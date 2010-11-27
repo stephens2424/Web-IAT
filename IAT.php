@@ -10,7 +10,7 @@
       $query = "SELECT * FROM stimuli";
       $result = mysql_query($query);
 
-      $num = mysql_numrows($result);
+      $num = mysql_num_rows($result);
 
       $i = 0;
 
@@ -33,7 +33,8 @@
 
       $query = "INSERT INTO subjects VALUES ()";
       $result = mysql_query($query);
-      printf("var subj=%d;\n</script>", mysql_insert_id());
+      $subj = mysql_insert_id();
+      printf("var subj=%d;\n</script>", $subj);
 
       mysql_close();
     ?>
@@ -48,7 +49,7 @@
         if (wordNum >= wordArray.length) {
           location.href="<?php
             if ($development) {
-              echo "results.php";
+              echo "results.php?subj=$subj";
             } else {
               echo "thankyou.php";
             }
