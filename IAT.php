@@ -44,14 +44,9 @@
 		var wordShowed;
 		
 		function show_key ( the_key ) {
-			var date = new Date().getTime();
-			sendData((date - wordShowed).toString());
-    		if ( ! the_key ) {
-        		the_key = event.keyCode;
-    		}
-    		
-				//change word
-			new_word ();
+                    var date = new Date().getTime();
+                    sendData(String.fromCharCode(the_key),(date - wordShowed).toString());
+                    new_word ();
 		}
 		function new_word () {
 			document.getElementById('word').textContent = "%%%%%%%%%%%%%%";
@@ -77,10 +72,9 @@
 		function load_timestamp () {
 			var date = new Date().getTime();
 			new_word();
-			
 		}
 		
-		function sendData(data) {
+		function sendData(response,time) {
 			if (window.XMLHttpRequest)
 			  {// code for IE7+, Firefox, Chrome, Opera, Safari
 			  	xmlhttp=new XMLHttpRequest();
@@ -96,7 +90,7 @@
                                 }
                             }
                         };
-			xmlhttp.open("GET","dataHandler.php?subj=" + subj.toString() + "&stim=" + stimArray[wordNum] + "&rt=" + data,true);
+			xmlhttp.open("GET","dataHandler.php?subj=" + subj.toString() + "&stim=" + stimArray[wordNum] + "&response=" + response + "&rt=" + time,true);
 			xmlhttp.send();
 		}
 		
