@@ -1,7 +1,7 @@
 <html>
   <head>
     <?php
-      //echo "php is working";
+      $development = false;
       echo "<script language=\"JavaScript1.7\" type=\"text/javascript\">\n";
 
       $link = mysql_connect('127.0.0.1', 'root', 'tempest24') or die('Could not connect: ' . mysql_error());
@@ -45,6 +45,15 @@
       function show_key ( the_key ) {
         var date = new Date().getTime();
         sendData(String.fromCharCode(the_key),(date - wordShowed).toString());
+        if (wordNum >= wordArray.length) {
+          location.href="<?php
+            if ($development) {
+              echo "results.php";
+            } else {
+              echo "thankyou.php";
+            }
+            ?>";
+        }
         new_word ();
       }
       function new_word () {
