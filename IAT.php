@@ -50,24 +50,6 @@
         		the_key = event.keyCode;
     		}
     		
-    		/*
-			//replace all before 'change word' with php/mysql database insertion
-			var tbl = document.getElementById('data');
-  			var lastRow = tbl.rows.length;
-  				// if there's no header row in the table, then iteration = lastRow + 1
-  			var iteration = lastRow;
-  			var row = tbl.insertRow(lastRow);
-  
-  				// left cell
-  			var cellLeft = row.insertCell(0);
-  			var textNode = document.createTextNode(String.fromCharCode ( the_key ));
-  			cellLeft.appendChild(textNode);
-  
-  				// right cell
-  			var cellRight = row.insertCell(1);
-			var otherTextNode = document.createTextNode(date.toString());
-  			cellRight.appendChild(otherTextNode);
-  			*/
 				//change word
 			new_word ();
 		}
@@ -89,52 +71,11 @@
 		}
 		function show_new_word () {
 			document.getElementById('word').textContent = wordArray[wordNum];
-			//new_word_timestamp ();
 			wordShowed = new Date().getTime();
 			wordNum++;
 		}
-		function new_word_timestamp () {
-			var date = new Date().getTime();
-
-			/*
-			//replace the following with php/mysql database insertion
-			var tbl = document.getElementById('data');
-  			var lastRow = tbl.rows.length;
-  				// if there's no header row in the table, then iteration = lastRow + 1
-  			var iteration = lastRow;
-  			var row = tbl.insertRow(lastRow);
-  
-  				// left cell
-  			var cellLeft = row.insertCell(0);
-  			var textNode = document.createTextNode("New Word");
-  			cellLeft.appendChild(textNode);
-  
-  				// right cell
-  			var cellRight = row.insertCell(1);
-			var otherTextNode = document.createTextNode(date.toString());
-  			cellRight.appendChild(otherTextNode);
-  			*/
-		}
 		function load_timestamp () {
 			var date = new Date().getTime();
-			/*
-			var tbl = document.getElementById('data');
-  			var lastRow = tbl.rows.length;
-  				// if there's no header row in the table, then iteration = lastRow + 1
-  			var iteration = lastRow;
-  			var row = tbl.insertRow(lastRow);
-  
-  				// left cell
-  			var cellLeft = row.insertCell(0);
-  			var textNode = document.createTextNode("Page Load");
-  			cellLeft.appendChild(textNode);
-  
-  				// right cell
-  			var cellRight = row.insertCell(1);
-			var otherTextNode = document.createTextNode(date.toString());
-  			cellRight.appendChild(otherTextNode);
-			*/
-			//sendData(date.toString());
 			new_word();
 			
 		}
