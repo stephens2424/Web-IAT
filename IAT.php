@@ -95,7 +95,7 @@
             }
           }
         };
-        xmlhttp.open("GET","dataHandler.php?subj=" + subj.toString() + "&stim=" + stimArray[wordNum] + "&response=" + response + "&rt=" + time,true);
+        xmlhttp.open("GET","dataHandler.php?subj=" + subj.toString() + "&stim=" + stimArray[wordNum-1] + "&response=" + response + "&rt=" + time,true);
         xmlhttp.send();
       }
 		
