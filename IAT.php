@@ -148,6 +148,13 @@
 			  {// code for IE6, IE5
 			  	xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
 			  }
+                        xmlhttp.onreadystatechange = function (aEvt) {
+                            if (this.readyState == 4) {
+                                if(this.status !== 200) {
+                                    alert("Server error: " + this.status + ' ' + this.statusText);
+                                }
+                            }
+                        };
 			xmlhttp.open("GET","dataHandler.php?subj=" + subj.toString() + "&stim=" + stimArray[wordNum] + "&rt=" + data,true);
 			xmlhttp.send();
 		}
