@@ -151,7 +151,7 @@
                         xmlhttp.onreadystatechange = function (aEvt) {
                             if (this.readyState == 4) {
                                 if(this.status !== 200) {
-                                    alert("Server error: " + this.status + ' ' + this.statusText);
+                                    location.href="servererror.php?status=" + this.status + "&statusText=" + encodeURIComponent(this.statusText);
                                 }
                             }
                         };
