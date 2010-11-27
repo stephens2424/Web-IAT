@@ -78,10 +78,6 @@
         wordShowed = new Date().getTime();
         wordNum++;
       }
-      function load_timestamp () {
-        var date = new Date().getTime();
-        new_word();
-      }
 		
       function sendData(response,time) {
         if (window.XMLHttpRequest)
@@ -135,7 +131,7 @@
       }
     </style>
   </head>
-  <body onkeypress="show_key(event.which);" onload="load_timestamp()">
+  <body onkeypress="show_key(event.which);" onload="new_word()">
     <div>
       <table class="center">
         <tr>
@@ -156,11 +152,5 @@
         </tr>
       </table>
     </div>
-    <table id="data">
-      <tr>
-        <td>key</td>
-        <td>timestamp</td>
-      </tr>
-    </table>
   </body>
 </html>
