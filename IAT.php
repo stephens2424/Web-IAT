@@ -19,11 +19,23 @@
       elseif ($num > 0) {
         echo "var wordArray = new Array($num-1);\n";
         echo "var stimArray = new Array($num-1);\n";
+        echo "var catLeftArray = new Array($num-1);\n";
+        echo "var catRightArray = new Array($num-1);\n";
+        echo "var subCatLeftArray = new Array($num-1);\n";
+        echo "var subCatRightArray = new Array($num-1);\n";
         while ($i < $num) {
           $text = mysql_result($result, $i, "word");
           $stimNum = mysql_result($result, $i, "stimulus_id");
+          $catLeft = mysql_result($result, $i, "category1");
+          $catRight = mysql_result($result, $i, "category2");
+          $subCatLeft = mysql_result($result, $i, "subcategory1");
+          $subCatRight = mysql_result($result, $i, "subcategory2");
           echo "wordArray[$i]=\"$text\";\n";
           echo "stimArray[$i]=\"$stimNum\";\n";
+          echo "catLeftArray[$i]=\"$catLeft\";\n";
+          echo "catRightArray[$i]=\"$catRight\";\n";
+          echo "subCatLeftArray[$i]=\"$subCatLeft\";\n";
+          echo "subCatRightArray[$i]=\"$subCatRight\";\n";
           $i++;
         }
         echo "var dataArray = new Array($num-1);\n";
@@ -58,6 +70,7 @@
         new_word ();
       }
       function new_word () {
+        change_categories(0);
         document.getElementById('word').textContent = "%%%%%%%%%%%%%%";
         setTimeout("new_word_one (document.getElementById('word'))",200);
       }
@@ -77,6 +90,12 @@
         document.getElementById('word').textContent = wordArray[wordNum];
         wordShowed = new Date().getTime();
         wordNum++;
+      }
+      function change_categories (wordNumShift) {
+        document.getElementById('catLeft').textContent = catLeftArray[wordNum + wordNumShift];
+        document.getElementById('catRight').textContent = catRightArray[wordNum + wordNumShift];
+        document.getElementById('subCatLeft').textContent = subCatLeftArray[wordNum + wordNumShift];
+        document.getElementById('subCatRight').textContent = subCatRightArray[wordNum + wordNumShift];
       }
 		
       function sendData(response,time) {
@@ -136,14 +155,20 @@
       <table class="center">
         <tr>
           <td class="categoryLeft">
-            <h1 class="categoryLeft">Cat One</h1>
+            <h1 class="categoryLeft" id="catLeft"></h1>
           </td>
-          <td class="categoryRight"><h1 class="categoryRight">Cat Two</h1></td></tr>
+          <td class="categoryRight">
+            <h1 class="categoryRight" id="catRight"></h1>
+          </td>
+        </tr>
         <tr>
           <td class="categoryLeft">
-            <h1 class="categoryLeft">Second Cat One</h1>
+            <h1 class="categoryLeft" id="subCatLeft"></h1>
           </td>
-          <td class="categoryRight"><h1 class="categoryRight">Second Cat Two</h1></td></tr>
+          <td class="categoryRight">
+            <h1 class="categoryRight" id="subCatRight"></h1>
+          </td>
+        </tr>
         <tr></tr>
         <tr>
           <td colspan="2">
