@@ -1,6 +1,8 @@
 <html>
   <head>
     <?php
+      //TODO add web management tool for stimuli
+      //TODO figure out how to make this full screen
       $development = false;
       echo "<script language=\"JavaScript1.7\" type=\"text/javascript\">\n";
 
@@ -43,7 +45,7 @@
 
       mysql_free_result($result);
 
-      $query = "INSERT INTO subjects VALUES ()";
+      $query = "INSERT INTO subjects VALUES ()"; //TODO make sure that the timezone for the beginTime inserted into the database will be consistent/understandable
       $result = mysql_query($query);
       $subj = mysql_insert_id();
       printf("var subj=%d;\n</script>", $subj);
@@ -56,6 +58,7 @@
       var wordShowed;
 		
       function show_key ( the_key ) {
+        //TODO add safeguard so only the proper keys trigger any changes
         var date = new Date().getTime();
         sendData(String.fromCharCode(the_key),(date - wordShowed).toString());
         if (wordNum >= wordArray.length) {
