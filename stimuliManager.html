@@ -1,0 +1,102 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title></title>
+    <script type="text/javascript">
+      function submitToHandler (parameters) {
+        if (window.XMLHttpRequest)
+        {// code for IE7+, Firefox, Chrome, Opera, Safari
+          xmlhttp=new XMLHttpRequest();
+        }
+        else
+        {// code for IE6, IE5
+          xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        xmlhttp.onreadystatechange = function (aEvt) {
+          if (this.readyState == 4) {
+            if(this.status !== 200) {
+              location.href="servererror.php?status=" + this.status + "&statusText=" + encodeURIComponent(this.statusText);
+            } else {
+              result = this.responseText;
+              document.getElementById("response").innerHTML = result;
+            }
+          }
+        };
+        xmlhttp.open("POST","stimuliManagerHandler.php",true);
+        xmlhttp.send(parameters);
+      }
+      function get(obj) {
+      var poststr = "leftCategory=" + encodeURI( document.getElementById("categoryLeft").value ) +
+                    "&rightCategory=" + encodeURI( document.getElementById("categoryRight").value ) +
+                    "&subLeftCategory=" + encodeURI( document.getElementById("subCategoryLeft").value ) +
+                    "&subRightCategory=" + encodeURI( document.getElementById("subCategoryRight").value ) +
+                    "&word=" + encodeURI( document.getElementById("word").value );
+      submitToHandler(poststr);
+   }
+
+    </script>
+    <style type="text/css">
+      table.center {
+        width: 50%;
+        height: 25%;
+        font-family: "Helvetica"
+      }
+
+      td.categoryLeft {
+        text-align: left;
+        padding-left: 0%;
+      }
+
+      td.categoryRight {
+        text-align: right;
+        padding-right: 0%;
+      }
+
+      h1.categoryLeft {
+        text-align: left;
+      }
+
+      h1.categoryRight {
+        text-align: right;
+      }
+
+      h1.center {
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body> <!-- TODO add listing of current stimuli -->
+    <div>
+      <form action="javascript:get(document.getElementById('myform'));" name="iatForm">
+      <table class="center">
+        <tr>
+          <td class="categoryLeft"> <!-- TODO change the styles -->
+            <input type="text" name="categoryLeft" id="categoryLeft" />
+          </td>
+          <td class="categoryRight">
+            <input type="text" name="categoryRight" id="categoryRight" />
+          </td>
+        </tr>
+        <tr>
+          <td class="categoryLeft">
+            <input type="text" name="subCategoryLeft" id="subCategoryLeft" />
+          </td>
+          <td class="categoryRight">
+            <input type="text" name="subCategoryRight" id="subCategoryRight" />
+          </td>
+        </tr>
+        <tr></tr>
+        <tr>
+          <td colspan="2">
+            <input type="text" name="word" id="word" />
+          </td>
+        </tr>
+        <tr><td colspan="2"></td><td><input type="button" name="button" value="Submit" onclick="javascript:get(this.parentNode);"></tr>
+      </table>
+      </form>
+    </div>
+    <div id="response">
+    </div>
+  </body>
+</html>
