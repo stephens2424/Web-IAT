@@ -4,11 +4,12 @@
       //TODO add web management tool for stimuli
       //TODO figure out how to make this full screen
       $development = false;
+      $stim_set = $_GET['s'];
       echo "<script language=\"JavaScript1.7\" type=\"text/javascript\">\n";
 
       include 'connect.php';
 
-      $query = "SELECT * FROM stimuli";
+      $query = "SELECT * FROM stimuli WHERE `set`=$stim_set";
       $result = mysql_query($query);
 
       $num = mysql_num_rows($result);
@@ -58,6 +59,7 @@
 		
       function show_key ( the_key ) {
         //TODO add safeguard so only the proper keys trigger any changes
+        //TODO make this able to track arrow keys
         var date = new Date().getTime();
         sendData(String.fromCharCode(the_key),(date - wordShowed).toString());
         if (wordNum >= wordArray.length) {
