@@ -25,6 +25,7 @@
         echo "var catRightArray = new Array($num-1);\n";
         echo "var subCatLeftArray = new Array($num-1);\n";
         echo "var subCatRightArray = new Array($num-1);\n";
+        echo "var instructionArray = new Array($num-1);\n";
         while ($i < $num) {
           $text = mysql_result($result, $i, "word");
           $stimNum = mysql_result($result, $i, "stimulus_id");
@@ -32,12 +33,14 @@
           $catRight = mysql_result($result, $i, "category2");
           $subCatLeft = mysql_result($result, $i, "subcategory1");
           $subCatRight = mysql_result($result, $i, "subcategory2");
+          $instruction = mysql_result($result, $i, "instruction");
           echo "wordArray[$i]=\"$text\";\n";
           echo "stimArray[$i]=\"$stimNum\";\n";
           echo "catLeftArray[$i]=\"$catLeft\";\n";
           echo "catRightArray[$i]=\"$catRight\";\n";
           echo "subCatLeftArray[$i]=\"$subCatLeft\";\n";
           echo "subCatRightArray[$i]=\"$subCatRight\";\n";
+          echo "instructionArray[$i]=\"$instruction\";\n";
           $i++;
         }
         echo "var dataArray = new Array($num-1);\n";
@@ -74,6 +77,17 @@
         new_word ();
       }
       function new_word () {
+    function new_word () {
+      if (wordArray[wordNum] == '') {
+        toggleLayer('IAT');
+        toggleLayer('instructionDiv');
+        instruction = true;
+        show_new_word()
+      } else {
+        if (instruction) {
+          toggleLayer('instructionDiv');
+          toggleLayer('IAT')
+        }
         change_categories(0);
         document.getElementById('word').textContent = "%%%%%%%%%%%%%%";
         setTimeout("new_word_one (document.getElementById('word'))",200);
@@ -122,6 +136,21 @@
         xmlhttp.send();
       }
 		
+    function toggleLayer( whichLayer )
+    {
+      var elem, vis;
+      if( document.getElementById ) // this is the way the standards work
+        elem = document.getElementById( whichLayer );
+      else if( document.all ) // this is the way old msie versions work
+        elem = document.all[whichLayer];
+      else if( document.layers ) // this is the way nn4 works
+        elem = document.layers[whichLayer];
+      vis = elem.style;
+      if(vis.display=='none' || vis.display=='')
+        vis.display = 'block';
+      else
+        vis.display = 'none';
+    }
     </script>
     <title>IAT</title>
     <style type="text/css">
@@ -155,7 +184,16 @@
     </style>
   </head>
   <body onkeypress="show_key(event.which);" onload="new_word()">
-    <div>
+    <div id="instructionDiv" style="display: none;">
+      <table class="center">
+        <tr>
+          <td>
+            <h1 id="instruction" class="center"></h1>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div id="IAT" style="display:block;">
       <table class="center">
         <tr>
           <td class="categoryLeft">
