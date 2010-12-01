@@ -5,7 +5,7 @@
       //TODO figure out how to make this full screen
       $development = false;
       $stim_set = $_GET['s'];
-      echo "<script language=\"JavaScript1.7\" type=\"text/javascript\">\n";
+      echo "<script type=\"text/javascript\">\n";
 
       include 'connect.php';
 
@@ -56,27 +56,27 @@
       mysql_close();
     ?>
 
-    <script language="JavaScript1.7" type="text/javascript">
-      var wordNum = 0;
-      var wordShowed;
-		
-      function show_key ( the_key ) {
-        //TODO add safeguard so only the proper keys trigger any changes
-        //TODO make this able to track arrow keys
-        var date = new Date().getTime();
-        sendData(String.fromCharCode(the_key),(date - wordShowed).toString());
-        if (wordNum >= wordArray.length) {
-          location.href="<?php
-            if ($development) {
-              echo "results.php?subj=$subj";
-            } else {
-              echo "thankyou.php";
-            }
-            ?>";
-        }
-        new_word ();
+      <script type="text/javascript">
+        var wordNum = 0;
+        var instruction = false;
+        var wordShowed;
+
+        function show_key ( the_key ) {
+          //TODO add safeguard so only the proper keys trigger any changes
+          //TODO make this able to track arrow keys
+          var date = new Date().getTime();
+          sendData(String.fromCharCode(the_key),(date - wordShowed).toString());
+          if (wordNum >= wordArray.length) {
+            location.href="<?php
+      if ($development) {
+        echo "results.php?subj=$subj";
+      } else {
+        echo "thankyou.php";
       }
-      function new_word () {
+    ?>";
+      }
+      new_word ();
+    }
     function new_word () {
       if (wordArray[wordNum] == '') {
         toggleLayer('IAT');
@@ -92,50 +92,51 @@
         document.getElementById('word').textContent = "%%%%%%%%%%%%%%";
         setTimeout("new_word_one (document.getElementById('word'))",200);
       }
-      function new_word_one () {
-        document.getElementById('word').textContent = "#########";
-        setTimeout("new_word_two (document.getElementById('word'))",200);
-      }
-      function new_word_two () {
-        document.getElementById('word').textContent = "@@@@@@@";
-        setTimeout("new_word_three (document.getElementById('word'))",200);
-      }
-      function new_word_three () {
-        document.getElementById('word').textContent = "xxxxxxxxxx";
-        setTimeout("show_new_word(document.getElementById('word'))",200);
-      }
-      function show_new_word () {
-        document.getElementById('word').textContent = wordArray[wordNum];
-        wordShowed = new Date().getTime();
-        wordNum++;
-      }
-      function change_categories (wordNumShift) {
-        document.getElementById('catLeft').textContent = catLeftArray[wordNum + wordNumShift];
-        document.getElementById('catRight').textContent = catRightArray[wordNum + wordNumShift];
-        document.getElementById('subCatLeft').textContent = subCatLeftArray[wordNum + wordNumShift];
-        document.getElementById('subCatRight').textContent = subCatRightArray[wordNum + wordNumShift];
-      }
+    }
+    function new_word_one () {
+      document.getElementById('word').textContent = "#########";
+      setTimeout("new_word_two (document.getElementById('word'))",200);
+    }
+    function new_word_two () {
+      document.getElementById('word').textContent = "@@@@@@@";
+      setTimeout("new_word_three (document.getElementById('word'))",200);
+    }
+    function new_word_three () {
+      document.getElementById('word').textContent = "xxxxxxxxxx";
+      setTimeout("show_new_word(document.getElementById('word'))",200);
+    }
+    function show_new_word () {
+      document.getElementById('word').textContent = wordArray[wordNum];
+      document.getElementById('instruction').textContent = instructionArray[wordNum];
+      wordShowed = new Date().getTime();
+      wordNum++;
+    }
+    function change_categories (wordNumShift) {
+      document.getElementById('catLeft').textContent = catLeftArray[wordNum + wordNumShift];
+      document.getElementById('catRight').textContent = catRightArray[wordNum + wordNumShift];
+      document.getElementById('subCatLeft').textContent = subCatLeftArray[wordNum + wordNumShift];
+      document.getElementById('subCatRight').textContent = subCatRightArray[wordNum + wordNumShift];
+    }
 		
-      function sendData(response,time) {
-        if (window.XMLHttpRequest)
-        {// code for IE7+, Firefox, Chrome, Opera, Safari
-          xmlhttp=new XMLHttpRequest();
-        }
-        else
-        {// code for IE6, IE5
-          xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-        }
-        xmlhttp.onreadystatechange = function (aEvt) {
-          if (this.readyState == 4) {
-            if(this.status !== 200) {
-              location.href="servererror.php?status=" + this.status + "&statusText=" + encodeURIComponent(this.statusText);
-            }
+    function sendData(response,time) {
+      if (window.XMLHttpRequest)
+      {// code for IE7+, Firefox, Chrome, Opera, Safari
+        xmlhttp=new XMLHttpRequest();
+      }
+      else
+      {// code for IE6, IE5
+        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+      }
+      xmlhttp.onreadystatechange = function (aEvt) {
+        if (this.readyState == 4) {
+          if(this.status !== 200) {
+            location.href="servererror.php?status=" + this.status + "&statusText=" + encodeURIComponent(this.statusText);
           }
-        };
-        xmlhttp.open("GET","dataHandler.php?subj=" + subj.toString() + "&stim=" + stimArray[wordNum-1] + "&response=" + response + "&rt=" + time,true);
-        xmlhttp.send();
-      }
-		
+        }
+      };
+      xmlhttp.open("GET","dataHandler.php?subj=" + subj.toString() + "&stim=" + stimArray[wordNum-1] + "&response=" + response + "&rt=" + time,true);
+      xmlhttp.send();
+    }
     function toggleLayer( whichLayer )
     {
       var elem, vis;
