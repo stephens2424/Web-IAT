@@ -65,10 +65,10 @@
         editCell.appendChild(button);
         
       }
+      
       function test () {
         addStimulusRow("#","cat1","cat2","subcat1","subcat2","word","correct","instruction");
       }
-
     </script>
     <style type="text/css">
       table.center {
