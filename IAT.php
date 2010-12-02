@@ -26,6 +26,7 @@
         echo "var subCatLeftArray = new Array($num-1);\n";
         echo "var subCatRightArray = new Array($num-1);\n";
         echo "var instructionArray = new Array($num-1);\n";
+        echo "var maskArray = new Array($num-1);\n";
         while ($i < $num) {
           $text = mysql_result($result, $i, "word");
           $stimNum = mysql_result($result, $i, "stimulus_id");
@@ -34,6 +35,7 @@
           $subCatLeft = mysql_result($result, $i, "subcategory1");
           $subCatRight = mysql_result($result, $i, "subcategory2");
           $instruction = mysql_result($result, $i, "instruction");
+          $mask = mysql_result($result, $i, "mask");
           echo "wordArray[$i]=\"$text\";\n";
           echo "stimArray[$i]=\"$stimNum\";\n";
           echo "catLeftArray[$i]=\"$catLeft\";\n";
@@ -41,6 +43,7 @@
           echo "subCatLeftArray[$i]=\"$subCatLeft\";\n";
           echo "subCatRightArray[$i]=\"$subCatRight\";\n";
           echo "instructionArray[$i]=\"$instruction\";\n";
+          echo "maskArray[$i]=$mask;\n";
           $i++;
         }
         echo "var dataArray = new Array($num-1);\n";
@@ -82,16 +85,21 @@
         toggleLayer('IAT');
         toggleLayer('instructionDiv');
         instruction = true;
-        show_new_word()
       } else {
         if (instruction) {
           toggleLayer('instructionDiv');
           toggleLayer('IAT')
         }
         change_categories(0);
-        document.getElementById('word').textContent = "%%%%%%%%%%%%%%";
-        setTimeout("new_word_one (document.getElementById('word'))",200);
       }
+      if (maskArray[wordNum])
+        new_word_zero();
+      else
+        show_new_word();
+    }
+    function new_word_zero () {
+      document.getElementById('word').textContent = "%%%%%%%%%%%%%%";
+      setTimeout("new_word_one (document.getElementById('word'))",200);
     }
     function new_word_one () {
       document.getElementById('word').textContent = "#########";
