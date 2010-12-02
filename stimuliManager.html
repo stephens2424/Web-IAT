@@ -27,13 +27,47 @@
         xmlhttp.send(parameters);
       }
       function get(obj) {
-      var poststr = "leftCategory=" + encodeURI( document.getElementById("categoryLeft").value ) +
-                    "&rightCategory=" + encodeURI( document.getElementById("categoryRight").value ) +
-                    "&subLeftCategory=" + encodeURI( document.getElementById("subCategoryLeft").value ) +
-                    "&subRightCategory=" + encodeURI( document.getElementById("subCategoryRight").value ) +
-                    "&word=" + encodeURI( document.getElementById("word").value );
-      submitToHandler(poststr);
-   }
+        var poststr = "leftCategory=" + encodeURI( document.getElementById("categoryLeft").value ) +
+          "&rightCategory=" + encodeURI( document.getElementById("categoryRight").value ) +
+          "&subLeftCategory=" + encodeURI( document.getElementById("subCategoryLeft").value ) +
+          "&subRightCategory=" + encodeURI( document.getElementById("subCategoryRight").value ) +
+          "&word=" + encodeURI( document.getElementById("word").value );
+        submitToHandler(poststr);
+      }
+      function addStimulusRow (stim_id,cat1,cat2,subcat1,subcat2,word,correct,instruction) {
+        var stimuliTable = document.getElementById('stimuliTable');
+        var stimulusRow = stimuliTable.insertRow(stimuliTable.rows.length);
+
+        // id cell
+        var idCell = stimulusRow.insertCell(0);
+        idCell.appendChild(document.createTextNode(stim_id));
+
+        //stimulus cell
+        var stimulusCell = stimulusRow.insertCell(1);
+        var stimulusTable = document.createElement('table');
+        var row0 = stimulusTable.insertRow(0);
+        var row1 = stimulusTable.insertRow(1);
+        var cat1Cell = row0.insertCell(0);
+        cat1Cell.appendChild(document.createTextNode(cat1));
+        var middleCell = row0.insertCell(1);
+        middleCell.rowSpan = 2;
+        middleCell.appendChild(document.createTextNode(word));
+        row0.insertCell(2).appendChild(document.createTextNode(cat2));
+        row1.insertCell(0).appendChild(document.createTextNode(subcat1));
+        row1.insertCell(1).appendChild(document.createTextNode(subcat2));
+        stimulusCell.appendChild(stimulusTable);
+
+        // edit cell
+        
+        var editCell = stimulusRow.insertCell(2);
+        var button = document.createElement('button');
+        button.innerHTML = "Edit";
+        editCell.appendChild(button);
+        
+      }
+      function test () {
+        addStimulusRow("#","cat1","cat2","subcat1","subcat2","word","correct","instruction");
+      }
 
     </script>
     <style type="text/css">
@@ -66,34 +100,39 @@
       }
     </style>
   </head>
-  <body> <!-- TODO add listing of current stimuli -->
-    <div>
-      <form action="javascript:get(document.getElementById('myform'));" name="iatForm">
-      <table class="center">
-        <tr>
-          <td class="categoryLeft"> <!-- TODO change the styles -->
-            <input type="text" name="categoryLeft" id="categoryLeft" />
-          </td>
-          <td class="categoryRight">
-            <input type="text" name="categoryRight" id="categoryRight" />
-          </td>
-        </tr>
-        <tr>
-          <td class="categoryLeft">
-            <input type="text" name="subCategoryLeft" id="subCategoryLeft" />
-          </td>
-          <td class="categoryRight">
-            <input type="text" name="subCategoryRight" id="subCategoryRight" />
-          </td>
-        </tr>
-        <tr></tr>
-        <tr>
-          <td colspan="2">
-            <input type="text" name="word" id="word" />
-          </td>
-        </tr>
-        <tr><td colspan="2"></td><td><input type="button" name="button" value="Submit" onclick="javascript:get(this.parentNode);"></tr>
+  <body onload="test();"> <!-- TODO add listing of current stimuli -->
+    <div id="stimuliList">
+      <table id="stimuliTable" style="border-width:2px; border-color:black;">
+        <tr><td>id</td><td>Stimulus</td><td>Edit</td></tr>
       </table>
+    </div>
+    <div id="stimuliForm" style="display:none;">
+      <form action="javascript:get(document.getElementById('myform'));" name="iatForm">
+        <table class="center">
+          <tr>
+            <td class="categoryLeft"> <!-- TODO change the styles -->
+              <input type="text" name="categoryLeft" id="categoryLeft" />
+            </td>
+            <td class="categoryRight">
+              <input type="text" name="categoryRight" id="categoryRight" />
+            </td>
+          </tr>
+          <tr>
+            <td class="categoryLeft">
+              <input type="text" name="subCategoryLeft" id="subCategoryLeft" />
+            </td>
+            <td class="categoryRight">
+              <input type="text" name="subCategoryRight" id="subCategoryRight" />
+            </td>
+          </tr>
+          <tr></tr>
+          <tr>
+            <td colspan="2">
+              <input type="text" name="word" id="word" />
+            </td>
+          </tr>
+          <tr><td colspan="2"></td><td><input type="button" name="button" value="Submit" onclick="javascript:get(this.parentNode);"></tr>
+        </table>
       </form>
     </div>
     <div id="response">
