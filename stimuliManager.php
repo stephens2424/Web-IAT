@@ -18,7 +18,9 @@
             if(this.status !== 200) {
               location.href="servererror.php?status=" + this.status + "&statusText=" + encodeURIComponent(this.statusText);
             } else {
-              var stimuli = JSON.parse(this.responseText);
+              var data = JSON.parse(this.responseText);
+              document.getElementById("responseCount").innerHTML = data.responseCount;
+              var stimuli = data.stimuli;
               var num = stimuli.length;
               for (var i=0; i < num; i++) {
                 addStimulusRow(stimuli[i].stim_id,stimuli[i].category1,stimuli[i].category2,stimuli[i].subcategory1,stimuli[i].subcategory2,stimuli[i].word,stimuli[i].correct_response,stimuli[i].instruction);
@@ -133,7 +135,7 @@
         mysql_free_result($result);
         mysql_close();
       ?>
-    </select>
+    </select> Responses: <span id="responseCount"></span>
     <div id="stimuliList">
       <table id="stimuliTable" style="border-width:2px; border-color:black;">
         <thead><tr><th>id</th><th>Stimulus</th><th>Edit</th></tr></thead><tbody id="stimuliBody"></tbody>

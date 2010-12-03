@@ -18,5 +18,11 @@
       );
     $row++;
   }
-  echo json_encode($array);
+  $upperArray["stimuli"] = $array;
+  mysql_free_result($result);
+  $query = "SELECT COUNT(DISTINCT subj) AS responses FROM responses INNER JOIN stimuli ON responses.stimulus=stimuli.stimulus_id WHERE stimuli.`set`=$set";
+  $result = mysql_query($query);
+  $upperArray["responseCount"] = mysql_result($result, 0, "responses");
+  mysql_close();
+  echo json_encode($upperArray);
 ?>
