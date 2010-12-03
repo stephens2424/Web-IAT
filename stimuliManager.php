@@ -4,7 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title></title>
     <script type="text/javascript">
-      function submitToHandler (parameters) {
+      function requestStimuliSet (parameters) {
         if (window.XMLHttpRequest)
         {// code for IE7+, Firefox, Chrome, Opera, Safari
           xmlhttp=new XMLHttpRequest();
@@ -18,12 +18,18 @@
             if(this.status !== 200) {
               location.href="servererror.php?status=" + this.status + "&statusText=" + encodeURIComponent(this.statusText);
             } else {
-              result = this.responseText;
-              document.getElementById("response").innerHTML = result;
+              var stimuli = JSON.parse(this.responseText);
+              var num = stimuli.length;
+              for (var i=0; i < num; i++) {
+                addStimulusRow(stimuli[i].stim_id,stimuli[i].category1,stimuli[i].category2,stimuli[i].subcategory1,stimuli[i].subcategory2,stimuli[i].word,stimuli[i].correct_response,stimuli[i].instruction);
+              }
             }
           }
         };
-        xmlhttp.open("POST","stimuliManagerHandler.php",true);
+        xmlhttp.open("POST","requestStimuliSet.php",true);
+        xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xmlhttp.setRequestHeader("Content-length", parameters.length);
+        xmlhttp.setRequestHeader("Connection", "close");
         xmlhttp.send(parameters);
       }
       function get(obj) {
@@ -35,8 +41,8 @@
         submitToHandler(poststr);
       }
       function addStimulusRow (stim_id,cat1,cat2,subcat1,subcat2,word,correct,instruction) {
-        var stimuliTable = document.getElementById('stimuliTable');
-        var stimulusRow = stimuliTable.insertRow(stimuliTable.rows.length);
+        var stimuliTable = document.getElementById('stimuliBody');
+        var stimulusRow = stimuliTable.insertRow(-1);
 
         // id cell
         var idCell = stimulusRow.insertCell(0);
@@ -44,18 +50,22 @@
 
         //stimulus cell
         var stimulusCell = stimulusRow.insertCell(1);
-        var stimulusTable = document.createElement('table');
-        var row0 = stimulusTable.insertRow(0);
-        var row1 = stimulusTable.insertRow(1);
-        var cat1Cell = row0.insertCell(0);
-        cat1Cell.appendChild(document.createTextNode(cat1));
-        var middleCell = row0.insertCell(1);
-        middleCell.rowSpan = 2;
-        middleCell.appendChild(document.createTextNode(word));
-        row0.insertCell(2).appendChild(document.createTextNode(cat2));
-        row1.insertCell(0).appendChild(document.createTextNode(subcat1));
-        row1.insertCell(1).appendChild(document.createTextNode(subcat2));
-        stimulusCell.appendChild(stimulusTable);
+        if (instruction == null) {
+          var stimulusTable = document.createElement('table');
+          var row0 = stimulusTable.insertRow(-1);
+          var row1 = stimulusTable.insertRow(-1);
+          var cat1Cell = row0.insertCell(0);
+          cat1Cell.appendChild(document.createTextNode(cat1));
+          var middleCell = row0.insertCell(1);
+          middleCell.rowSpan = 2;
+          middleCell.appendChild(document.createTextNode(word));
+          row0.insertCell(2).appendChild(document.createTextNode(cat2));
+          row1.insertCell(0).appendChild(document.createTextNode(subcat1));
+          row1.insertCell(1).appendChild(document.createTextNode(subcat2));
+          stimulusCell.appendChild(stimulusTable);
+        } else {
+          stimulusCell.appendChild(document.createTextNode(instruction));
+        }
 
         // edit cell
         
@@ -63,11 +73,17 @@
         var button = document.createElement('button');
         button.innerHTML = "Edit";
         editCell.appendChild(button);
-        
       }
-      
-      function test () {
-        addStimulusRow("#","cat1","cat2","subcat1","subcat2","word","correct","instruction");
+      function remove_all_stimuli() {
+        for(var i = document.getElementById("stimuliTable").rows.length; i > 0;i--)
+        {
+          document.getElementById("stimuliTable").deleteRow(i -1);
+        }
+      }
+      function experiment_change() {
+        remove_all_stimuli();
+        var selectBox = document.getElementById("experiment_selector");
+        requestStimuliSet("set=" + selectBox.options[selectBox.selectedIndex].value);
       }
     </script>
     <style type="text/css">
@@ -100,10 +116,27 @@
       }
     </style>
   </head>
-  <body onload="test();"> <!-- TODO add listing of current stimuli -->
+  <body onload="experiment_change();">
+    <select id="experiment_selector" onchange="experiment_change();">
+      <?php
+        include 'connect.php';
+        $query = "SELECT name,stimuli_set FROM experiments";
+        $result = mysql_query($query);
+        $num = mysql_num_rows($result);
+        $i = 0;
+        while ($i < $num) {
+          $name = mysql_result($result, $i, "name");
+          $set = mysql_result($result, $i, "stimuli_set");
+          echo "<option value=\"$set\">$name</option>";
+          $i++;
+        }
+        mysql_free_result($result);
+        mysql_close();
+      ?>
+    </select>
     <div id="stimuliList">
       <table id="stimuliTable" style="border-width:2px; border-color:black;">
-        <tr><td>id</td><td>Stimulus</td><td>Edit</td></tr>
+        <thead><tr><th>id</th><th>Stimulus</th><th>Edit</th></tr></thead><tbody id="stimuliBody"></tbody>
       </table>
     </div>
     <div id="stimuliForm" style="display:none;">
