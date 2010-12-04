@@ -34,17 +34,39 @@
         xmlhttp.setRequestHeader("Connection", "close");
         xmlhttp.send(parameters);
       }
-      function get(obj) {
-        var poststr = "leftCategory=" + encodeURI( document.getElementById("categoryLeft").value ) +
-          "&rightCategory=" + encodeURI( document.getElementById("categoryRight").value ) +
-          "&subLeftCategory=" + encodeURI( document.getElementById("subCategoryLeft").value ) +
-          "&subRightCategory=" + encodeURI( document.getElementById("subCategoryRight").value ) +
-          "&word=" + encodeURI( document.getElementById("word").value );
-        submitToHandler(poststr);
+      function save_stimulus_row (stimuliRow) {
+        var stimulusTable = stimuliRow.childNodes[1].childNodes[0];
+        var poststr = "leftCategory=" + encodeURI( stimulusTable.rows[0].cells[0].lastChild.value ) +
+          "&rightCategory=" + encodeURI( stimulusTable.rows[0].cells[2].lastChild.value ) +
+          "&subLeftCategory=" + encodeURI( stimulusTable.rows[1].cells[0].lastChild.value ) +
+          "&subRightCategory=" + encodeURI( stimulusTable.rows[1].cells[1].lastChild.value ) +
+          "&word=" + encodeURI( stimulusTable.rows[0].cells[1].lastChild.value ) +
+          "&stim_id=" + encodeURI(stimuliRow.childNodes[0].childNodes[0].alt);
+        if (window.XMLHttpRequest)
+        {// code for IE7+, Firefox, Chrome, Opera, Safari
+          xmlhttp=new XMLHttpRequest();
+        }
+        else
+        {// code for IE6, IE5
+          xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        xmlhttp.onreadystatechange = function (aEvt) {
+          if (this.readyState == 4) {
+            if(this.status !== 200) {
+              location.href="servererror.php?status=" + this.status + "&statusText=" + encodeURIComponent(this.statusText);
+            } else {
+              var stimuli = JSON.parse(this.responseText);
+              i = 0;
+              stimuliRow.parentNode.replaceChild(createStimulusRow(stimuli[i].stim_id,stimuli[i].category1,stimuli[i].category2,stimuli[i].subcategory1,stimuli[i].subcategory2,stimuli[i].word,stimuli[i].correct_response,stimuli[i].instruction),stimuliRow);
+            }
+          }
+        };
+        xmlhttp.open("POST","updateStimulus.php",true);
+        xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xmlhttp.send(poststr);
       }
-      function addStimulusRow (stim_id,cat1,cat2,subcat1,subcat2,word,correct,instruction) {
-        var stimuliTable = document.getElementById('stimuliBody');
-        var stimulusRow = stimuliTable.insertRow(-1);
+      function createStimulusRow(stim_id,cat1,cat2,subcat1,subcat2,word,correct,instruction) {
+        var stimulusRow = document.createElement('tr');
 
         // id cell
         var idCell = stimulusRow.insertCell(0);
@@ -70,11 +92,58 @@
         }
 
         // edit cell
-        
+
         var editCell = stimulusRow.insertCell(2);
         var button = document.createElement('button');
+        button.onclick = make_row_editable;
         button.innerHTML = "Edit";
         editCell.appendChild(button);
+        return stimulusRow;
+      }
+      function addStimulusRow (stim_id,cat1,cat2,subcat1,subcat2,word,correct,instruction) {
+        var stimuliTable = document.getElementById('stimuliBody');
+        stimuliTable.appendChild(createStimulusRow(stim_id,cat1,cat2,subcat1,subcat2,word,correct,instruction));
+      }
+      function make_row_editable() {
+        //TODO disable all other edit buttons
+        //TODO make this work for instruction rows. also. make it possible to switch.
+        var stimulusTable = this.parentNode.parentNode.childNodes[1].childNodes[0];
+        var row = 0;
+        while (row < stimulusTable.rows.length) {
+          var cell = 0;
+          while (cell < stimulusTable.rows[row].cells.length) {
+            var text = stimulusTable.rows[row].cells[cell].childNodes[0].textContent;
+            stimulusTable.rows[row].cells[cell].removeChild(stimulusTable.rows[row].cells[cell].childNodes[0]);
+            var elem = document.createElement('input');
+            elem.type = 'text';
+            elem.value = text;
+            stimulusTable.rows[row].cells[cell].appendChild(elem);
+            cell++;
+          }
+          row++;
+        }
+        this.onclick = make_row_uneditable;
+        this.innerHTML = "Save";
+      }
+      function make_row_uneditable(node) {
+        //TODO reenable all edit buttons
+        var stimuliRow = this.parentNode.parentNode;
+        var loading = document.createElement('img');
+        loading.alt = stimuliRow.childNodes[0].childNodes[0].textContent;
+        stimuliRow.childNodes[0].removeChild(stimuliRow.childNodes[0].childNodes[0]);
+        stimuliRow.childNodes[0].appendChild(loading);
+        loading.src = "ajaxloader.gif";
+        var stimulusTable = stimuliRow.childNodes[1].childNodes[0];
+        var row = 0;
+        while (row < stimulusTable.rows.length) {
+          var cell = 0;
+          while (cell < stimulusTable.rows[row].cells.length) {
+            stimulusTable.rows[row].cells[cell].childNodes[0].disabled = true;
+            cell++;
+          }
+          row++;
+        }
+        save_stimulus_row(stimuliRow);
       }
       function remove_all_stimuli() {
         for(var i = document.getElementById("stimuliTable").rows.length; i > 0;i--)
@@ -140,37 +209,6 @@
       <table id="stimuliTable" style="border-width:2px; border-color:black;">
         <thead><tr><th>id</th><th>Stimulus</th><th>Edit</th></tr></thead><tbody id="stimuliBody"></tbody>
       </table>
-    </div>
-    <div id="stimuliForm" style="display:none;">
-      <form action="javascript:get(document.getElementById('myform'));" name="iatForm">
-        <table class="center">
-          <tr>
-            <td class="categoryLeft"> <!-- TODO change the styles -->
-              <input type="text" name="categoryLeft" id="categoryLeft" />
-            </td>
-            <td class="categoryRight">
-              <input type="text" name="categoryRight" id="categoryRight" />
-            </td>
-          </tr>
-          <tr>
-            <td class="categoryLeft">
-              <input type="text" name="subCategoryLeft" id="subCategoryLeft" />
-            </td>
-            <td class="categoryRight">
-              <input type="text" name="subCategoryRight" id="subCategoryRight" />
-            </td>
-          </tr>
-          <tr></tr>
-          <tr>
-            <td colspan="2">
-              <input type="text" name="word" id="word" />
-            </td>
-          </tr>
-          <tr><td colspan="2"></td><td><input type="button" name="button" value="Submit" onclick="javascript:get(this.parentNode);"></tr>
-        </table>
-      </form>
-    </div>
-    <div id="response">
     </div>
   </body>
 </html>

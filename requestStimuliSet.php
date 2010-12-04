@@ -15,7 +15,7 @@
       "word" => mysql_result($result, $row, "word"),
       "correct_response" => mysql_result($result, $row, "correct_response"),
       "instruction" => mysql_result($result, $row, "instruction")
-      );
+    );
     $row++;
   }
   $upperArray["stimuli"] = $array;
