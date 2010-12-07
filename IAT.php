@@ -59,6 +59,7 @@
       mysql_close();
     ?>
 
+<<<<<<< HEAD
       <script type="text/javascript">
         var wordNum = 0;
         var instruction = false;
@@ -99,6 +100,25 @@
           } else {
             new_word ();
           }
+=======
+    <script type="text/javascript">
+      var wordNum = 0;
+      var wordShowed;
+		
+      function show_key ( the_key ) {
+        var date = new Date().getTime();
+        sendData(String.fromCharCode(the_key),(date - wordShowed).toString());
+        if (wordNum >= wordArray.length) {
+          location.href="<?php
+            if ($development) {
+              echo "results.php?subj=$subj";
+            } else {
+              echo "thankyou.php";
+            }
+            ?>";
+        }
+        new_word ();
+>>>>>>> updated server info for web release
       }
       function new_word () {
         if (wordArray[wordNum] == '') {
