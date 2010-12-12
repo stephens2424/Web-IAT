@@ -36,12 +36,18 @@
       }
       function save_stimulus_row (stimuliRow) {
         var stimulusTable = stimuliRow.childNodes[1].childNodes[0];
-        var poststr = "leftCategory=" + encodeURI( stimulusTable.rows[0].cells[0].lastChild.value ) +
-          "&rightCategory=" + encodeURI( stimulusTable.rows[0].cells[2].lastChild.value ) +
-          "&subLeftCategory=" + encodeURI( stimulusTable.rows[1].cells[0].lastChild.value ) +
-          "&subRightCategory=" + encodeURI( stimulusTable.rows[1].cells[1].lastChild.value ) +
-          "&word=" + encodeURI( stimulusTable.rows[0].cells[1].lastChild.value ) +
-          "&stim_id=" + encodeURI(stimuliRow.childNodes[0].childNodes[0].alt);
+        var poststr;
+        if (stimulusTable.rows) {
+          poststr = "leftCategory=" + encodeURI( stimulusTable.rows[0].cells[0].lastChild.value ) +
+            "&rightCategory=" + encodeURI( stimulusTable.rows[0].cells[2].lastChild.value ) +
+            "&subLeftCategory=" + encodeURI( stimulusTable.rows[1].cells[0].lastChild.value ) +
+            "&subRightCategory=" + encodeURI( stimulusTable.rows[1].cells[1].lastChild.value ) +
+            "&word=" + encodeURI( stimulusTable.rows[0].cells[1].lastChild.value ) +
+            "&stim_id=" + encodeURI(stimuliRow.childNodes[0].childNodes[0].alt);
+        } else {
+          poststr = "instruction=" + encodeURI( stimulusTable.textContent) +
+            "&stim_id=" + encodeURI(stimuliRow.childNodes[0].childNodes[0].alt);
+        }
         if (window.XMLHttpRequest)
         {// code for IE7+, Firefox, Chrome, Opera, Safari
           xmlhttp=new XMLHttpRequest();
@@ -74,7 +80,7 @@
 
         //stimulus cell
         var stimulusCell = stimulusRow.insertCell(1);
-        if (instruction == null) {
+        if (instruction == null || instruction == '') {
           var stimulusTable = document.createElement('table');
           var row0 = stimulusTable.insertRow(-1);
           var row1 = stimulusTable.insertRow(-1);
@@ -109,18 +115,27 @@
         //TODO make this work for instruction rows. also. make it possible to switch.
         var stimulusTable = this.parentNode.parentNode.childNodes[1].childNodes[0];
         var row = 0;
-        while (row < stimulusTable.rows.length) {
-          var cell = 0;
-          while (cell < stimulusTable.rows[row].cells.length) {
-            var text = stimulusTable.rows[row].cells[cell].childNodes[0].textContent;
-            stimulusTable.rows[row].cells[cell].removeChild(stimulusTable.rows[row].cells[cell].childNodes[0]);
-            var elem = document.createElement('input');
-            elem.type = 'text';
-            elem.value = text;
-            stimulusTable.rows[row].cells[cell].appendChild(elem);
-            cell++;
+        if (stimulusTable.rows) {
+          while (row < stimulusTable.rows.length) {
+            var cell = 0;
+            while (cell < stimulusTable.rows[row].cells.length) {
+              var text = stimulusTable.rows[row].cells[cell].childNodes[0].textContent;
+              stimulusTable.rows[row].cells[cell].removeChild(stimulusTable.rows[row].cells[cell].childNodes[0]);
+              var elem = document.createElement('input');
+              elem.type = 'text';
+              elem.value = text;
+              stimulusTable.rows[row].cells[cell].appendChild(elem);
+              cell++;
+            }
+            row++;
           }
-          row++;
+        } else {
+          var text = stimulusTable.textContent;
+          var elem = document.createElement('input');
+          elem.type = 'text';
+          elem.value = text;
+          stimulusTable.parentNode.appendChild(elem);
+          stimulusTable.parentNode.removeChild(stimulusTable);
         }
         this.onclick = make_row_uneditable;
         this.innerHTML = "Save";
@@ -135,14 +150,19 @@
         loading.src = "ajaxloader.gif";
         var stimulusTable = stimuliRow.childNodes[1].childNodes[0];
         var row = 0;
-        while (row < stimulusTable.rows.length) {
-          var cell = 0;
-          while (cell < stimulusTable.rows[row].cells.length) {
-            stimulusTable.rows[row].cells[cell].childNodes[0].disabled = true;
-            cell++;
+        if (stimulusTable.rows) {
+          while (row < stimulusTable.rows.length) {
+            var cell = 0;
+            while (cell < stimulusTable.rows[row].cells.length) {
+              stimulusTable.rows[row].cells[cell].childNodes[0].disabled = true;
+              cell++;
+            }
+            row++;
           }
-          row++;
+        } else {
+          stimulusTable.disabled = true;
         }
+        
         save_stimulus_row(stimuliRow);
       }
       function remove_all_stimuli() {
