@@ -80,6 +80,18 @@
 
         //stimulus cell
         var stimulusCell = stimulusRow.insertCell(1);
+        stimulusCell.appendChild(createStimulusTable(cat1,cat2,subcat1,subcat2,word,correct,instruction));
+
+        // edit cell
+
+        var editCell = stimulusRow.insertCell(2);
+        var button = document.createElement('button');
+        button.onclick = make_row_editable;
+        button.innerHTML = "Edit";
+        editCell.appendChild(button);
+        return stimulusRow;
+      }
+      function createStimulusTable (cat1,cat2,subcat1,subcat2,word,correct,instruction) {
         if (instruction == null || instruction == '') {
           var stimulusTable = document.createElement('table');
           var row0 = stimulusTable.insertRow(-1);
@@ -92,19 +104,10 @@
           row0.insertCell(2).appendChild(document.createTextNode(cat2));
           row1.insertCell(0).appendChild(document.createTextNode(subcat1));
           row1.insertCell(1).appendChild(document.createTextNode(subcat2));
-          stimulusCell.appendChild(stimulusTable);
+          return stimulusTable;
         } else {
-          stimulusCell.appendChild(document.createTextNode(instruction));
+          return document.createTextNode(instruction);
         }
-
-        // edit cell
-
-        var editCell = stimulusRow.insertCell(2);
-        var button = document.createElement('button');
-        button.onclick = make_row_editable;
-        button.innerHTML = "Edit";
-        editCell.appendChild(button);
-        return stimulusRow;
       }
       function addStimulusRow (stim_id,cat1,cat2,subcat1,subcat2,word,correct,instruction) {
         var stimuliTable = document.getElementById('stimuliBody');
