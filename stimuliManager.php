@@ -4,6 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title></title>
     <script type="text/javascript">
+      var maskArray;
       function requestStimuliSet (parameters) {
         if (window.XMLHttpRequest)
         {// code for IE7+, Firefox, Chrome, Opera, Safari
@@ -22,8 +23,10 @@
               document.getElementById("responseCount").innerHTML = data.responseCount;
               var stimuli = data.stimuli;
               var num = stimuli.length;
+              maskArray = new Array(num);
               for (var i=0; i < num; i++) {
                 addStimulusRow(stimuli[i].stim_id,stimuli[i].category1,stimuli[i].category2,stimuli[i].subcategory1,stimuli[i].subcategory2,stimuli[i].word,stimuli[i].correct_response,stimuli[i].instruction);
+                maskArray[i] = stimuli[i].mask;
               }
             }
           }
@@ -43,6 +46,7 @@
             "&subLeftCategory=" + encodeURI( stimulusTable.rows[1].cells[0].lastChild.value ) +
             "&subRightCategory=" + encodeURI( stimulusTable.rows[1].cells[1].lastChild.value ) +
             "&word=" + encodeURI( stimulusTable.rows[0].cells[1].lastChild.value ) +
+            "&mask=" + encodeURI( (stimulusTable.rows[0].cells[3].childNodes[7].checked == true)?"1":"0") +
             "&stim_id=" + encodeURI(stimuliRow.childNodes[0].childNodes[0].alt);
         } else {
           poststr = "instruction=" + encodeURI( stimulusTable.textContent) +
@@ -64,6 +68,7 @@
               var stimuli = JSON.parse(this.responseText);
               i = 0;
               stimuliRow.parentNode.replaceChild(createStimulusRow(stimuli[i].stim_id,stimuli[i].category1,stimuli[i].category2,stimuli[i].subcategory1,stimuli[i].subcategory2,stimuli[i].word,stimuli[i].correct_response,stimuli[i].instruction),stimuliRow);
+              maskArray[stimuli[i].stim_id-1] = stimuli[i].mask;
             }
           }
         };
@@ -134,6 +139,7 @@
         var maskingButton = document.createElement('input');
         maskingButton.type = "checkbox";
         maskingButton.name = "masking";
+        maskingButton.checked = (maskArray[parseInt(table.parentNode.parentNode.childNodes[0].textContent)-1] == "0") ? false : true;
         cell.appendChild(iatButton);
         cell.appendChild(document.createTextNode("IAT/Sequential Prime"));
         cell.appendChild(document.createElement('br'));
