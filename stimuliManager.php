@@ -109,6 +109,36 @@
           return document.createTextNode(instruction);
         }
       }
+      function changeStimulusType (row,type) {
+        switch (type) {
+          case 1: //IAT
+            alert("changing to iat");
+            break;
+          case 2: //Sequential Prime
+            alert("changing to sequential prime");
+            break;
+          case 3: //Instruction
+            alert("changing to instruction");
+            break;
+        }
+      }
+      function addOptionsCell (row) {
+        var cell = row.insertCell(-1);
+        var iatButton = document.createElement('input');
+        iatButton.onclick = changeStimulusExperiment(row,1);
+        var sequentialPrimeButton = document.createElement('input');
+        iatButton.onclick = changeStimulusExperiment(row,2);
+        var instructionButton = document.createElement('input');
+        iatButton.onclick = changeStimulusExperiment(row,3);
+        cell.appendChild(iatButton);
+        cell.appendChild(document.createTextNode("IAT"));
+        cell.appendChild(document.createElement('br'));
+        cell.appendChild(sequentialPrimeButton);
+        cell.appendChild(document.createTextNode("Sequential Prime"));
+        cell.appendChild(document.createElement('br'));
+        cell.appendChild(instructionButton);
+        cell.appendChild(document.createTextNode("Instruction"));
+      }
       function addStimulusRow (stim_id,cat1,cat2,subcat1,subcat2,word,correct,instruction) {
         var stimuliTable = document.getElementById('stimuliBody');
         stimuliTable.appendChild(createStimulusRow(stim_id,cat1,cat2,subcat1,subcat2,word,correct,instruction));
