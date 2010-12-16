@@ -96,7 +96,7 @@ CREATE TABLE `stimuli` (
 
 LOCK TABLES `stimuli` WRITE;
 /*!40000 ALTER TABLE `stimuli` DISABLE KEYS */;
-INSERT INTO `stimuli` VALUES (1,1,'cat1','cat2','subcat1','subcat2','word1',NULL,'','\0'),(2,1,'cat1','cat2','subcat1','subcat2','word2',NULL,'','\0'),(3,1,'cat1','cat2','subcat1','subcat2','word3',NULL,'','\0'),(4,1,'cat3','cat4','subcat3','subcat4','word4',NULL,NULL,'\0'),(5,1,'cat3','cat4','subcat3','subcat4','word5',NULL,NULL,'\0'),(6,2,'','','','','',NULL,'','\0'),(15,2,'','','','','',NULL,'','\0'),(12,2,'cat5','cat6','subcat5','subcat6','blah',NULL,'','\0');
+INSERT INTO `stimuli` VALUES (1,1,'cat1','cat2','subcat1','subcat2','word1',NULL,'','\0'),(2,1,'cat1','cat2','subcat1','subcat2','word2',NULL,'','\0'),(3,1,'cat1','cat2','subcat1','subcat2','word3',NULL,'','\0'),(4,1,'cat3','cat4','subcat3','subcat4','word4',NULL,NULL,'\0'),(5,1,'cat3','cat4','subcat3','subcat4','word5',NULL,NULL,'\0'),(6,2,'cat2','','','','',NULL,'','\0'),(15,2,'','','','','',NULL,'','\0'),(12,2,'cat5','cat6','subcat5','subcat6','blah',NULL,'','\0');
 /*!40000 ALTER TABLE `stimuli` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -133,4 +133,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2010-12-15 18:33:42
+-- Dump completed on 2010-12-15 23:47:59

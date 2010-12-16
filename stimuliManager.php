@@ -111,33 +111,38 @@
       }
       function changeStimulusType (row,type) {
         switch (type) {
-          case 1: //IAT
-            alert("changing to iat");
+          case 1: //IAT or Sequential Prime
+            alert("changing to iat/sequential prime");
             break;
-          case 2: //Sequential Prime
-            alert("changing to sequential prime");
-            break;
-          case 3: //Instruction
+          case 2: //Instruction
             alert("changing to instruction");
             break;
         }
       }
-      function addOptionsCell (row) {
+      function addOptionsCell (table) {
+        var row = table.rows[0];
         var cell = row.insertCell(-1);
+        cell.rowSpan = "2";
         var iatButton = document.createElement('input');
-        iatButton.onclick = changeStimulusExperiment(row,1);
-        var sequentialPrimeButton = document.createElement('input');
-        iatButton.onclick = changeStimulusExperiment(row,2);
+        iatButton.onclick = function() {changeStimulusType(table,1)};
+        iatButton.type = "radio";
+        iatButton.name = "stimulusType";
         var instructionButton = document.createElement('input');
-        iatButton.onclick = changeStimulusExperiment(row,3);
+        instructionButton.onclick = function() {changeStimulusType(table,2)};
+        instructionButton.type = "radio";
+        instructionButton.name = "stimulusType";
+        var maskingButton = document.createElement('input');
+        maskingButton.type = "checkbox";
+        maskingButton.name = "masking";
         cell.appendChild(iatButton);
-        cell.appendChild(document.createTextNode("IAT"));
-        cell.appendChild(document.createElement('br'));
-        cell.appendChild(sequentialPrimeButton);
-        cell.appendChild(document.createTextNode("Sequential Prime"));
+        cell.appendChild(document.createTextNode("IAT/Sequential Prime"));
         cell.appendChild(document.createElement('br'));
         cell.appendChild(instructionButton);
         cell.appendChild(document.createTextNode("Instruction"));
+        cell.appendChild(document.createElement('br'));
+        cell.appendChild(document.createElement('br'));
+        cell.appendChild(maskingButton);
+        cell.appendChild(document.createTextNode("Mask"));
       }
       function addStimulusRow (stim_id,cat1,cat2,subcat1,subcat2,word,correct,instruction) {
         var stimuliTable = document.getElementById('stimuliBody');
@@ -170,6 +175,7 @@
           stimulusTable.parentNode.appendChild(elem);
           stimulusTable.parentNode.removeChild(stimulusTable);
         }
+        addOptionsCell(this.parentNode.parentNode.childNodes[1].childNodes[0]);
         this.onclick = make_row_uneditable;
         this.innerHTML = "Save";
       }
