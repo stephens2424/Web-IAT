@@ -80,6 +80,31 @@
         xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xmlhttp.send(poststr);
       }
+      function saveNewStimulusRow () {
+        if (window.XMLHttpRequest)
+        {// code for IE7+, Firefox, Chrome, Opera, Safari
+          xmlhttp=new XMLHttpRequest();
+        }
+        else
+        {// code for IE6, IE5
+          xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        xmlhttp.onreadystatechange = function (aEvt) {
+          if (this.readyState == 4) {
+            if(this.status !== 200) {
+              location.href="servererror.php?status=" + this.status + "&statusText=" + encodeURIComponent(this.statusText);
+            } else {
+              var stimuli = JSON.parse(this.responseText);
+              i = 0;
+              addStimulusRow(stimuli[i].stim_id,stimuli[i].category1,stimuli[i].category2,stimuli[i].subcategory1,stimuli[i].subcategory2,stimuli[i].word,stimuli[i].correct_response,stimuli[i].instruction);
+              maskArray[stimuli[i].stim_id-1] = stimuli[i].mask;
+            }
+          }
+        };
+        xmlhttp.open("POST","addNewStimulus.php",true);
+        xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xmlhttp.send();
+      }
       function createStimulusRow(stim_id,cat1,cat2,subcat1,subcat2,word,correct,instruction) {
         var stimulusRow = document.createElement('tr');
 
@@ -216,7 +241,7 @@
       }
       function remove_all_stimuli() {
         if (document.getElementById("stimuliTable") == null) return;
-        for(var i = document.getElementById("stimuliTable").rows.length; i > 1;i--)
+        for(var i = (document.getElementById("stimuliTable").rows.length - 1); i > 1;i--)
         {
           document.getElementById("stimuliTable").deleteRow(i -1);
         }
@@ -278,6 +303,7 @@
     <div id="stimuliList">
       <table id="stimuliTable" style="border-width:2px; border-color:black;">
         <thead><tr><th>id</th><th>Stimulus</th><th>Edit</th></tr></thead><tbody id="stimuliBody"></tbody>
+        <tfoot><tr><td rowspan="3"><button type="button" onclick="saveNewStimulusRow();">+</button></td></tr></tfoot>
       </table>
     </div>
   </body>
