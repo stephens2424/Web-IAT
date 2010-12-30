@@ -221,6 +221,22 @@
       function addStimulusRow (stim_id,cat1,cat2,subcat1,subcat2,word,correct,instruction) {
         var stimuliTable = document.getElementById('stimuliBody');
         stimuliTable.appendChild(createStimulusRow(stim_id,cat1,cat2,subcat1,subcat2,word,correct,instruction));
+        appendAddButtonRow(stimuliTable);
+      }
+      function appendAddButtonRow(table) {
+        var row = table.insertRow(-1);
+        var cell = row.insertCell(-1);
+        cell.colSpan = "4";
+        var button = document.createElement('button');
+        button.onclick = function () {insert_row("blerg")};
+        button.innerHTML = "+";
+        button.style.display = "none";
+        cell.appendChild(button);
+        row.onmouseover = function () {button.style.display = "block";}
+        row.onmouseout = function () {button.style.display = "none";};
+      }
+      function insert_row(index) {
+        alert("insert row at " + index);
       }
       function make_row_editable() {
         //TODO disable all other edit buttons

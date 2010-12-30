@@ -87,7 +87,7 @@ CREATE TABLE `stimuli` (
   `instruction` tinytext,
   `mask` bit(1) NOT NULL DEFAULT b'0',
   PRIMARY KEY (`stimulus_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=23 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=24 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -96,7 +96,7 @@ CREATE TABLE `stimuli` (
 
 LOCK TABLES `stimuli` WRITE;
 /*!40000 ALTER TABLE `stimuli` DISABLE KEYS */;
-INSERT INTO `stimuli` VALUES (1,1,'cat1','cat 2','subcat1','subcat2','word 1',NULL,'','\0'),(3,1,'cat1','cat2','subcat1','subcat2','word3',NULL,'','\0'),(4,1,'cat3','cat4','subcat3','subcat4','word4',NULL,'','\0'),(5,1,'cat3','cat4','subcat3','subcat4','word5',NULL,'','\0'),(6,2,'cat2','','','','',NULL,'','\0'),(15,2,'','','','','',NULL,'','\0'),(12,2,'cat5','cat6','subcat5','subcat6','blah',NULL,'','\0'),(17,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0'),(18,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0'),(19,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0'),(20,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0'),(21,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0'),(22,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0');
+INSERT INTO `stimuli` VALUES (1,1,'cat1','cat 2','subcat1','subcat2','word 1',NULL,'','\0'),(23,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0'),(3,1,'cat1','cat2','subcat1','subcat2','word3',NULL,'','\0'),(4,1,'cat3','cat4','subcat3','subcat4','word4',NULL,'','\0'),(5,1,'cat3','cat4','subcat3','subcat4','word5',NULL,'','\0'),(6,2,'cat2','','','','',NULL,'','\0'),(15,2,'','','','','',NULL,'','\0'),(12,2,'cat5','cat6','subcat5','subcat6','blah',NULL,'','\0'),(17,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0'),(18,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0'),(19,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0'),(20,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0'),(21,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0'),(22,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0');
 /*!40000 ALTER TABLE `stimuli` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -133,4 +133,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2010-12-30 14:22:15
+-- Dump completed on 2010-12-30 15:44:35
