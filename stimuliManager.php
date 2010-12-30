@@ -21,12 +21,16 @@
             } else {
               var data = JSON.parse(this.responseText);
               document.getElementById("responseCount").innerHTML = data.responseCount;
-              var stimuli = data.stimuli;
-              var num = stimuli.length;
-              maskArray = new Array(num);
-              for (var i=0; i < num; i++) {
-                addStimulusRow(stimuli[i].stim_id,stimuli[i].category1,stimuli[i].category2,stimuli[i].subcategory1,stimuli[i].subcategory2,stimuli[i].word,stimuli[i].correct_response,stimuli[i].instruction);
-                maskArray[i] = stimuli[i].mask;
+              if (data.stimuli) {
+                var stimuli = data.stimuli;
+                var num = stimuli.length;
+                maskArray = new Array(num);
+                for (var i=0; i < num; i++) {
+                  addStimulusRow(stimuli[i].stim_id,stimuli[i].category1,stimuli[i].category2,stimuli[i].subcategory1,stimuli[i].subcategory2,stimuli[i].word,stimuli[i].correct_response,stimuli[i].instruction);
+                  maskArray[i] = stimuli[i].mask;
+                }
+              } else {
+                
               }
             }
           }
