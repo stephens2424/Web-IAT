@@ -211,7 +211,8 @@
         save_stimulus_row(stimuliRow);
       }
       function remove_all_stimuli() {
-        for(var i = document.getElementById("stimuliTable").rows.length; i > 0;i--)
+        if (document.getElementById("stimuliTable") == null) return;
+        for(var i = document.getElementById("stimuliTable").rows.length; i > 1;i--)
         {
           document.getElementById("stimuliTable").deleteRow(i -1);
         }
