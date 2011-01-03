@@ -124,19 +124,56 @@
         editCell.appendChild(button);
 
         //add remove cell
-        var addRemoveCell = stimulusRow.insertCell(3);
-        var removeButton = document.createElement('button');
-        removeButton.onclick = remove_row;
-        removeButton.innerHTML = "-";
-        addRemoveCell.appendChild(removeButton);
+        var selectBoxCell = stimulusRow.insertCell(3);
+        var selectBox = document.createElement('select');
+        var noOption = document.createElement('option');
+        noOption.appendChild(document.createTextNode("Actions"));
+        var removeOption = document.createElement('option');
+        removeOption.appendChild(document.createTextNode("Remove"));
+        var addAboveOption = document.createElement('option');
+        addAboveOption.appendChild(document.createTextNode("Add Row Above"));
+        var addBelowOption = document.createElement('option');
+        addBelowOption.appendChild(document.createTextNode("Add Row Below"));
+        var copyOption = document.createElement('option');
+        copyOption.appendChild(document.createTextNode("Copy"));
+        selectBox.appendChild(noOption);
+        selectBox.appendChild(removeOption);
+        selectBox.appendChild(addAboveOption);
+        selectBox.appendChild(addBelowOption);
+        selectBox.onchange = function () {handleRowAction(selectBox);};
+        selectBoxCell.appendChild(selectBox);
         return stimulusRow;
       }
-      function remove_row () {
+      function handleRowAction (selectBox) {
+        switch (selectBox.selectedIndex) {
+          case 0:
+            alert("no option");
+            break;
+          case 1:
+            remove_row(selectBox.parentNode.parentNode);
+            break;
+          case 2:
+            alert("add above");
+            selectBox.selectedIndex = 0;
+            break;
+          case 3:
+            alert("add below");
+            selectBox.selectedIndex = 0;
+            break;
+          case 4:
+            alert("copy");
+            selectBox.selectedIndex = 0;
+            break;
+          default:
+            selectBox.selectedIndex = 0;
+        }
+      }
+      function remove_row (row) {
         var stim_id;
-        if (this.parentNode.parentNode.childNodes[0].childNodes[0].alt) {
-          stim_id = this.parentNode.parentNode.childNodes[0].childNodes[0].alt;
+        if (row.childNodes[0].childNodes[0].alt) {
+          stim_id = row.childNodes[0].childNodes[0].alt;
         } else {
-          stim_id = this.parentNode.parentNode.childNodes[0].childNodes[0].textContent;
+          stim_id = row.childNodes[0].childNodes[0].textContent;
         }
         var poststr = "&stim_id=" + stim_id;
         if (window.XMLHttpRequest)
@@ -162,7 +199,7 @@
         xmlhttp.open("POST","removeStimulus.php",true);
         xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xmlhttp.send(poststr);
-        this.parentNode.parentNode.parentNode.removeChild(this.parentNode.parentNode);
+        row.parentNode.removeChild(row);
       }
       function createStimulusTable (cat1,cat2,subcat1,subcat2,word,correct,instruction) {
         if (instruction == null || instruction == '') {
@@ -221,19 +258,6 @@
       function addStimulusRow (stim_id,cat1,cat2,subcat1,subcat2,word,correct,instruction) {
         var stimuliTable = document.getElementById('stimuliBody');
         stimuliTable.appendChild(createStimulusRow(stim_id,cat1,cat2,subcat1,subcat2,word,correct,instruction));
-        appendAddButtonRow(stimuliTable);
-      }
-      function appendAddButtonRow(table) {
-        var row = table.insertRow(-1);
-        var cell = row.insertCell(-1);
-        cell.colSpan = "4";
-        var button = document.createElement('button');
-        button.onclick = function () {insert_row("blerg")};
-        button.innerHTML = "+";
-        button.style.display = "none";
-        cell.appendChild(button);
-        row.onmouseover = function () {button.style.display = "block";}
-        row.onmouseout = function () {button.style.display = "none";};
       }
       function insert_row(index) {
         alert("insert row at " + index);
@@ -313,7 +337,6 @@
         height: 25%;
         font-family: "Helvetica"
       }
-
       td.categoryLeft {
         text-align: left;
         padding-left: 0%;
@@ -357,7 +380,7 @@
     </select> Responses: <span id="responseCount"></span>
     <div id="stimuliList">
       <table id="stimuliTable" style="border-width:2px; border-color:black;">
-        <thead><tr><th>id</th><th>Stimulus</th><th>Edit</th><th>Add/Remove</th></tr></thead><tbody id="stimuliBody"></tbody>
+        <thead><tr><th>id</th><th>Stimulus</th><th>Edit</th><th>Actions</th></tr></thead><tbody id="stimuliBody"></tbody>
         <tfoot><tr><td colspan="3"></td><td><button type="button" onclick="saveNewStimulusRow();">+</button></td></tr></tfoot>
       </table>
     </div>
