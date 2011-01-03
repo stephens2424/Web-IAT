@@ -1,7 +1,7 @@
 <?php
   include 'connect.php';
   $set = $_POST['set'];
-  $query = "SELECT stimulus_id,category1,category2,subcategory1,subcategory2,word,correct_response,instruction,mask FROM stimuli WHERE `set`=$set";
+  $query = "SELECT stimulus_id,category1,category2,subcategory1,subcategory2,word,correct_response,instruction,mask FROM stimuli WHERE `set`=$set ORDER BY stimuli.order ASC";
   $result = mysql_query($query);
   $rows = mysql_num_rows($result);
   $row = 0;
