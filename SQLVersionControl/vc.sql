@@ -77,7 +77,7 @@ DROP TABLE IF EXISTS `stimuli`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `stimuli` (
   `stimulus_id` int(11) NOT NULL AUTO_INCREMENT,
-  `set` int(11) DEFAULT NULL,
+  `set` int(11) NOT NULL,
   `category1` text,
   `category2` text,
   `subcategory1` text,
@@ -86,10 +86,12 @@ CREATE TABLE `stimuli` (
   `correct_response` tinytext,
   `instruction` tinytext,
   `mask` bit(1) NOT NULL DEFAULT b'0',
-  `order` int(11) NOT NULL,
+  `order` int(11) DEFAULT NULL,
+  `group` int(11) NOT NULL,
   PRIMARY KEY (`stimulus_id`),
-  KEY `order` (`order`)
-) ENGINE=MyISAM AUTO_INCREMENT=24 DEFAULT CHARSET=latin1;
+  KEY `order` (`order`),
+  KEY `group` (`group`)
+) ENGINE=MyISAM AUTO_INCREMENT=25 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -98,8 +100,35 @@ CREATE TABLE `stimuli` (
 
 LOCK TABLES `stimuli` WRITE;
 /*!40000 ALTER TABLE `stimuli` DISABLE KEYS */;
-INSERT INTO `stimuli` VALUES (1,1,'cat1','cat 2','subcat1','subcat2','word 1',NULL,'','\0',1),(3,1,'cat1','cat2','subcat1','subcat2','word3',NULL,'','\0',3),(4,1,'cat3','cat4','subcat3','subcat4','word4',NULL,'','\0',2),(6,2,'cat2','','','','',NULL,'','\0',1),(15,2,'','','','','',NULL,'','\0',2),(12,2,'cat5','cat6','subcat5','subcat6','blah',NULL,'','\0',3);
+INSERT INTO `stimuli` VALUES (1,1,'cat1','cat 2','subcat1','subcat2','word 1',NULL,'','\0',1,1),(3,1,'cat1','cat2','subcat1','subcat2','word3',NULL,'','\0',3,2),(4,1,'cat3','cat4','subcat3','subcat4','word4',NULL,'','\0',1,2),(6,2,'cat2','','','','',NULL,'','\0',1,3),(15,2,'','','','','',NULL,'','\0',2,4),(12,2,'cat5','cat6','subcat5','subcat6','blah',NULL,'','\0',3,4);
 /*!40000 ALTER TABLE `stimuli` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `stimuliGroups`
+--
+
+DROP TABLE IF EXISTS `stimuliGroups`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `stimuliGroups` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `stimuliSet` int(11) DEFAULT NULL,
+  `order` int(11) DEFAULT NULL,
+  `name` text NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `stimuliSet` (`stimuliSet`)
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `stimuliGroups`
+--
+
+LOCK TABLES `stimuliGroups` WRITE;
+/*!40000 ALTER TABLE `stimuliGroups` DISABLE KEYS */;
+INSERT INTO `stimuliGroups` VALUES (1,1,1,'group1'),(2,1,2,'group2'),(3,2,1,'group1'),(4,2,2,'');
+/*!40000 ALTER TABLE `stimuliGroups` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -135,4 +164,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2011-01-02 21:48:39
+-- Dump completed on 2011-01-10 16:11:05

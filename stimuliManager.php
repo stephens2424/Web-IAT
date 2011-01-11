@@ -21,13 +21,18 @@
             } else {
               var data = JSON.parse(this.responseText);
               document.getElementById("responseCount").innerHTML = data.responseCount;
-              if (data.stimuli) {
-                var stimuli = data.stimuli;
-                var num = stimuli.length;
-                maskArray = new Array(num);
-                for (var i=0; i < num; i++) {
-                  addStimulusRow(stimuli[i].stim_id,stimuli[i].category1,stimuli[i].category2,stimuli[i].subcategory1,stimuli[i].subcategory2,stimuli[i].word,stimuli[i].correct_response,stimuli[i].instruction);
-                  maskArray[i] = stimuli[i].mask;
+              if (data.stimuliGroups) {
+                var groups = data.stimuliGroups;
+                var num = groups.length;
+                for (var ii=0; ii < num; ii++) {
+                  addGroupRow(groups[ii].groupName);
+                  var stimuli = groups[ii].stimuli;
+                  var num2 = stimuli.length;
+                  maskArray = new Array(num2);
+                  for (var i=0; i < num2; i++) {
+                    addStimulusRow(stimuli[i].stim_id,stimuli[i].category1,stimuli[i].category2,stimuli[i].subcategory1,stimuli[i].subcategory2,stimuli[i].word,stimuli[i].correct_response,stimuli[i].instruction);
+                    maskArray[i] = stimuli[i].mask;
+                  }
                 }
               } else {
                 
@@ -258,6 +263,16 @@
       function addStimulusRow (stim_id,cat1,cat2,subcat1,subcat2,word,correct,instruction) {
         var stimuliTable = document.getElementById('stimuliBody');
         stimuliTable.appendChild(createStimulusRow(stim_id,cat1,cat2,subcat1,subcat2,word,correct,instruction));
+      }
+      function addGroupRow (name) {
+        var stimuliTable = document.getElementById('stimuliBody');
+        var row = document.createElement('tr');
+        var disclosureCell = document.createElement('td'); //TODO add disclosure functionality for groups
+        var nameCell = document.createElement('td');
+        nameCell.appendChild(document.createTextNode(name));
+        row.appendChild(disclosureCell);
+        row.appendChild(nameCell);
+        stimuliTable.appendChild(row);
       }
       function insert_row(index) {
         alert("insert row at " + index);
