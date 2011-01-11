@@ -3,6 +3,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title></title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript"></script>
     <script type="text/javascript">
       var maskArray;
       function requestStimuliSet (parameters) {
@@ -20,19 +21,11 @@
               location.href="servererror.php?status=" + this.status + "&statusText=" + encodeURIComponent(this.statusText);
             } else {
               var data = JSON.parse(this.responseText);
-              document.getElementById("responseCount").innerHTML = data.responseCount;
+              $('#responseCount').text(data.responseCount);
               if (data.stimuliGroups) {
-                var groups = data.stimuliGroups;
-                var num = groups.length;
-                for (var ii=0; ii < num; ii++) {
-                  addGroupRow(groups[ii].groupName);
-                  var stimuli = groups[ii].stimuli;
-                  var num2 = stimuli.length;
-                  maskArray = new Array(num2);
-                  for (var i=0; i < num2; i++) {
-                    addStimulusRow(stimuli[i].stim_id,stimuli[i].category1,stimuli[i].category2,stimuli[i].subcategory1,stimuli[i].subcategory2,stimuli[i].word,stimuli[i].correct_response,stimuli[i].instruction);
-                    maskArray[i] = stimuli[i].mask;
-                  }
+                var num = data.stimuliGroups.length;
+                for (var i=0; i < num; i++) {
+                  insertGroup(-1,data.stimuliGroups[i].groupName,data.stimuliGroups[i].stimuli,i);
                 }
               } else {
                 
@@ -45,6 +38,31 @@
         xmlhttp.setRequestHeader("Content-length", parameters.length);
         xmlhttp.setRequestHeader("Connection", "close");
         xmlhttp.send(parameters);
+      }
+      function insertGroup (afterPosition,name,content,groupId) {
+        if (afterPosition < 0) {
+          $('#stimuliBody').append(_createGroupRow(name,content,groupId));
+        }
+      }
+      function _createGroupRow (name,content,groupId) {
+        var group = "<table>"+
+          "<thead><th rowspan=\"2\"><input type=\"image\" src=\"disclosureTriangle.png\" onclick=\"discloseGroup(" + groupId + ")\" /></th><th>" + name + "</th><th>actions</th></thead>" +
+          "<tbody><tr><td></td><td colspan=\"2\">" + $(_createGroupContent(content)).html() + "</td></tr></tbody></table>";
+        return group;
+      }
+      function _createGroupContent (content) {
+        var table = $('<table>');
+        for (var i = 0; i < content.length; i++) {
+          var tr_elem = _createStimulusRow(content[i]);
+          $(table).append($(tr_elem));
+        }
+        return table;
+      }
+      function _createStimulusRow (data) {
+        return createStimulusRow(data.stim_id,data.category1,data.category2,data.subcategory1,data.subcategory2,data.word,data.correct_response,data.instruction);
+      }
+      function discloseGroup(groupId) {
+        alert("disclose: " + groupId);
       }
       function save_stimulus_row (stimuliRow) {
         var stimulusTable = stimuliRow.childNodes[1].childNodes[0];
