@@ -352,11 +352,7 @@
         save_stimulus_row(stimuliRow);
       }
       function remove_all_stimuli() {
-        if (document.getElementById("stimuliTable") == null) return;
-        for(var i = (document.getElementById("stimuliTable").rows.length - 1); i > 1;i--)
-        {
-          document.getElementById("stimuliTable").deleteRow(i -1);
-        }
+        $('#stimuliBody').replaceWith('<tbody id="stimuliBody"></tbody>');
       }
       function experiment_change() {
         remove_all_stimuli();
