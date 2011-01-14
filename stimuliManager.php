@@ -45,10 +45,11 @@
         }
       }
       function _createGroupRow (name,content,groupId) {
-        var group = "<table>"+
-          "<thead><th rowspan=\"2\"><input type=\"image\" src=\"disclosureTriangle.png\" onclick=\"discloseGroup(" + groupId + ")\" /></th><th>" + name + "</th><th>actions</th></thead>" +
-          "<tbody><tr><td></td><td colspan=\"2\">" + $(_createGroupContent(content)).html() + "</td></tr></tbody></table>";
-        return group;
+        var body = $('<tr>').appendTo($('<tbody>')).append('<td>').append($('<td>').attr('colspan','2').append(_createGroupContent(content)));
+        var disclose = $('<input>').attr('type','image').click(function () {discloseGroup(groupId)}).attr('src','disclosureTriangle.png');
+        var head = $('<thead>').append($('<th>').attr('rowspan','2').append(disclose)).append('<th>' + name + '</th>').append('<th>actions</th>');
+        var table = $('<table>').append(head).append(body);
+        return table;
       }
       function _createGroupContent (content) {
         var table = $('<table>');
