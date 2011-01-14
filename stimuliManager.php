@@ -5,7 +5,7 @@
     <title></title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript"></script>
     <script type="text/javascript">
-      var maskArray;
+      var stimuliData;
       function requestStimuliSet (parameters) {
         if (window.XMLHttpRequest)
         {// code for IE7+, Firefox, Chrome, Opera, Safari
@@ -24,6 +24,7 @@
               $('#responseCount').text(data.responseCount);
               if (data.stimuliGroups) {
                 var num = data.stimuliGroups.length;
+                stimuliData = data.stimuliGroups;
                 for (var i=0; i < num; i++) {
                   insertGroup(-1,data.stimuliGroups[i].groupName,data.stimuliGroups[i].stimuli,i);
                 }
@@ -268,7 +269,7 @@
         var maskingButton = document.createElement('input');
         maskingButton.type = "checkbox";
         maskingButton.name = "masking";
-        maskingButton.checked = (maskArray[parseInt(table.parentNode.parentNode.childNodes[0].textContent)-1] == "0") ? false : true;
+        maskingButton.checked = (stimuliData[$(row).parent().parent().index()].stimuli[$(row).index()].mask == "0") ? false : true;
         cell.appendChild(iatButton);
         cell.appendChild(document.createTextNode("IAT/Sequential Prime"));
         cell.appendChild(document.createElement('br'));
@@ -296,7 +297,7 @@
       function insert_row(index) {
         alert("insert row at " + index);
       }
-      function make_row_editable() {
+      function make_row_editable(evt) {
         //TODO disable all other edit buttons
         //TODO make this work for instruction rows. also. make it possible to switch.
         var stimulusTable = this.parentNode.parentNode.childNodes[1].childNodes[0];
@@ -327,7 +328,7 @@
         this.onclick = make_row_uneditable;
         this.innerHTML = "Save";
       }
-      function make_row_uneditable(node) {
+      function make_row_uneditable(evt) {
         //TODO reenable all edit buttons
         var stimuliRow = this.parentNode.parentNode;
         var loading = document.createElement('img');
