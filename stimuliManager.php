@@ -231,16 +231,13 @@
           if (this.readyState == 4) {
             if(this.status !== 200) {
               location.href="servererror.php?status=" + this.status + "&statusText=" + encodeURIComponent(this.statusText);
-            } else {
-              var stimuli = JSON.parse(this.responseText);
-              i = 0;
-              stimuliRow.parentNode.replaceChild(createStimulusRow(stimuli[i].stim_id,stimuli[i].category1,stimuli[i].category2,stimuli[i].subcategory1,stimuli[i].subcategory2,stimuli[i].word,stimuli[i].correct_response,stimuli[i].instruction),stimuliRow);
             }
           }
         };
         xmlhttp.open("POST","removeStimulus.php",true);
         xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xmlhttp.send(poststr);
+        stimuliData[$(row).parent().parent().parent().parent().parent().parent().index()].stimuli.splice($(row).index(),1);
         row.parentNode.removeChild(row);
       }
       function createStimulusTable (cat1,cat2,subcat1,subcat2,word,correct,instruction) {
