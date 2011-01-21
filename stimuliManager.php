@@ -429,8 +429,7 @@
     </select> Responses: <span id="responseCount"></span>
     <div id="stimuliList">
       <table id="stimuliTable" style="border-width:2px; border-color:black;">
-        <thead><tr><th>id</th><th>Stimulus</th><th>Edit</th><th>Actions</th></tr></thead><tbody id="stimuliBody"></tbody>
-        <tfoot><tr><td colspan="3"></td><td><button type="button" onclick="saveNewStimulusRow();">+</button></td></tr></tfoot>
+        <tbody id="stimuliBody"></tbody>
       </table>
     </div>
   </body>
