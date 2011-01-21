@@ -27,7 +27,7 @@
                 var num = data.stimuliGroups.length;
                 stimuliData = data.stimuliGroups;
                 for (var i=0; i < num; i++) {
-                  insertGroup(-1,data.stimuliGroups[i].groupName,data.stimuliGroups[i].stimuli,data.stimuliGroups[i].group_id);
+                  insertGroup(-1,data.stimuliGroups[i].groupName,data.stimuliGroups[i].stimuli,data.stimuliGroups[i].group_id,i);
                 }
               } else {
                 
@@ -41,17 +41,18 @@
         xmlhttp.setRequestHeader("Connection", "close");
         xmlhttp.send(parameters);
       }
-      function insertGroup (afterPosition,name,content,groupId) {
+      function insertGroup (afterPosition,name,content,groupId,groupNum) {
         if (afterPosition < 0) {
-          $('#stimuliBody').append(_createGroupRow(name,content,groupId));
+          $('#stimuliBody').append(_createGroupRow(name,content,groupId,groupNum));
         }
       }
-      function _createGroupRow (name,content,groupId) {
+      function _createGroupRow (name,content,groupId,groupNum) {
         var body = $('<tr>').appendTo($('<tbody>')).append('<td>').append($('<td>').attr('colspan','2').append(_createGroupContent(content)));
-        var disclose = $('<input>').attr('type','image').click(function () {discloseGroup(groupId)}).attr('src','disclosureTriangle.png');
+        var disclose = $('<input>').attr('type','image').click(function () {discloseGroupToggle(groupNum)}).attr('src','disclosureTriangle.png');
         var head = $('<thead>').append($('<th>').append(disclose)).append('<th>' + name + '</th>').append($('<th>' + groupId + '</th>').attr('style','display:none')).append('<th>actions</th>');
         var table = $('<table>').append(head).append(body);
-        return table;
+        var tableRow = $('<tr>').append(table);
+        return tableRow;
       }
       function _createGroupContent (content) {
         var table = $('<table>');
@@ -64,8 +65,8 @@
       function _createStimulusRow (data) {
         return createStimulusRow(data.stim_id,data.category1,data.category2,data.subcategory1,data.subcategory2,data.word,data.correct_response,data.instruction);
       }
-      function discloseGroup(groupId) {
-        alert("disclose: " + groupId);
+      function discloseGroupToggle(groupNum) {
+        $('#stimuliBody').children().eq(groupNum).children().eq(0).children().eq(1).toggleClass("hidden");
       }
       function save_stimulus_row (stimuliRow) {
         var stimulusTable = stimuliRow.childNodes[1].childNodes[0];
@@ -380,6 +381,9 @@
       }
     </script>
     <style type="text/css">
+      .hidden {
+        display: none;
+      }
       table.center {
         width: 50%;
         height: 25%;
