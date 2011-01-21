@@ -6,6 +6,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript"></script>
     <script type="text/javascript">
       var stimuliData;
+      var set;
       function requestStimuliSet (parameters) {
         if (window.XMLHttpRequest)
         {// code for IE7+, Firefox, Chrome, Opera, Safari
@@ -26,7 +27,7 @@
                 var num = data.stimuliGroups.length;
                 stimuliData = data.stimuliGroups;
                 for (var i=0; i < num; i++) {
-                  insertGroup(-1,data.stimuliGroups[i].groupName,data.stimuliGroups[i].stimuli,i);
+                  insertGroup(-1,data.stimuliGroups[i].groupName,data.stimuliGroups[i].stimuli,data.stimuliGroups[i].group_id);
                 }
               } else {
                 
@@ -48,7 +49,7 @@
       function _createGroupRow (name,content,groupId) {
         var body = $('<tr>').appendTo($('<tbody>')).append('<td>').append($('<td>').attr('colspan','2').append(_createGroupContent(content)));
         var disclose = $('<input>').attr('type','image').click(function () {discloseGroup(groupId)}).attr('src','disclosureTriangle.png');
-        var head = $('<thead>').append($('<th>').attr('rowspan','2').append(disclose)).append('<th>' + name + '</th>').append('<th>actions</th>');
+        var head = $('<thead>').append($('<th>').append(disclose)).append('<th>' + name + '</th>').append($('<th>' + groupId + '</th>').attr('style','display:none')).append('<th>actions</th>');
         var table = $('<table>').append(head).append(body);
         return table;
       }
@@ -97,7 +98,6 @@
               var stimuli = JSON.parse(this.responseText);
               i = 0;
               stimuliRow.parentNode.replaceChild(createStimulusRow(stimuli[i].stim_id,stimuli[i].category1,stimuli[i].category2,stimuli[i].subcategory1,stimuli[i].subcategory2,stimuli[i].word,stimuli[i].correct_response,stimuli[i].instruction),stimuliRow);
-              maskArray[stimuli[i].stim_id-1] = stimuli[i].mask;
             }
           }
         };
@@ -122,7 +122,6 @@
               var stimuli = JSON.parse(this.responseText);
               i = 0;
               addStimulusRow(stimuli[i].stim_id,stimuli[i].category1,stimuli[i].category2,stimuli[i].subcategory1,stimuli[i].subcategory2,stimuli[i].word,stimuli[i].correct_response,stimuli[i].instruction);
-              maskArray[stimuli[i].stim_id-1] = stimuli[i].mask;
             }
           }
         };
@@ -178,11 +177,29 @@
             remove_row(selectBox.parentNode.parentNode);
             break;
           case 2:
-            alert("add above");
+            $.post("insertNewStimulus.php",{
+                below:false,
+                position:$(selectBox).parent().parent().index(),
+                stim_set:set,
+                group:selectBox.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.childNodes[0].childNodes[2].textContent
+              }, function (received_data) {
+                var data = JSON.parse(received_data)[0];
+                stimuliData[$(selectBox).parent().parent().parent().parent().parent().parent().parent().parent().index()].stimuli.splice($(selectBox).parent().parent().index()-1,0,data);
+                $(selectBox).parent().parent().before(createStimulusRow(data.stim_id,data.category1,data.category2,data.subcategory1,data.subcategory2,data.word,data.correct_response,data.instruction));
+            });
             selectBox.selectedIndex = 0;
             break;
           case 3:
-            alert("add below");
+            $.post("insertNewStimulus.php",{
+                below:true,
+                position:$(selectBox).parent().parent().index(),
+                stim_set:set,
+                group:selectBox.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.childNodes[0].childNodes[2].textContent
+              }, function (received_data) {
+                var data = JSON.parse(received_data)[0];
+                stimuliData[$(selectBox).parent().parent().parent().parent().parent().parent().parent().parent().index()].stimuli.splice($(selectBox).parent().parent().index(),0,data);
+                $(selectBox).parent().parent().after(createStimulusRow(data.stim_id,data.category1,data.category2,data.subcategory1,data.subcategory2,data.word,data.correct_response,data.instruction));
+            });
             selectBox.selectedIndex = 0;
             break;
           case 4:
@@ -217,7 +234,6 @@
               var stimuli = JSON.parse(this.responseText);
               i = 0;
               stimuliRow.parentNode.replaceChild(createStimulusRow(stimuli[i].stim_id,stimuli[i].category1,stimuli[i].category2,stimuli[i].subcategory1,stimuli[i].subcategory2,stimuli[i].word,stimuli[i].correct_response,stimuli[i].instruction),stimuliRow);
-              maskArray[stimuli[i].stim_id-1] = stimuli[i].mask;
             }
           }
         };
@@ -359,7 +375,8 @@
       function experiment_change() {
         remove_all_stimuli();
         var selectBox = document.getElementById("experiment_selector");
-        requestStimuliSet("set=" + selectBox.options[selectBox.selectedIndex].value);
+        set = selectBox.options[selectBox.selectedIndex].value;
+        requestStimuliSet("set=" + set);
       }
     </script>
     <style type="text/css">
