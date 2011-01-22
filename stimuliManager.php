@@ -60,7 +60,7 @@
             $('<option></option>').val(val).html(text)
           );
         });
-        var head = $('<thead>').append($('<th>').append(disclose)).append('<th>' + name + '</th>').append($('<th>' + groupId + '</th>').attr('style','display:none')).append($('<th>').append(actions)).append($("<th>").append($('<input>').attr("type","checkbox").attr("checked",((randomize === "1") ? true : false)).click(function () {toggleRandomization(groupNum,groupId)})).append(" Randomize"));
+        var head = $('<thead>').append($('<th>').append(disclose)).append('<th>' + name + '</th>').append($('<th>' + groupId + '</th>').attr('style','display:none')).append($('<th>').append(actions)).append($("<th>").append($('<input>').attr("type","checkbox").attr("checked",((randomize === "1") ? true : false)).click(function () {toggleGroupRandomization(groupNum,groupId)})).append(" Randomize"));
         var table = $('<table>').append(head).append(body);
         var tableRow = $('<tr>').append(table);
         return tableRow;
@@ -74,7 +74,11 @@
         return table;
       }
       function toggleGroupRandomization(groupNum,groupId) {
-
+        $.post("toggleGroupRandomization.php",{
+                group_id:groupId,
+                randomize:(stimuliData[groupNum].randomize === "0" ? "1" : "0")
+              });
+        stimuliData[groupNum].randomize = stimuliData[groupNum].randomize === "0" ? "1" : "0";
       }
       function handleGroupAction(selectBox) {
 
