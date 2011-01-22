@@ -32,7 +32,7 @@
                 var num = data.stimuliGroups.length;
                 stimuliData = data.stimuliGroups;
                 for (var i=0; i < num; i++) {
-                  insertGroup(-1,data.stimuliGroups[i].groupName,data.stimuliGroups[i].stimuli,data.stimuliGroups[i].group_id,i);
+                  insertGroup(-1,data.stimuliGroups[i].groupName,data.stimuliGroups[i].stimuli,data.stimuliGroups[i].randomize,data.stimuliGroups[i].group_id,i);
                 }
               } else {
                 
@@ -46,12 +46,12 @@
         xmlhttp.setRequestHeader("Connection", "close");
         xmlhttp.send(parameters);
       }
-      function insertGroup (afterPosition,name,content,groupId,groupNum) {
+      function insertGroup (afterPosition,name,content,randomize,groupId,groupNum) {
         if (afterPosition < 0) {
-          $('#stimuliBody').append(_createGroupRow(name,content,groupId,groupNum));
+          $('#stimuliBody').append(_createGroupRow(name,content,randomize,groupId,groupNum));
         }
       }
-      function _createGroupRow (name,content,groupId,groupNum) {
+      function _createGroupRow (name,content,randomize,groupId,groupNum) {
         var body = $('<tr>').appendTo($('<tbody>')).append('<td>').append($('<td>').attr('colspan','2').append(_createGroupContent(content)));
         var disclose = $('<input>').attr('type','image').click(function () {discloseGroupToggle(groupNum)}).attr('src','disclosureTriangle.png');
         var actions = $('<select>').change(function () {handleGroupAction(actions);});
@@ -60,7 +60,7 @@
             $('<option></option>').val(val).html(text)
           );
         });
-        var head = $('<thead>').append($('<th>').append(disclose)).append('<th>' + name + '</th>').append($('<th>' + groupId + '</th>').attr('style','display:none')).append($('<th>').append(actions)).append($("<th>").append($('<input>').attr("type","checkbox").click(function () {toggleRandomization(groupNum,groupId)})).append(" Randomize"));
+        var head = $('<thead>').append($('<th>').append(disclose)).append('<th>' + name + '</th>').append($('<th>' + groupId + '</th>').attr('style','display:none')).append($('<th>').append(actions)).append($("<th>").append($('<input>').attr("type","checkbox").attr("checked",((randomize === "1") ? true : false)).click(function () {toggleRandomization(groupNum,groupId)})).append(" Randomize"));
         var table = $('<table>').append(head).append(body);
         var tableRow = $('<tr>').append(table);
         return tableRow;

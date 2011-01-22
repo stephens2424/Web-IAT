@@ -1,7 +1,7 @@
 <?php
   include 'connect.php';
   $set = $_POST['set'];
-  $query = "SELECT stimulus_id,category1,category2,subcategory1,subcategory2,word,correct_response,instruction,mask,stimuli.`order` AS stimulusOrder,stimuliGroups.id AS group_id,stimuliGroups.name AS groupName,stimuliGroups.order AS groupOrder FROM stimuli JOIN stimuliGroups ON stimuli.`group`=stimuliGroups.`id` WHERE `set`=$set ORDER BY groupOrder,stimulusOrder";
+  $query = "SELECT stimulus_id,category1,category2,subcategory1,subcategory2,word,correct_response,instruction,mask,stimuli.`order` AS stimulusOrder,stimuliGroups.id AS group_id,stimuliGroups.name AS groupName,stimuliGroups.order AS groupOrder,stimuliGroups.randomize AS randomize FROM stimuli JOIN stimuliGroups ON stimuli.`group`=stimuliGroups.`id` WHERE `set`=$set ORDER BY groupOrder,stimulusOrder";
   $result = mysql_query($query);
   $rows = mysql_num_rows($result);
   $row = 0;
@@ -11,6 +11,7 @@
       if ($changed == true) {
         $groupArray[] = array(
           "group_id" => $group,
+          "randomize" => mysql_result($result,$row-1,"randomize"),
           "groupName" => mysql_result($result,$row-1,"groupName"),
           "stimuli" => $array
         );
@@ -36,6 +37,7 @@
   
   $groupArray[] = array(
     "group_id" => $group,
+    "randomize" => mysql_result($result,$row-1,"randomize"),
     "groupName" => mysql_result($result,$row-1,"groupName"),
     "stimuli" => $array
   );
