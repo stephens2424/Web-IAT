@@ -7,6 +7,11 @@
     <script type="text/javascript">
       var stimuliData;
       var set;
+      var groupOptions = {
+        def : "Group Actions",
+        addAbove : "Add Group Above",
+        addBelow : "Add Group Below"
+      };
       function requestStimuliSet (parameters) {
         if (window.XMLHttpRequest)
         {// code for IE7+, Firefox, Chrome, Opera, Safari
@@ -49,7 +54,13 @@
       function _createGroupRow (name,content,groupId,groupNum) {
         var body = $('<tr>').appendTo($('<tbody>')).append('<td>').append($('<td>').attr('colspan','2').append(_createGroupContent(content)));
         var disclose = $('<input>').attr('type','image').click(function () {discloseGroupToggle(groupNum)}).attr('src','disclosureTriangle.png');
-        var head = $('<thead>').append($('<th>').append(disclose)).append('<th>' + name + '</th>').append($('<th>' + groupId + '</th>').attr('style','display:none')).append('<th>actions</th>');
+        var actions = $('<select>').change(function () {handleGroupAction(actions);});
+        $.each(groupOptions,function (val,text) {
+          actions.append(
+            $('<option></option>').val(val).html(text)
+          );
+        });
+        var head = $('<thead>').append($('<th>').append(disclose)).append('<th>' + name + '</th>').append($('<th>' + groupId + '</th>').attr('style','display:none')).append($('<th>').append(actions)).append($("<th>").append($('<input>').attr("type","checkbox").click(function () {toggleRandomization(groupNum,groupId)})).append(" Randomize"));
         var table = $('<table>').append(head).append(body);
         var tableRow = $('<tr>').append(table);
         return tableRow;
@@ -61,6 +72,12 @@
           $(table).append($(tr_elem));
         }
         return table;
+      }
+      function toggleGroupRandomization(groupNum,groupId) {
+
+      }
+      function handleGroupAction(selectBox) {
+
       }
       function _createStimulusRow (data) {
         return createStimulusRow(data.stim_id,data.category1,data.category2,data.subcategory1,data.subcategory2,data.word,data.correct_response,data.instruction);
