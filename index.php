@@ -16,5 +16,6 @@
       <tr><td><a href="IAT.php?s=1">Test 1</a></td></tr>
       <tr><td><a href="IAT.php?s=2">Test 2</a></td></tr>
     </table>
+    <p><a href="stimuliManager.php">Admin Tool</a>
   </body>
 </html>
