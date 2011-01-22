@@ -1,9 +1,9 @@
 <?php
 
-  $subj = $_GET["subj"];
-  $stim = $_GET["stim"];
-  $response = $_GET["response"];
-  $rt = $_GET["rt"];
+  $subj = $_POST["subj"];
+  $stim = $_POST["stim"];
+  $response = $_POST["response"];
+  $rt = $_POST["rt"];
   $query = "INSERT INTO responses (`subj`,`stimulus`,`response`,`response_time`) VALUES ($subj,$stim,'$response',$rt)";
 
   include "connect.php";
