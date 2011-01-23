@@ -10,7 +10,8 @@
       var groupOptions = {
         def : "Group Actions",
         addAbove : "Add Group Above",
-        addBelow : "Add Group Below"
+        addBelow : "Add Group Below",
+        remove : "Remove Group"
       };
       function requestStimuliSet (parameters) {
         if (window.XMLHttpRequest)
@@ -81,7 +82,27 @@
         stimuliData[groupNum].randomize = stimuliData[groupNum].randomize === "0" ? "1" : "0";
       }
       function handleGroupAction(selectBox) {
-
+        switch (selectBox.selectedIndex) {
+          case 0:
+            alert("Default Group Action");
+            selectBox.selectedIndex = 0;
+            break;
+          case 1:
+            alert("add group above");
+            selectBox.selectedIndex = 0;
+            break;
+          case 2:
+            alert("add group below");
+            selectBox.selectedIndex = 0;
+            break;
+          case 3:
+            alert("remove group");
+            selectBox.selectedIndex = 0;
+            break;
+          default:
+            selectBox.selectedIndex = 0;
+            break;
+        }
       }
       function _createStimulusRow (data) {
         return createStimulusRow(data.stim_id,data.category1,data.category2,data.subcategory1,data.subcategory2,data.word,data.correct_response,data.instruction);
