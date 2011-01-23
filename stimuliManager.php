@@ -11,7 +11,8 @@
         def : "Group Actions",
         addAbove : "Add Group Above",
         addBelow : "Add Group Below",
-        remove : "Remove Group"
+        remove : "Remove Group",
+        appendStimulus : "Append Stimulus"
       };
       function requestStimuliSet (parameters) {
         if (window.XMLHttpRequest)
@@ -33,7 +34,7 @@
                 var num = data.stimuliGroups.length;
                 stimuliData = data.stimuliGroups;
                 for (var i=0; i < num; i++) {
-                  insertGroup(-1,data.stimuliGroups[i].groupName,data.stimuliGroups[i].stimuli,data.stimuliGroups[i].randomize,data.stimuliGroups[i].group_id,i);
+                  insertGroup(i,data.stimuliGroups[i].groupName,data.stimuliGroups[i].stimuli,data.stimuliGroups[i].randomize,data.stimuliGroups[i].group_id);
                 }
               } else {
                 
@@ -47,21 +48,26 @@
         xmlhttp.setRequestHeader("Connection", "close");
         xmlhttp.send(parameters);
       }
-      function insertGroup (afterPosition,name,content,randomize,groupId,groupNum) {
-        if (afterPosition < 0) {
-          $('#stimuliBody').append(_createGroupRow(name,content,randomize,groupId,groupNum));
+      function insertGroup (afterPosition,name,content,randomize,groupId) {
+        var $row = $('#stimuliBody').children().eq(afterPosition);
+        var newRow = _createGroupRow(name,content,randomize,groupId,afterPosition);
+        if ($row.size() === 0) {
+          $('#stimuliBody').append(newRow);
+        } else {
+          $row.after(newRow);
         }
       }
       function _createGroupRow (name,content,randomize,groupId,groupNum) {
         var body = $('<tr>').appendTo($('<tbody>')).append('<td>').append($('<td>').attr('colspan','2').append(_createGroupContent(content)));
-        var disclose = $('<input>').attr('type','image').click(function () {discloseGroupToggle(groupNum)}).attr('src','disclosureTriangle.png');
-        var actions = $('<select>').change(function () {handleGroupAction(actions);});
+        var disclose = $('<input>').attr('type','image').click(function () {discloseGroupToggle(body)}).attr('src','disclosureTriangle.png');
+        var $actions = $('<select>');
         $.each(groupOptions,function (val,text) {
-          actions.append(
+          $actions.append(
             $('<option></option>').val(val).html(text)
           );
         });
-        var head = $('<thead>').append($('<th>').append(disclose)).append('<th>' + name + '</th>').append($('<th>' + groupId + '</th>').attr('style','display:none')).append($('<th>').append(actions)).append($("<th>").append($('<input>').attr("type","checkbox").attr("checked",((randomize === "1") ? true : false)).click(function () {toggleGroupRandomization(groupNum,groupId)})).append(" Randomize"));
+        $actions.change(function () {handleGroupAction(this);});
+        var head = $('<thead>').append($('<th>').append(disclose)).append('<th>' + name + '</th>').append($('<th>' + groupId + '</th>').attr('style','display:none')).append($('<th>').append($actions)).append($("<th>").append($('<input>').attr("type","checkbox").attr("checked",((randomize === "1") ? true : false)).click(function () {toggleGroupRandomization(groupNum,groupId)})).append(" Randomize"));
         var table = $('<table>').append(head).append(body);
         var tableRow = $('<tr>').append(table);
         return tableRow;
@@ -81,6 +87,15 @@
               });
         stimuliData[groupNum].randomize = stimuliData[groupNum].randomize === "0" ? "1" : "0";
       }
+      function removeGroup($groupRow) {
+        $.post(
+          "removeGroup.php",{
+            group:stimuliData[$groupRow.index()].group_id
+          }
+        );
+        stimuliData.splice($groupRow.index(),1);
+        $groupRow.remove();
+      }
       function handleGroupAction(selectBox) {
         switch (selectBox.selectedIndex) {
           case 0:
@@ -92,13 +107,33 @@
             selectBox.selectedIndex = 0;
             break;
           case 2:
-            alert("add group below");
+            $.post("insertGroup.php",{
+              set:set,
+              position:$(selectBox).parent().parent().index(),
+              below:"true"
+            },function(receivedData) {
+              var data = JSON.parse(receivedData);
+              insertGroup($(selectBox).parent().parent().index(),data.name,data.stimuli,data.randomize,data.group_id);
+              stimuliData.splice($(selectBox).parent().parent().index(),0,data);
+            });
             selectBox.selectedIndex = 0;
             break;
           case 3:
-            alert("remove group");
+            removeGroup($(selectBox).closest('tr'));
             selectBox.selectedIndex = 0;
             break;
+          case 4:
+            $.post("insertNewStimulus.php",{
+                below:true,
+                position:0,
+                stim_set:set,
+                group:selectBox.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.childNodes[0].childNodes[2].textContent
+              }, function (received_data) {
+                var data = JSON.parse(received_data)[0];
+                stimuliData[$(selectBox).parent().parent().parent().parent().parent().parent().parent().parent().index()].stimuli.splice($(selectBox).parent().parent().index(),0,data);
+                $(selectBox).parent().parent().after(createStimulusRow(data.stim_id,data.category1,data.category2,data.subcategory1,data.subcategory2,data.word,data.correct_response,data.instruction));
+            });
+            selectBox.selectedIndex = 0;
           default:
             selectBox.selectedIndex = 0;
             break;
@@ -107,8 +142,8 @@
       function _createStimulusRow (data) {
         return createStimulusRow(data.stim_id,data.category1,data.category2,data.subcategory1,data.subcategory2,data.word,data.correct_response,data.instruction);
       }
-      function discloseGroupToggle(groupNum) {
-        $('#stimuliBody').children().eq(groupNum).children().eq(0).children().eq(1).toggleClass("hidden");
+      function discloseGroupToggle($groupTable) {
+        $groupTable.toggleClass("hidden");
       }
       function save_stimulus_row (stimuliRow) {
         var stimulusTable = stimuliRow.childNodes[1].childNodes[0];
