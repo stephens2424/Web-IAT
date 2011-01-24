@@ -96,6 +96,16 @@
         stimuliData.splice($groupRow.index(),1);
         $groupRow.remove();
       }
+      function replaceRowWithNewStimulus($row) {
+        $.post("addNewStimulus.php",{
+                set:set,
+                group:parseInt($row.parents('table').eq(1).find('th').eq(2).text(),10)
+              }, function (received_data) {
+                var data = JSON.parse(received_data)[0];
+                stimuliData[$row.parents('table').eq(1).index()].stimuli.splice(0,0,data);
+                $row.replaceWith(createStimulusRow(data.stim_id,data.category1,data.category2,data.subcategory1,data.subcategory2,data.word,data.correct_response,data.instruction));
+            });
+      }
       function handleGroupAction(selectBox) {
         switch (selectBox.selectedIndex) {
           case 0:
@@ -182,30 +192,6 @@
         xmlhttp.open("POST","updateStimulus.php",true);
         xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xmlhttp.send(poststr);
-      }
-      function saveNewStimulusRow () {
-        if (window.XMLHttpRequest)
-        {// code for IE7+, Firefox, Chrome, Opera, Safari
-          xmlhttp=new XMLHttpRequest();
-        }
-        else
-        {// code for IE6, IE5
-          xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-        }
-        xmlhttp.onreadystatechange = function (aEvt) {
-          if (this.readyState == 4) {
-            if(this.status !== 200) {
-              location.href="servererror.php?status=" + this.status + "&statusText=" + encodeURIComponent(this.statusText);
-            } else {
-              var stimuli = JSON.parse(this.responseText);
-              i = 0;
-              addStimulusRow(stimuli[i].stim_id,stimuli[i].category1,stimuli[i].category2,stimuli[i].subcategory1,stimuli[i].subcategory2,stimuli[i].word,stimuli[i].correct_response,stimuli[i].instruction);
-            }
-          }
-        };
-        xmlhttp.open("POST","addNewStimulus.php",true);
-        xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xmlhttp.send();
       }
       function createStimulusRow(stim_id,cat1,cat2,subcat1,subcat2,word,correct,instruction) {
         var stimulusRow = document.createElement('tr');
