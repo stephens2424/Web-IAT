@@ -141,15 +141,13 @@
             selectBox.selectedIndex = 0;
             break;
           case 4:
-            $.post("insertNewStimulus.php",{
-                below:true,
-                position:0,
-                stim_set:set,
-                group:selectBox.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.childNodes[0].childNodes[2].textContent
+            $.post("addNewStimulus.php",{
+                set:set,
+                group:stimuliData[$(selectBox).closest('tr').index()].group_id
               }, function (received_data) {
                 var data = JSON.parse(received_data)[0];
-                stimuliData[$(selectBox).parent().parent().parent().parent().parent().parent().parent().parent().index()].stimuli.splice($(selectBox).parent().parent().index(),0,data);
-                $(selectBox).parent().parent().after(createStimulusRow(data.stim_id,data.category1,data.category2,data.subcategory1,data.subcategory2,data.word,data.correct_response,data.instruction));
+                stimuliData[$(selectBox).closest('tr').index()].stimuli.splice($(selectBox).closest('tr').index(),0,data);
+                $(selectBox).closest('table').find('table').eq(0).append(createStimulusRow(data.stim_id,data.category1,data.category2,data.subcategory1,data.subcategory2,data.word,data.correct_response,data.instruction));
             });
             selectBox.selectedIndex = 0;
           default:
@@ -364,10 +362,6 @@
         cell.appendChild(document.createElement('br'));
         cell.appendChild(maskingButton);
         cell.appendChild(document.createTextNode("Mask"));
-      }
-      function addStimulusRow (stim_id,cat1,cat2,subcat1,subcat2,word,correct,instruction) {
-        var stimuliTable = document.getElementById('stimuliBody');
-        stimuliTable.appendChild(createStimulusRow(stim_id,cat1,cat2,subcat1,subcat2,word,correct,instruction));
       }
       function addGroupRow (name) {
         var stimuliTable = document.getElementById('stimuliBody');
