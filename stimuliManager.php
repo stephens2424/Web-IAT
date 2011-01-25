@@ -37,7 +37,7 @@
                   insertGroup(i,data.stimuliGroups[i].groupName,data.stimuliGroups[i].stimuli,data.stimuliGroups[i].randomize,data.stimuliGroups[i].group_id);
                 }
               } else {
-                
+                addNoGroup();
               }
             }
           }
@@ -48,13 +48,28 @@
         xmlhttp.setRequestHeader("Connection", "close");
         xmlhttp.send(parameters);
       }
-      function insertGroup (afterPosition,name,content,randomize,groupId) {
-        var $row = $('#stimuliBody').children().eq(afterPosition);
-        var newRow = _createGroupRow(name,content,randomize,groupId,afterPosition);
-        if ($row.size() === 0) {
+      function addNoGroup () {
+        $('#stimuliBody').append($('<tr>').click(function() {replaceNoGroup($(this))}).append($('<td>No groups. Click here to add one.</td>').attr("colspan",4)));
+      }
+      function replaceNoGroup ($row) {
+        $.post("insertGroup.php",{
+              set:set,
+              position:0,
+              below:"false"
+            },function(receivedData) {
+              var data = JSON.parse(receivedData);
+              insertGroup(0,data.name,data.stimuli,data.randomize,data.group_id);
+              $row.remove();
+              stimuliData = new Array(data);
+            });
+      }
+      function insertGroup (atPosition,name,content,randomize,groupId) {
+        var $row = $('#stimuliBody').children().eq(atPosition);
+        var newRow = _createGroupRow(name,content,randomize,groupId,atPosition);
+        if ($row.size() <= atPosition) {
           $('#stimuliBody').append(newRow);
         } else {
-          $row.after(newRow);
+          $row.before(newRow);
         }
       }
       function _createGroupRow (name,content,randomize,groupId,groupNum) {
@@ -74,9 +89,13 @@
       }
       function _createGroupContent (content) {
         var table = $('<table>');
-        for (var i = 0; i < content.length; i++) {
-          var tr_elem = _createStimulusRow(content[i]);
-          $(table).append($(tr_elem));
+        if (content.length > 0) {
+          for (var i = 0; i < content.length; i++) {
+            var tr_elem = _createStimulusRow(content[i]);
+            $(table).append($(tr_elem));
+          }
+        } else {
+          addNoStimuliNoticeRow(table);
         }
         return table;
       }
@@ -95,6 +114,9 @@
         );
         stimuliData.splice($groupRow.index(),1);
         $groupRow.remove();
+        if ($('#stimuliBody').children('tr').length === 0) {
+          addNoGroup();
+        }
       }
       function replaceRowWithNewStimulus($row) {
         $.post("addNewStimulus.php",{
@@ -131,8 +153,8 @@
               below:"true"
             },function(receivedData) {
               var data = JSON.parse(receivedData);
-              insertGroup($(selectBox).parent().parent().index(),data.name,data.stimuli,data.randomize,data.group_id);
-              stimuliData.splice($(selectBox).parent().parent().index(),0,data);
+              insertGroup($(selectBox).parent().parent().index()+1,data.name,data.stimuli,data.randomize,data.group_id);
+              stimuliData.splice($(selectBox).parent().parent().index()+1,0,data);
             });
             selectBox.selectedIndex = 0;
             break;
@@ -307,7 +329,16 @@
         xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xmlhttp.send(poststr);
         stimuliData[$(row).parent().parent().parent().parent().parent().parent().index()].stimuli.splice($(row).index(),1);
+        $table = $(row).closest('table');
         row.parentNode.removeChild(row);
+        if ($table.length === 1) {
+          addNoStimuliNoticeRow($table);
+        }
+      }
+      function addNoStimuliNoticeRow($table) {
+        $row = $('<tr>');
+        $row.click(function() {replaceRowWithNewStimulus($row)});
+        $table.append($row.append($('<td>Empty Group. Click here to add a stimulus</td>').attr("colspan",4)));
       }
       function createStimulusTable (cat1,cat2,subcat1,subcat2,word,correct,instruction) {
         if (instruction == null || instruction == '') {
