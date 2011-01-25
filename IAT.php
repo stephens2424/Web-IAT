@@ -1,65 +1,32 @@
 <html>
   <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+      var stimuliData;
+      var done = false;
     <?php
       //TODO add web management tool for stimuli
       //TODO figure out how to make this full screen
       $development = false;
-      $stim_set = $_GET['s'];
-      echo "<script type=\"text/javascript\">\n";
-
-      include 'connect.php';
-
-      $query = "SELECT * FROM stimuli WHERE `set`=$stim_set";
-      $result = mysql_query($query);
-
-      $num = mysql_num_rows($result);
-
-      $i = 0;
-
-      if ($num == 0)
-        print "Error - No records found";
-      elseif ($num > 0) {
-        echo "var wordArray = new Array($num-1);\n";
-        echo "var stimArray = new Array($num-1);\n";
-        echo "var catLeftArray = new Array($num-1);\n";
-        echo "var catRightArray = new Array($num-1);\n";
-        echo "var subCatLeftArray = new Array($num-1);\n";
-        echo "var subCatRightArray = new Array($num-1);\n";
-        echo "var instructionArray = new Array($num-1);\n";
-        echo "var maskArray = new Array($num-1);\n";
-        while ($i < $num) {
-          $text = mysql_result($result, $i, "word");
-          $stimNum = mysql_result($result, $i, "stimulus_id");
-          $catLeft = mysql_result($result, $i, "category1");
-          $catRight = mysql_result($result, $i, "category2");
-          $subCatLeft = mysql_result($result, $i, "subcategory1");
-          $subCatRight = mysql_result($result, $i, "subcategory2");
-          $instruction = mysql_result($result, $i, "instruction");
-          $mask = mysql_result($result, $i, "mask");
-          echo "wordArray[$i]=\"$text\";\n";
-          echo "stimArray[$i]=\"$stimNum\";\n";
-          echo "catLeftArray[$i]=\"$catLeft\";\n";
-          echo "catRightArray[$i]=\"$catRight\";\n";
-          echo "subCatLeftArray[$i]=\"$subCatLeft\";\n";
-          echo "subCatRightArray[$i]=\"$subCatRight\";\n";
-          echo "instructionArray[$i]=\"$instruction\";\n";
-          echo "maskArray[$i]=$mask;\n";
-          $i++;
+      ?>
+        function load() {
+          $.post("requestStimuliSetForIAT.php", {
+            stim_set:<? echo $_GET['s'] ?>
+          },function (receivedData) {
+            stimuliData = JSON.parse(receivedData);
+            new_word();
+          });
         }
-        echo "var dataArray = new Array($num-1);\n";
-      }
-
-      mysql_free_result($result);
-
+    <?
+      include 'connect.php';
       $query = "INSERT INTO subjects VALUES ()"; //TODO make sure that the timezone for the beginTime inserted into the database will be consistent/understandable
       $result = mysql_query($query);
       $subj = mysql_insert_id();
-      printf("var subj=%d;\n</script>", $subj);
-
+      printf("var subj=%d;\n", $subj);
       mysql_close();
     ?>
-      <script type="text/javascript">
         var wordNum = 0;
+        var groupNum = 0;
         var instruction = false;
         var wordShowed;
 
@@ -93,14 +60,20 @@
               keychar = String.fromCharCode(keynum);
           }
           sendData(keychar,(time - wordShowed).toString());
-          if (wordNum >= wordArray.length) {
-            location.href="<?php if ($development) { echo "results.php?subj=$subj"; } else { echo "thankyou.php"; } ?>";
+          if (wordNum >= stimuliData[groupNum].stimulus.length) {
+            if (groupNum >= stimuliData.length - 1) {
+              done = true;
+            } else {
+              groupNum++;
+              wordNum = 0;
+              new_word();
+            }
           } else {
             new_word ();
           }
       }
       function new_word () {
-        if (wordArray[wordNum] == '') {
+        if (stimuliData[groupNum].stimulus[wordNum].word === '') {
           toggleLayer('IAT');
           toggleLayer('instructionDiv');
           instruction = true;
@@ -111,7 +84,7 @@
           }
           change_categories(0);
         }
-        if (maskArray[wordNum])
+        if (stimuliData[groupNum].stimulus[wordNum].mask)
           new_word_zero();
         else
           show_new_word();
@@ -133,36 +106,30 @@
         setTimeout("show_new_word(document.getElementById('word'))",200);
       }
       function show_new_word () {
-        document.getElementById('word').textContent = wordArray[wordNum];
-        document.getElementById('instruction').textContent = instructionArray[wordNum];
+        document.getElementById('word').textContent = stimuliData[groupNum].stimulus[wordNum].word;
+        document.getElementById('instruction').textContent = stimuliData[groupNum].stimulus[wordNum].word;
         wordShowed = new Date().getTime();
         wordNum++;
       }
       function change_categories (wordNumShift) {
-        document.getElementById('catLeft').textContent = catLeftArray[wordNum + wordNumShift];
-        document.getElementById('catRight').textContent = catRightArray[wordNum + wordNumShift];
-        document.getElementById('subCatLeft').textContent = subCatLeftArray[wordNum + wordNumShift];
-        document.getElementById('subCatRight').textContent = subCatRightArray[wordNum + wordNumShift];
+        document.getElementById('catLeft').textContent = stimuliData[groupNum].stimulus[wordNum + wordNumShift].category1;
+        document.getElementById('catRight').textContent = stimuliData[groupNum].stimulus[wordNum + wordNumShift].category2;
+        document.getElementById('subCatLeft').textContent = stimuliData[groupNum].stimulus[wordNum + wordNumShift].subcategory1;
+        document.getElementById('subCatRight').textContent = stimuliData[groupNum].stimulus[wordNum + wordNumShift].subcategory2;
       }
 
       function sendData(response,time) {
-        if (window.XMLHttpRequest)
-        {// code for IE7+, Firefox, Chrome, Opera, Safari
-          xmlhttp=new XMLHttpRequest();
-        }
-        else
-        {// code for IE6, IE5
-          xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-        }
-        xmlhttp.onreadystatechange = function (aEvt) {
-          if (this.readyState == 4) {
-            if(this.status !== 200) {
-              location.href="servererror.php?status=" + this.status + "&statusText=" + encodeURIComponent(this.statusText);
-            }
+        $.ajax({
+          type:"POST",
+          url:"dataHandler.php",
+          data:{"response":response,"rt":time,"subj":subj,"stim":stimuliData[groupNum].stimulus[wordNum-1].stim_id},
+          success:function (data, textStatus, XMLHttpRequest) {
+            if (done) {location.href="<?php if ($development) { echo "results.php?subj=$subj"; } else { echo "thankyou.php"; } ?>";}
+          },
+          error:function (XMLHttpRequest, textStatus, errorThrown) {
+            alert("Server error: " + textStatus + "\nerror: " + errorThrown);
           }
-        };
-        xmlhttp.open("GET","dataHandler.php?subj=" + subj.toString() + "&stim=" + stimArray[wordNum-1] + "&response=" + response + "&rt=" + time,true);
-        xmlhttp.send();
+        });
       }
       function toggleLayer( whichLayer )
       {
@@ -211,7 +178,7 @@
       }
     </style>
   </head>
-  <body onkeydown="detect_keydown(event);" onload="new_word()">
+  <body onkeydown="detect_keydown(event);" onload="load()">
     <div id="instructionDiv" style="display: none;">
       <table class="center">
         <tr>
