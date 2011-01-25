@@ -494,6 +494,33 @@
         set = selectBox.options[selectBox.selectedIndex].value;
         requestStimuliSet("set=" + set);
       }
+      function handle_experiment_action() {
+        switch ($('#experiment_action_selector').attr("selectedIndex")) {
+          case 0: {
+              $('#experiment_action_selector').attr("selectedIndex","0");
+              break;
+            }
+          case 1: {//rename
+              alert("rename");
+              $('#experiment_action_selector').attr("selectedIndex","0");
+              break;
+            }
+          case 2: {//new experiment
+              alert("new experiment");
+              $('#experiment_action_selector').attr("selectedIndex","0");
+              break;
+            }
+          case 3: {//delete experiment
+              alert("delete experiment");
+              $('#experiment_action_selector').attr("selectedIndex","0");
+              break;
+            }
+          default: {
+              $('#experiment_action_selector').attr("selectedIndex","0");
+              break;
+            }
+        }
+      }
     </script>
     <style type="text/css">
       .hidden {
@@ -528,27 +555,43 @@
     </style>
   </head>
   <body onload="experiment_change();">
-    <select id="experiment_selector" onchange="experiment_change();">
-      <?php
-        include 'connect.php';
-        $query = "SELECT name,stimuli_set FROM experiments";
-        $result = mysql_query($query);
-        $num = mysql_num_rows($result);
-        $i = 0;
-        while ($i < $num) {
-          $name = mysql_result($result, $i, "name");
-          $set = mysql_result($result, $i, "stimuli_set");
-          echo "<option value=\"$set\">$name</option>";
-          $i++;
-        }
-        mysql_free_result($result);
-        mysql_close();
-      ?>
-    </select> Responses: <span id="responseCount"></span>
-    <div id="stimuliList">
-      <table id="stimuliTable" style="border-width:2px; border-color:black;">
-        <tbody id="stimuliBody"></tbody>
-      </table>
-    </div>
+    <fieldset>
+      <legend>
+        <select id="experiment_selector" onchange="experiment_change();">
+          <?php
+            include 'connect.php';
+            $query = "SELECT name,stimuli_set FROM experiments";
+            $result = mysql_query($query);
+            $num = mysql_num_rows($result);
+            $i = 0;
+            while ($i < $num) {
+              $name = mysql_result($result, $i, "name");
+              $set = mysql_result($result, $i, "stimuli_set");
+              echo "<option value=\"$set\">$name</option>";
+              $i++;
+            }
+            mysql_free_result($result);
+            mysql_close();
+          ?>
+        </select>
+      </legend>
+      <select id="experiment_action_selector" onchange="handle_experiment_action()">
+        <option>Experiment Actions</option>
+        <option>Rename Experiment</option>
+        <option>New Experiment</option>
+        <option>Delete Experiment</option>
+      </select>
+      <p>
+        Active: <span id="active"></span><br>
+        Responses: <span id="responseCount"></span>
+      </p>
+    </fieldset>
+    <fieldset><legend>Stimuli</legend>
+      <div id="stimuliList">
+        <table id="stimuliTable" style="border-width:2px; border-color:black;">
+          <tbody id="stimuliBody"></tbody>
+        </table>
+      </div>
+    </fieldset>
   </body>
 </html>
