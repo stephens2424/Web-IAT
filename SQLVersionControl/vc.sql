@@ -23,12 +23,11 @@ DROP TABLE IF EXISTS `experiments`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `experiments` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `stimuli_set` int(11) DEFAULT NULL,
-  `active` tinyint(1) NOT NULL DEFAULT '0',
+  `stimuli_set` int(11) NOT NULL AUTO_INCREMENT,
+  `active` bit(1) NOT NULL DEFAULT b'0',
   `name` tinytext,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+  PRIMARY KEY (`stimuli_set`)
+) ENGINE=MyISAM AUTO_INCREMENT=14 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -37,7 +36,7 @@ CREATE TABLE `experiments` (
 
 LOCK TABLES `experiments` WRITE;
 /*!40000 ALTER TABLE `experiments` DISABLE KEYS */;
-INSERT INTO `experiments` VALUES (1,1,1,'Test 1'),(2,2,1,'Test 2');
+INSERT INTO `experiments` VALUES (1,'','Test 1'),(2,'','Test 2'),(3,'\0','Test 3'),(4,'\0','Test 4'),(5,'\0','Test 5'),(6,'\0','Test 6'),(7,'\0','Test 7'),(8,'\0','null'),(9,'\0','Test 8'),(10,'\0','test 9'),(11,'\0','test 10'),(12,'\0','test 11'),(13,'\0','test 12');
 /*!40000 ALTER TABLE `experiments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -165,4 +164,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2011-01-24 22:12:10
+-- Dump completed on 2011-01-25  0:10:03
