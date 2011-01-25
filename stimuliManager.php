@@ -53,15 +53,15 @@
       }
       function replaceNoGroup ($row) {
         $.post("insertGroup.php",{
-              set:set,
-              position:0,
-              below:"false"
-            },function(receivedData) {
-              var data = JSON.parse(receivedData);
-              insertGroup(0,data.name,data.stimuli,data.randomize,data.group_id);
-              $row.remove();
-              stimuliData = new Array(data);
-            });
+          set:set,
+          position:0,
+          below:"false"
+        },function(receivedData) {
+          var data = JSON.parse(receivedData);
+          insertGroup(0,data.name,data.stimuli,data.randomize,data.group_id);
+          $row.remove();
+          stimuliData = new Array(data);
+        });
       }
       function insertGroup (atPosition,name,content,randomize,groupId) {
         var $row = $('#stimuliBody').children().eq(atPosition);
@@ -85,8 +85,8 @@
         var $actions = $('<select>');
         $.each(groupOptions,function (val,text) {
           $actions.append(
-            $('<option></option>').val(val).html(text)
-          );
+          $('<option></option>').val(val).html(text)
+        );
         });
         $actions.change(function () {handleGroupAction(this);});
         return $actions;
@@ -105,17 +105,17 @@
       }
       function toggleGroupRandomization(groupNum,groupId) {
         $.post("toggleGroupRandomization.php",{
-                group_id:groupId,
-                randomize:(stimuliData[groupNum].randomize === "0" ? "1" : "0")
-              });
+          group_id:groupId,
+          randomize:(stimuliData[groupNum].randomize === "0" ? "1" : "0")
+        });
         stimuliData[groupNum].randomize = stimuliData[groupNum].randomize === "0" ? "1" : "0";
       }
       function removeGroup($groupRow) {
         $.post(
-          "removeGroup.php",{
-            group:stimuliData[$groupRow.index()].group_id
-          }
-        );
+        "removeGroup.php",{
+          group:stimuliData[$groupRow.index()].group_id
+        }
+      );
         stimuliData.splice($groupRow.index(),1);
         $groupRow.remove();
         if ($('#stimuliBody').children('tr').length === 0) {
@@ -124,13 +124,13 @@
       }
       function replaceRowWithNewStimulus($row) {
         $.post("addNewStimulus.php",{
-                set:set,
-                group:parseInt($row.parents('table').eq(1).find('th').eq(2).text(),10)
-              }, function (received_data) {
-                var data = JSON.parse(received_data)[0];
-                stimuliData[$row.parents('table').eq(1).index()].stimuli.splice(0,0,data);
-                $row.replaceWith(createStimulusRow(data.stim_id,data.category1,data.category2,data.subcategory1,data.subcategory2,data.word,data.correct_response,data.instruction));
-            });
+          set:set,
+          group:parseInt($row.parents('table').eq(1).find('th').eq(2).text(),10)
+        }, function (received_data) {
+          var data = JSON.parse(received_data)[0];
+          stimuliData[$row.parents('table').eq(1).index()].stimuli.splice(0,0,data);
+          $row.replaceWith(createStimulusRow(data.stim_id,data.category1,data.category2,data.subcategory1,data.subcategory2,data.word,data.correct_response,data.instruction));
+        });
       }
       function makeGroupNameEditable($groupRow) {
         //change name into text box
@@ -165,7 +165,7 @@
               makeGroupNameEditable($(selectBox).parent().parent());
               selectBox.selectedIndex = 0;
               break;
-          }
+            }
           case 2:
             $.post("insertGroup.php",{
               set:set,
@@ -292,27 +292,27 @@
             break;
           case 2:
             $.post("insertNewStimulus.php",{
-                below:false,
-                position:$(selectBox).parent().parent().index(),
-                stim_set:set,
-                group:selectBox.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.childNodes[0].childNodes[2].textContent
-              }, function (received_data) {
-                var data = JSON.parse(received_data)[0];
-                stimuliData[$(selectBox).parent().parent().parent().parent().parent().parent().parent().parent().index()].stimuli.splice($(selectBox).parent().parent().index()-1,0,data);
-                $(selectBox).parent().parent().before(createStimulusRow(data.stim_id,data.category1,data.category2,data.subcategory1,data.subcategory2,data.word,data.correct_response,data.instruction));
+              below:false,
+              position:$(selectBox).parent().parent().index(),
+              stim_set:set,
+              group:selectBox.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.childNodes[0].childNodes[2].textContent
+            }, function (received_data) {
+              var data = JSON.parse(received_data)[0];
+              stimuliData[$(selectBox).parent().parent().parent().parent().parent().parent().parent().parent().index()].stimuli.splice($(selectBox).parent().parent().index()-1,0,data);
+              $(selectBox).parent().parent().before(createStimulusRow(data.stim_id,data.category1,data.category2,data.subcategory1,data.subcategory2,data.word,data.correct_response,data.instruction));
             });
             selectBox.selectedIndex = 0;
             break;
           case 3:
             $.post("insertNewStimulus.php",{
-                below:true,
-                position:$(selectBox).parent().parent().index(),
-                stim_set:set,
-                group:selectBox.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.childNodes[0].childNodes[2].textContent
-              }, function (received_data) {
-                var data = JSON.parse(received_data)[0];
-                stimuliData[$(selectBox).parent().parent().parent().parent().parent().parent().parent().parent().index()].stimuli.splice($(selectBox).parent().parent().index(),0,data);
-                $(selectBox).parent().parent().after(createStimulusRow(data.stim_id,data.category1,data.category2,data.subcategory1,data.subcategory2,data.word,data.correct_response,data.instruction));
+              below:true,
+              position:$(selectBox).parent().parent().index(),
+              stim_set:set,
+              group:selectBox.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.childNodes[0].childNodes[2].textContent
+            }, function (received_data) {
+              var data = JSON.parse(received_data)[0];
+              stimuliData[$(selectBox).parent().parent().parent().parent().parent().parent().parent().parent().index()].stimuli.splice($(selectBox).parent().parent().index(),0,data);
+              $(selectBox).parent().parent().after(createStimulusRow(data.stim_id,data.category1,data.category2,data.subcategory1,data.subcategory2,data.word,data.correct_response,data.instruction));
             });
             selectBox.selectedIndex = 0;
             break;
