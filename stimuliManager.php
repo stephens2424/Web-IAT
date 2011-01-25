@@ -558,7 +558,13 @@
           case 2: {//delete experiment
               var c = confirm("Are you sure you want to delete this experiment?\nThis action cannot be undone.");
               if (c === true) {
-                alert("delete experiment");
+                $.post("deleteExperiment.php",{
+                  experiment:set
+                },function (receivedData) {
+                  $("#experiment_selector").children().eq($("#experiment_selector").attr('selectedIndex')).remove();
+                  $("#experiment_selector").attr('selectedIndex','0');
+                  experiment_change();
+                });
               }
               $('#experiment_action_selector').attr("selectedIndex","0");
               break;
