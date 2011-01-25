@@ -492,7 +492,27 @@
         remove_all_stimuli();
         var selectBox = document.getElementById("experiment_selector");
         set = selectBox.options[selectBox.selectedIndex].value;
-        requestStimuliSet("set=" + set);
+        if (set === "default") {
+        } else {
+          requestStimuliSet("set=" + set);
+        }
+      }
+      function makeExperimentNameEditable() {
+        var oldName = $('#experiment_selector :selected').text();
+        var newName = prompt("New experiment name:",$('#experiment_selector :selected').text());
+        $('#experiment_selector :selected').text(newName);
+        $.ajax({
+          url:"renameExperiment",
+          type:'POST',
+          data:{
+            name:newName,
+            experiment:$('#experiment_selector').val()
+          },
+          error:function (XMLHttpRequest, textStatus, errorThrown) {
+            $('#experiment_selector :selected').text(oldName);
+            alert("Experiment rename failed. Please check your network settings.");
+          }
+        });
       }
       function handle_experiment_action() {
         switch ($('#experiment_action_selector').attr("selectedIndex")) {
@@ -501,7 +521,7 @@
               break;
             }
           case 1: {//rename
-              alert("rename");
+              makeExperimentNameEditable();
               $('#experiment_action_selector').attr("selectedIndex","0");
               break;
             }
@@ -558,6 +578,7 @@
     <fieldset>
       <legend>
         <select id="experiment_selector" onchange="experiment_change();">
+          <option value="default">Please choose an experiment to begin</option>
           <?php
             include 'connect.php';
             $query = "SELECT name,stimuli_set FROM experiments";
