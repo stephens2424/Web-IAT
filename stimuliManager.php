@@ -493,8 +493,10 @@
         var selectBox = document.getElementById("experiment_selector");
         set = selectBox.options[selectBox.selectedIndex].value;
         if (set === "default") {
+          $('#experiment_action_selector').attr("disabled","true");
         } else {
           requestStimuliSet("set=" + set);
+          $('#experiment_action_selector').removeAttr("disabled");
         }
       }
       function makeExperimentNameEditable() {
