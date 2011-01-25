@@ -9,10 +9,10 @@
       var set;
       var groupOptions = {
         def : "Group Actions",
+        rename : "Rename Group",
         addAbove : "Add Group Above",
         addBelow : "Add Group Below",
-        remove : "Remove Group",
-        appendStimulus : "Append Stimulus"
+        remove : "Remove Group"
       };
       function requestStimuliSet (parameters) {
         if (window.XMLHttpRequest)
@@ -75,6 +75,13 @@
       function _createGroupRow (name,content,randomize,groupId,groupNum) {
         var body = $('<tr>').appendTo($('<tbody>')).append('<td>').append($('<td>').attr('colspan','2').append(_createGroupContent(content)));
         var disclose = $('<input>').attr('type','image').click(function () {discloseGroupToggle(body)}).attr('src','disclosureTriangle.png');
+        var $actions = _createGroupActionsSelectBox();
+        var head = $('<thead>').append($('<th>').append(disclose)).append('<th>' + name + '</th>').append($('<th>' + groupId + '</th>').attr('style','display:none')).append($('<th>').append($actions)).append($("<th>").append($('<input>').attr("type","checkbox").attr("checked",((randomize === "1") ? true : false)).click(function () {toggleGroupRandomization(groupNum,groupId)})).append(" Randomize"));
+        var table = $('<table>').append(head).append(body);
+        var tableRow = $('<tr>').append(table);
+        return tableRow;
+      }
+      function _createGroupActionsSelectBox() {
         var $actions = $('<select>');
         $.each(groupOptions,function (val,text) {
           $actions.append(
@@ -82,10 +89,7 @@
           );
         });
         $actions.change(function () {handleGroupAction(this);});
-        var head = $('<thead>').append($('<th>').append(disclose)).append('<th>' + name + '</th>').append($('<th>' + groupId + '</th>').attr('style','display:none')).append($('<th>').append($actions)).append($("<th>").append($('<input>').attr("type","checkbox").attr("checked",((randomize === "1") ? true : false)).click(function () {toggleGroupRandomization(groupNum,groupId)})).append(" Randomize"));
-        var table = $('<table>').append(head).append(body);
-        var tableRow = $('<tr>').append(table);
-        return tableRow;
+        return $actions;
       }
       function _createGroupContent (content) {
         var table = $('<table>');
@@ -128,13 +132,41 @@
                 $row.replaceWith(createStimulusRow(data.stim_id,data.category1,data.category2,data.subcategory1,data.subcategory2,data.word,data.correct_response,data.instruction));
             });
       }
+      function makeGroupNameEditable($groupRow) {
+        //change name into text box
+        $textCell = $groupRow.children().eq(1);
+        var text = $textCell.text();
+        $textCell.html($('<input>').attr("type","text").attr("value",text));
+        //change actions menu into save button
+        $buttonCell = $groupRow.children().eq(3);
+        $saveButton = $('<button>').click(function () {saveGroupName($groupRow);}).html("Save");
+        $buttonCell.children('select').replaceWith($saveButton);
+      }
+      function saveGroupName($groupRow) {
+        var name = $groupRow.find('input').eq(1).attr("value");
+        //replace disclosure triangle with spinning wheel
+        //make all the components disabled
+        //post to database
+        $.post("renameGroup.php",{
+          groupId:$groupRow.children().eq(2).text(),
+          name:name
+        },function (receivedData){
+          //restore disclosure triangle and other components upon success
+          $groupRow.find('button').replaceWith(_createGroupActionsSelectBox());
+          $groupRow.find('input').eq(1).replaceWith(name);
+        });
+      }
       function handleGroupAction(selectBox) {
         switch (selectBox.selectedIndex) {
           case 0:
-            alert("Default Group Action");
             selectBox.selectedIndex = 0;
             break;
-          case 1:
+          case 1: {
+              makeGroupNameEditable($(selectBox).parent().parent());
+              selectBox.selectedIndex = 0;
+              break;
+          }
+          case 2:
             $.post("insertGroup.php",{
               set:set,
               position:$(selectBox).parent().parent().index(),
@@ -146,7 +178,7 @@
             });
             selectBox.selectedIndex = 0;
             break;
-          case 2:
+          case 3:
             $.post("insertGroup.php",{
               set:set,
               position:$(selectBox).parent().parent().index(),
@@ -158,20 +190,10 @@
             });
             selectBox.selectedIndex = 0;
             break;
-          case 3:
+          case 4:
             removeGroup($(selectBox).closest('tr'));
             selectBox.selectedIndex = 0;
             break;
-          case 4:
-            $.post("addNewStimulus.php",{
-                set:set,
-                group:stimuliData[$(selectBox).closest('tr').index()].group_id
-              }, function (received_data) {
-                var data = JSON.parse(received_data)[0];
-                stimuliData[$(selectBox).closest('tr').index()].stimuli.splice($(selectBox).closest('tr').index(),0,data);
-                $(selectBox).closest('table').find('table').eq(0).append(createStimulusRow(data.stim_id,data.category1,data.category2,data.subcategory1,data.subcategory2,data.word,data.correct_response,data.instruction));
-            });
-            selectBox.selectedIndex = 0;
           default:
             selectBox.selectedIndex = 0;
             break;
