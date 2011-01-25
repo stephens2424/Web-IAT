@@ -494,6 +494,8 @@
         set = selectBox.options[selectBox.selectedIndex].value;
         if (set === "default") {
           $('#experiment_action_selector').attr("disabled","true");
+        } else if (set === "new experiment") {
+          new_experiment();
         } else {
           requestStimuliSet("set=" + set);
           $('#experiment_action_selector').removeAttr("disabled");
@@ -516,6 +518,32 @@
           }
         });
       }
+      function new_experiment() {
+        $('#experiment_selector').attr("disabled","true");
+        $('#experiment_action_selector').attr("disabled","true");
+        var newName = prompt("New experiment name:","New Experiment");
+        while (newName === "Make New Experiment") {
+          newName = prompt("Invalid experiment name. Please choose a new experiment name:","New Experiment");
+        }
+        $.ajax({
+          url:"newExperiment.php",
+          type:'POST',
+          data:{
+            name:newName
+          },
+          success:function (data, textStatus, XMLHttpRequest) {
+            $newOption = $('<option>').val(data).text(newName).insertBefore($("#experiment_selector").children('option').last()).attr('selected','selected');
+            $("#experiment_selector").removeAttr("disabled");
+            $('#experiment_action_selector').removeAttr("disabled");
+            experiment_change();
+          },
+          error:function (XMLHttpRequest, textStatus, errorThrown) {
+            $("#experiment_selector").removeAttr("disabled");
+            $('#experiment_action_selector').removeAttr("disabled");
+            alert("Creating experiment failed. Please check your network settings.");
+          }
+        });
+      }
       function handle_experiment_action() {
         switch ($('#experiment_action_selector').attr("selectedIndex")) {
           case 0: {
@@ -527,13 +555,11 @@
               $('#experiment_action_selector').attr("selectedIndex","0");
               break;
             }
-          case 2: {//new experiment
-              alert("new experiment");
-              $('#experiment_action_selector').attr("selectedIndex","0");
-              break;
-            }
-          case 3: {//delete experiment
-              alert("delete experiment");
+          case 2: {//delete experiment
+              var c = confirm("Are you sure you want to delete this experiment?\nThis action cannot be undone.");
+              if (c === true) {
+                alert("delete experiment");
+              }
               $('#experiment_action_selector').attr("selectedIndex","0");
               break;
             }
@@ -596,12 +622,12 @@
             mysql_free_result($result);
             mysql_close();
           ?>
+          <option value="new experiment">Make New Experiment</option>
         </select>
       </legend>
       <select id="experiment_action_selector" onchange="handle_experiment_action()">
         <option>Experiment Actions</option>
         <option>Rename Experiment</option>
-        <option>New Experiment</option>
         <option>Delete Experiment</option>
       </select>
       <p>
