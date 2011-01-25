@@ -113,7 +113,15 @@
             selectBox.selectedIndex = 0;
             break;
           case 1:
-            alert("add group above");
+            $.post("insertGroup.php",{
+              set:set,
+              position:$(selectBox).parent().parent().index(),
+              below:"false"
+            },function(receivedData) {
+              var data = JSON.parse(receivedData);
+              insertGroup($(selectBox).parent().parent().index(),data.name,data.stimuli,data.randomize,data.group_id);
+              stimuliData.splice($(selectBox).parent().parent().index(),0,data);
+            });
             selectBox.selectedIndex = 0;
             break;
           case 2:

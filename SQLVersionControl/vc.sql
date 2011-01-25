@@ -91,7 +91,7 @@ CREATE TABLE `stimuli` (
   PRIMARY KEY (`stimulus_id`),
   KEY `order` (`order`),
   KEY `group` (`group`)
-) ENGINE=MyISAM AUTO_INCREMENT=112 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=140 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -100,7 +100,7 @@ CREATE TABLE `stimuli` (
 
 LOCK TABLES `stimuli` WRITE;
 /*!40000 ALTER TABLE `stimuli` DISABLE KEYS */;
-INSERT INTO `stimuli` VALUES (1,1,'cat1','cat 2','subcat1','subcat2','word 1',NULL,'','\0',4,1),(3,1,'cat1','cat2','subcat1','subcat2','word3',NULL,'','',3,2),(4,1,'cat3','cat4','subcat3','subcat4','word4',NULL,'','',1,2),(6,2,'cat2','','','','',NULL,'','',1,3),(15,2,'','','','','',NULL,'','\0',2,4),(12,2,'cat5','cat6','subcat5','subcat6','blah',NULL,'','\0',3,4),(61,1,'null','null','null','null','null',NULL,'','\0',3,1),(60,1,'null','null','null','null','null',NULL,'','\0',5,1),(105,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0',2,0),(104,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0',10,0),(98,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0',7,0),(97,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0',6,0),(99,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0',5,0),(100,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0',8,0),(101,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0',4,0),(102,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0',9,0),(103,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0',3,0),(106,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0',11,0),(107,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0',1,0),(108,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0',12,0),(109,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0',13,0);
+INSERT INTO `stimuli` VALUES (1,1,'cat1','cat 2','subcat1','subcat2','word 1',NULL,'','\0',4,1),(3,1,'cat1','cat2','subcat1','subcat2','word3',NULL,'','',3,2),(4,1,'cat3','cat4','subcat3','subcat4','word4',NULL,'','',1,2),(6,2,'cat2','','','','',NULL,'','',1,3),(15,2,'','','','','',NULL,'','\0',2,4),(12,2,'cat5','cat6','subcat5','subcat6','blah',NULL,'','\0',3,4),(61,1,'null','null','null','null','null',NULL,'','\0',3,1),(60,1,'null','null','null','null','null',NULL,'','\0',5,1),(105,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0',2,0),(104,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0',10,0),(98,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0',7,0),(97,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0',6,0),(99,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0',5,0),(100,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0',8,0),(101,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0',4,0),(102,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0',9,0),(103,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0',3,0),(106,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0',11,0),(107,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0',1,0),(108,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0',12,0),(109,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0',13,0),(127,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0',1,49),(116,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0',1,47),(129,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0',1,50),(130,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0',1,51),(131,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0',1,52),(133,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0',1,53),(134,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0',1,54),(135,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0',2,54),(136,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0',3,54),(137,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0',1,57),(138,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'\0',1,60);
 /*!40000 ALTER TABLE `stimuli` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -119,7 +119,7 @@ CREATE TABLE `stimuliGroups` (
   `randomize` bit(1) NOT NULL DEFAULT b'0',
   PRIMARY KEY (`id`),
   KEY `stimuliSet` (`stimuliSet`)
-) ENGINE=MyISAM AUTO_INCREMENT=46 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=62 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -128,7 +128,7 @@ CREATE TABLE `stimuliGroups` (
 
 LOCK TABLES `stimuliGroups` WRITE;
 /*!40000 ALTER TABLE `stimuliGroups` DISABLE KEYS */;
-INSERT INTO `stimuliGroups` VALUES (3,2,1,'group1','\0'),(4,2,2,'','\0'),(45,1,0,'New Group','\0');
+INSERT INTO `stimuliGroups` VALUES (3,2,1,'group1','\0'),(4,2,2,'','\0');
 /*!40000 ALTER TABLE `stimuliGroups` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -165,4 +165,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2011-01-23 20:27:08
+-- Dump completed on 2011-01-24 17:25:47
