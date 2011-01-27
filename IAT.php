@@ -3,7 +3,9 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript"></script>
     <script type="text/javascript">
       var stimuliData;
-      var done = false;
+      var successfulResponses = 0;
+      var responses = 0;
+      var totalStimuli = 0;
     <?php
       //TODO add web management tool for stimuli
       //TODO figure out how to make this full screen
@@ -18,6 +20,9 @@
             type:"POST",
             success:function (data, textStatus, XMLHttpRequest) {
               stimuliData = JSON.parse(data);
+              for (var i = 0; i < stimuliData.length; i++) {
+                totalStimuli += stimuliData[i].stimulus.length;
+              }
               $("#ajaxImage").remove();
               new_word();
             },
@@ -138,9 +143,12 @@
           url:"dataHandler.php",
           data:{"response":response,"rt":time,"subj":subj,"stim":stimuliData[groupNum].stimulus[wordNum-1].stim_id},
           success:function (data, textStatus, XMLHttpRequest) {
-            if (done) {location.href="<?php if ($development) { echo "results.php?subj=$subj"; } else { echo "thankyou.php"; } ?>";}
+            successfulResponses++;
+            responses++;
+            if (responses >= totalStimuli) {location.href="<?php if ($development) { echo "results.php?subj=$subj"; } else { echo "thankyou.php"; } ?>";}
           },
           error:function (XMLHttpRequest, textStatus, errorThrown) {
+            responses++;
             alert("Server error: " + textStatus + "\nerror: " + errorThrown);
           }
         });
