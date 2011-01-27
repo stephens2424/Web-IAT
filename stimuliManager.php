@@ -575,6 +575,9 @@
             }
         }
       }
+      function downloadData() {
+        location.href="csvGenerator.php";
+      }
     </script>
     <style type="text/css">
       .hidden {
@@ -638,7 +641,7 @@
       </select>
       <p>
         Active: <span id="active"></span><br>
-        Responses: <span id="responseCount"></span>
+        Responses: <span id="responseCount"></span><button onclick="downloadData()">Download CSV</button>
       </p>
     </fieldset>
     <fieldset><legend>Stimuli</legend>
