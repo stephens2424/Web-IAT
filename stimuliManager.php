@@ -227,42 +227,30 @@
         $groupTable.toggleClass("hidden");
       }
       function save_stimulus_row (stimuliRow) {
-        var stimulusTable = stimuliRow.childNodes[1].childNodes[0];
-        var poststr;
-        if (stimulusTable.rows) {
-          poststr = "leftCategory=" + encodeURI( stimulusTable.rows[0].cells[0].lastChild.value ) +
-            "&rightCategory=" + encodeURI( stimulusTable.rows[0].cells[2].lastChild.value ) +
-            "&subLeftCategory=" + encodeURI( stimulusTable.rows[1].cells[0].lastChild.value ) +
-            "&subRightCategory=" + encodeURI( stimulusTable.rows[1].cells[1].lastChild.value ) +
-            "&word=" + encodeURI( stimulusTable.rows[0].cells[1].lastChild.value ) +
-            "&mask=" + encodeURI( (stimulusTable.rows[0].cells[3].childNodes[7].checked == true)?"1":"0") +
-            "&stim_id=" + encodeURI(stimuliRow.childNodes[0].childNodes[0].alt);
-        } else {
-          poststr = "instruction=" + encodeURI( stimulusTable.textContent) +
-            "&stim_id=" + encodeURI(stimuliRow.childNodes[0].childNodes[0].alt);
-        }
-        if (window.XMLHttpRequest)
-        {// code for IE7+, Firefox, Chrome, Opera, Safari
-          xmlhttp=new XMLHttpRequest();
-        }
-        else
-        {// code for IE6, IE5
-          xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-        }
-        xmlhttp.onreadystatechange = function (aEvt) {
-          if (this.readyState == 4) {
-            if(this.status !== 200) {
-              location.href="servererror.php?status=" + this.status + "&statusText=" + encodeURIComponent(this.statusText);
-            } else {
-              var stimuli = JSON.parse(this.responseText);
-              i = 0;
-              stimuliRow.parentNode.replaceChild(createStimulusRow(stimuli[i].stim_id,stimuli[i].category1,stimuli[i].category2,stimuli[i].subcategory1,stimuli[i].subcategory2,stimuli[i].word,stimuli[i].correct_response,stimuli[i].instruction),stimuliRow);
-            }
+        var $row = $(stimuliRow)
+        var $table = $row.find('table');
+        $.ajax({
+          type:"POST",
+          url:"updateStimulus.php",
+          data:{
+            leftCategory:$table.find('input').eq(0).val(),
+            rightCategory:$table.find('input').eq(2).val(),
+            subLeftCategory:$table.find('input').eq(6).val(),
+            subRightCatebory:$table.find('input').eq(7).val(),
+            word:$table.find('input').eq(1).val(),
+            mask:$table.find('input').eq(5).attr('checked') === true ? 1 : 0,
+            stim_id:$row.closest('tr').find('img').attr('alt'),
+            correct:$table.find('input[name="correct"]').eq(0).attr('checked') == true ? '0' : ($table.find('input[name="correct"]').eq(1).attr('checked') == true ? '1' : 'NULL')
+          },
+          success:function (data, textStatus, XMLHttpRequest) {
+            var stimuli = JSON.parse(data);
+            i = 0;
+            $row.replaceWith(createStimulusRow(stimuli[i].stim_id,stimuli[i].category1,stimuli[i].category2,stimuli[i].subcategory1,stimuli[i].subcategory2,stimuli[i].word,stimuli[i].correct_response,stimuli[i].instruction),stimuliRow);
+          },
+          error:function (XMLHttpRequest, textStatus, errorThrown) {
+            alert("Server request failed. Please check your network settings.");
           }
-        };
-        xmlhttp.open("POST","updateStimulus.php",true);
-        xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xmlhttp.send(poststr);
+        });
       }
       function createStimulusRow(stim_id,cat1,cat2,subcat1,subcat2,word,correct,instruction) {
         var stimulusRow = document.createElement('tr');
@@ -273,7 +261,7 @@
 
         //stimulus cell
         var stimulusCell = stimulusRow.insertCell(1);
-        stimulusCell.appendChild(createStimulusTable(cat1,cat2,subcat1,subcat2,word,correct,instruction));
+        $(stimulusCell).append($(createStimulusTable(cat1,cat2,subcat1,subcat2,word,correct,instruction)));
 
         // edit cell
         var editCell = stimulusRow.insertCell(2);
@@ -385,18 +373,25 @@
       }
       function createStimulusTable (cat1,cat2,subcat1,subcat2,word,correct,instruction) {
         if (instruction == null || instruction == '') {
-          var stimulusTable = document.createElement('table');
-          var row0 = stimulusTable.insertRow(-1);
-          var row1 = stimulusTable.insertRow(-1);
-          var cat1Cell = row0.insertCell(0);
-          cat1Cell.appendChild(document.createTextNode(cat1));
-          var middleCell = row0.insertCell(1);
-          middleCell.rowSpan = 2;
-          middleCell.appendChild(document.createTextNode(word));
-          row0.insertCell(2).appendChild(document.createTextNode(cat2));
-          row1.insertCell(0).appendChild(document.createTextNode(subcat1));
-          row1.insertCell(1).appendChild(document.createTextNode(subcat2));
-          return stimulusTable;
+          var $table = $('<table>'), $row0 = $('<tr>'), $row1 = $('<tr>'), $row2 = $('<tr>');
+          var $t0x0 = $('<td>').text(cat1);
+          var $t0x1 = $('<td>').text(word).attr('rowspan',2);
+          var $t0x2 = $('<td>').text(cat2);
+          var $t1x0 = $('<td>').text(subcat1);
+          var $t1x2 = $('<td>').text(subcat2);
+          var $t2x0 = $('<td>').append($('<input>').attr('type','radio').attr('name','correct').attr('value','0').attr('disabled','true'));
+          var $t2x1 = $('<td>').text("Correct");
+          var $t2x2 = $('<td>').append($('<input>').attr('type','radio').attr('name','correct').attr('value','1').attr('disabled','true'));
+          if (correct === '0') {
+            $t2x0.children('input').attr('checked','true');
+          } else if (correct === '1') {
+            $t2x2.children('input').attr('checked','true');
+          }
+          $row0.append($t0x0).append($t0x1).append($t0x2);
+          $row1.append($t1x0).append($t1x2);
+          $row2.append($t2x0).append($t2x1).append($t2x2);
+          $table.append($row0).append($row1).append($row2);
+          return $table.get();
         } else {
           return document.createTextNode(instruction);
         }
@@ -456,7 +451,7 @@
         var stimulusTable = this.parentNode.parentNode.childNodes[1].childNodes[0];
         var row = 0;
         if (stimulusTable.rows) {
-          while (row < stimulusTable.rows.length) {
+          while (row < 2) {
             var cell = 0;
             while (cell < stimulusTable.rows[row].cells.length) {
               var text = stimulusTable.rows[row].cells[cell].childNodes[0].textContent;
@@ -469,6 +464,7 @@
             }
             row++;
           }
+          $(stimulusTable).find('input[name="correct"]').removeAttr('disabled');
         } else {
           var text = stimulusTable.textContent;
           var elem = document.createElement('input');
@@ -492,7 +488,7 @@
         var stimulusTable = stimuliRow.childNodes[1].childNodes[0];
         var row = 0;
         if (stimulusTable.rows) {
-          while (row < stimulusTable.rows.length) {
+          while (row < 2) {
             var cell = 0;
             while (cell < stimulusTable.rows[row].cells.length) {
               stimulusTable.rows[row].cells[cell].childNodes[0].disabled = true;
@@ -500,6 +496,7 @@
             }
             row++;
           }
+          $(stimulusTable).find('input[name="correct"]').attr('disabled','true');
         } else {
           stimulusTable.disabled = true;
         }
