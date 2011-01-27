@@ -494,11 +494,13 @@
         set = selectBox.options[selectBox.selectedIndex].value;
         if (set === "default") {
           $('#experiment_action_selector').attr("disabled","true");
+          $('#end_of_experiment_selector').attr("disabled","true");
         } else if (set === "new experiment") {
           new_experiment();
         } else {
           requestStimuliSet("set=" + set);
           $('#experiment_action_selector').removeAttr("disabled");
+          $('#end_of_experiment_selector').removeAttr("disabled");
         }
       }
       function makeExperimentNameEditable() {
