@@ -57,8 +57,13 @@
           $('#end_of_experiment_selector').attr('selectedIndex',4).change();
         } else {
           if (url.substr(0,7) === "http://") {
-            $('#end_of_experiment_selector').attr('selectedIndex',3).change();
-            $('#end_of_experiment_zone').children('input').attr('value',url.substr(7));
+            if (url.substr(0,34) === "http://ucla.qualtrics.com/SE/?SID=") {
+              $('#end_of_experiment_selector').attr('selectedIndex',1).change();
+              $('#end_of_experiment_zone').children('input').attr('value',url.substr(34));
+            } else {
+              $('#end_of_experiment_selector').attr('selectedIndex',3).change();
+              $('#end_of_experiment_zone').children('input').attr('value',url.substr(7));
+            }
           } else {
             $('#end_of_experiment_selector').attr('selectedIndex',2).change();
           }
@@ -616,7 +621,27 @@
               break;
             }
           case 1: {
-              $('#end_of_experiment_zone').text("This option not yet implemented. Will default to Thank You page");
+              $('#end_of_experiment_zone').text("http://ucla.qualtrics.com/SE/?SID=");
+              var $box = $('<input>').attr('type','text');
+              $box.change(function () {
+                $box.after($('<img>').attr('src','ajaxloader.gif'));
+                $.ajax({
+                  type:"POST",
+                  url:"updateExperimentEndURL.php",
+                  data:{
+                    newURL:"http://ucla.qualtrics.com/SE/?SID=" + $box.attr('value'),
+                    set:set
+                  },
+                  success:function (data, textStatus, XMLHttpRequest) {
+                    $box.siblings('img').remove();
+                  },
+                  error:function (XMLHttpRequest, textStatus, errorThrown) {
+                    $box.siblings('img').remove();
+                    alert("Error. Please check your network settings.");
+                  }
+                });
+              });
+              $('#end_of_experiment_zone').append($box);
               break;
             }
           case 2: {
