@@ -10,11 +10,21 @@
       $development = false;
       ?>
         function load() {
-          $.post("requestStimuliSetForIAT.php", {
-            stim_set:<? echo $_GET['s'] ?>
-          },function (receivedData) {
-            stimuliData = JSON.parse(receivedData);
-            new_word();
+          $.ajax({
+            url:"requestStimuliSetForIAT.php",
+            data:{
+              stim_set:<? echo $_GET['s'] ?>
+            },
+            type:"POST",
+            success:function (data, textStatus, XMLHttpRequest) {
+              stimuliData = JSON.parse(data);
+              $("#ajaxImage").remove();
+              new_word();
+            },
+            error:function (XMLHttpRequest, textStatus, errorThrown) {
+              $("#ajaxImage").remove();
+              $("#word").text("Error loading stimulus data.");
+            }
           });
         }
     <?
@@ -176,6 +186,9 @@
       h1.center {
         text-align: center;
       }
+      .center {
+        text-align: center;
+      }
     </style>
   </head>
   <body onkeydown="detect_keydown(event);" onload="load()">
@@ -209,7 +222,7 @@
         <tr></tr>
         <tr>
           <td colspan="2">
-            <h1 class="center" id="word">Error - No Stimulus Data</h1>
+            <span class="center" id="wordSpace"><img src="ajaxloader.gif" id="ajaxImage"><h1 id="word"></h1></span>
           </td>
         </tr>
       </table>
