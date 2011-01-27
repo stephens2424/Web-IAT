@@ -6,6 +6,7 @@
       var successfulResponses = 0;
       var responses = 0;
       var totalStimuli = 0;
+      var endURL;
     <?php
       //TODO add web management tool for stimuli
       //TODO figure out how to make this full screen
@@ -19,7 +20,9 @@
             },
             type:"POST",
             success:function (data, textStatus, XMLHttpRequest) {
-              stimuliData = JSON.parse(data);
+              var upperData = JSON.parse(data);
+              endURL = upperData.endURL;
+              stimuliData = upperData.stimuli;
               for (var i = 0; i < stimuliData.length; i++) {
                 totalStimuli += stimuliData[i].stimulus.length;
               }
@@ -150,7 +153,7 @@
           success:function (data, textStatus, XMLHttpRequest) {
             successfulResponses++;
             responses++;
-            if (responses >= totalStimuli) {location.href="<?php if ($development) { echo "results.php?subj=$subj"; } else { echo "thankyou.php"; } ?>";}
+            if (responses >= totalStimuli) {location.href=endURL;}
           },
           error:function (XMLHttpRequest, textStatus, errorThrown) {
             responses++;

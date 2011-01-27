@@ -593,6 +593,9 @@
               $('#end_of_experiment_zone').text("This option not yet implemented. Will default to Thank You page");
               break;
           }
+          case 4: {
+              $('#end_of_experiment_zone').text("This option not yet implemented. Will default to Thank You page");
+          }
         }
       }
     </script>
@@ -662,6 +665,7 @@
         <option>Link to Qualtrics</option>
         <option>Upload Page</option>
         <option>Custom URL</option>
+        <option>Results Page (Recommended for development only)</option>
       </select><span id="end_of_experiment_zone"></span>
       <p>
         Active: <span id="active"></span><br>
