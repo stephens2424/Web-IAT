@@ -37,7 +37,7 @@ CREATE TABLE `experiments` (
 
 LOCK TABLES `experiments` WRITE;
 /*!40000 ALTER TABLE `experiments` DISABLE KEYS */;
-INSERT INTO `experiments` VALUES (1,'','Test 1','http://google.com'),(2,'','Test 2','thankyou.php');
+INSERT INTO `experiments` VALUES (1,'','Test 1','results.php'),(2,'','Test 2','thankyou.php');
 /*!40000 ALTER TABLE `experiments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -166,4 +166,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2011-01-27  1:31:09
+-- Dump completed on 2011-01-27  1:53:02

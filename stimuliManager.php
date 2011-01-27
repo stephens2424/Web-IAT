@@ -581,25 +581,78 @@
         switch ($('#end_of_experiment_selector').attr('selectedIndex')) {
           case 0: {
               $('#end_of_experiment_zone').text("");
+              $('#end_of_experiment_zone').append($('<img>').attr('src','ajaxloader.gif'));
+              $.ajax({
+                type:"POST",
+                url:"updateExperimentEndURL.php",
+                data:{
+                  newURL:"results.php",
+                  set:set
+                },
+                success:function (data, textStatus, XMLHttpRequest) {
+                  $('#end_of_experiment_zone').children('img').remove();
+                },
+                error:function (XMLHttpRequest, textStatus, errorThrown) {
+                  $('#end_of_experiment_zone').children('img').remove();
+                  alert("Error. Please check your network settings.");
+                }
+              });
               break;
-          }
+            }
           case 1: {
               $('#end_of_experiment_zone').text("This option not yet implemented. Will default to Thank You page");
               break;
-          }
+            }
           case 2: {
               $('#end_of_experiment_zone').text("This option not yet implemented. Will default to Thank You page");
               break;
-          }
+            }
           case 3: {
-              $('#end_of_experiment_zone').text("This option not yet implemented. Will default to Thank You page");
+              $('#end_of_experiment_zone').text("http://");
+              var $box = $('<input>').attr('type','text');
+              $box.change(function () {
+                $box.after($('<img>').attr('src','ajaxloader.gif'));
+                $.ajax({
+                  type:"POST",
+                  url:"updateExperimentEndURL.php",
+                  data:{
+                    newURL:"http://" + $box.attr('value'),
+                    set:set
+                  },
+                  success:function (data, textStatus, XMLHttpRequest) {
+                    $box.siblings('img').remove();
+                  },
+                  error:function (XMLHttpRequest, textStatus, errorThrown) {
+                    $box.siblings('img').remove();
+                    alert("Error. Please check your network settings.");
+                  }
+                });
+              });
+              $('#end_of_experiment_zone').append($box);
               break;
-          }
+            }
           case 4: {
-              $('#end_of_experiment_zone').text("This option not yet implemented. Will default to Thank You page");
+              $('#end_of_experiment_zone').text("");
+              $('#end_of_experiment_zone').append($('<img>').attr('src','ajaxloader.gif'));
+              $.ajax({
+                type:"POST",
+                url:"updateExperimentEndURL.php",
+                data:{
+                  newURL:"results.php",
+                  set:set
+                },
+                success:function (data, textStatus, XMLHttpRequest) {
+                  $('#end_of_experiment_zone').children('img').remove();
+                },
+                error:function (XMLHttpRequest, textStatus, errorThrown) {
+                  $('#end_of_experiment_zone').children('img').remove();
+                  alert("Error. Please check your network settings.");
+                }
+              });
+              break;
+            }
           }
         }
-      }
     </script>
     <style type="text/css">
       .hidden {
