@@ -102,7 +102,7 @@
           }
           change_categories(0);
         }
-        if (stimuliData[groupNum].stimulus[wordNum].mask)
+        if (stimuliData[groupNum].stimulus[wordNum].mask === "1")
           new_word_zero();
         else
           show_new_word();
