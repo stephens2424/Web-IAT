@@ -38,11 +38,14 @@
         var wordNum = 0;
         var groupNum = 0;
         var instruction = false;
-        var wordShowed;
+        var wordShowedTime;
+        var wordShowed = false;
 
         function detect_keydown ( e ) {
           //TODO add safeguard so only the proper keys trigger any changes
+          if (!wordShowed) return;
           var time = new Date().getTime();
+          wordShowed = false;
           var keynum;
           var keychar;
           if(window.event) // IE
@@ -69,7 +72,7 @@
             default:
               keychar = String.fromCharCode(keynum);
           }
-          sendData(keychar,(time - wordShowed).toString());
+          sendData(keychar,(time - wordShowedTime).toString());
           if (wordNum >= stimuliData[groupNum].stimulus.length) {
             if (groupNum >= stimuliData.length - 1) {
               done = true;
@@ -118,7 +121,8 @@
       function show_new_word () {
         document.getElementById('word').textContent = stimuliData[groupNum].stimulus[wordNum].word;
         document.getElementById('instruction').textContent = stimuliData[groupNum].stimulus[wordNum].word;
-        wordShowed = new Date().getTime();
+        wordShowedTime = new Date().getTime();
+        wordShowed = true;
         wordNum++;
       }
       function change_categories (wordNumShift) {
