@@ -34,7 +34,12 @@
         }
     <?
       include 'connect.php';
-      $query = "INSERT INTO subjects VALUES ()"; //TODO make sure that the timezone for the beginTime inserted into the database will be consistent/understandable
+      if (isset($_GET['qid'])) {
+        $qid = $_GET['qid'];
+        $query = "INSERT INTO subjects (`qualtrics_id`) VALUES ($qid)";
+      } else {
+        $query = "INSERT INTO subjects VALUES ()";
+      }
       $result = mysql_query($query);
       $subj = mysql_insert_id();
       printf("var subj=%d;\n", $subj);
