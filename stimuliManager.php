@@ -29,6 +29,7 @@
               location.href="servererror.php?status=" + this.status + "&statusText=" + encodeURIComponent(this.statusText);
             } else {
               var data = JSON.parse(this.responseText);
+              _parseEndURLAndSetSelectBox(data.endURL);
               $('#responseCount').text(data.responseCount);
               if (data.stimuliGroups) {
                 var num = data.stimuliGroups.length;
@@ -47,6 +48,21 @@
         xmlhttp.setRequestHeader("Content-length", parameters.length);
         xmlhttp.setRequestHeader("Connection", "close");
         xmlhttp.send(parameters);
+      }
+      function _parseEndURLAndSetSelectBox(url) {
+        url.toLowerCase();
+        if (url === "thankyou.php") {
+          $('#end_of_experiment_selector').attr('selectedIndex',0).change();
+        } else if (url === "results.php") {
+          $('#end_of_experiment_selector').attr('selectedIndex',4).change();
+        } else {
+          if (url.substr(0,7) === "http://") {
+            $('#end_of_experiment_selector').attr('selectedIndex',3).change();
+            $('#end_of_experiment_zone').children('input').attr('value',url.substr(7));
+          } else {
+            $('#end_of_experiment_selector').attr('selectedIndex',2).change();
+          }
+        }
       }
       function addNoGroup () {
         $('#stimuliBody').append($('<tr>').click(function() {replaceNoGroup($(this))}).append($('<td>No groups. Click here to add one.</td>').attr("colspan",4)));
