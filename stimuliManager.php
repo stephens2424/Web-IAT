@@ -741,7 +741,7 @@
             while ($i < $num) {
               $name = mysql_result($result, $i, "name");
               $set = mysql_result($result, $i, "stimuli_set");
-              echo "<option value=\"$set\">$name</option>";
+              echo "<option value=\"$set\">$name - ID:$set</option>";
               $i++;
             }
             mysql_free_result($result);
