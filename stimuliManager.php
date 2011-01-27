@@ -575,6 +575,26 @@
             }
         }
       }
+      function handle_end_of_experiment_change() {
+        switch ($('#end_of_experiment_selector').attr('selectedIndex')) {
+          case 0: {
+              $('#end_of_experiment_zone').text("");
+              break;
+          }
+          case 1: {
+              $('#end_of_experiment_zone').text("This option not yet implemented. Will default to Thank You page");
+              break;
+          }
+          case 2: {
+              $('#end_of_experiment_zone').text("This option not yet implemented. Will default to Thank You page");
+              break;
+          }
+          case 3: {
+              $('#end_of_experiment_zone').text("This option not yet implemented. Will default to Thank You page");
+              break;
+          }
+        }
+      }
     </script>
     <style type="text/css">
       .hidden {
@@ -636,6 +656,13 @@
         <option>Rename Experiment</option>
         <option>Delete Experiment</option>
       </select>
+      End of experiment action:
+      <select id="end_of_experiment_selector" onchange="handle_end_of_experiment_change()">
+        <option>Thank you page</option>
+        <option>Link to Qualtrics</option>
+        <option>Upload Page</option>
+        <option>Custom URL</option>
+      </select><span id="end_of_experiment_zone"></span>
       <p>
         Active: <span id="active"></span><br>
         Responses: <span id="responseCount"></span>
