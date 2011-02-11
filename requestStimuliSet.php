@@ -1,6 +1,6 @@
 <?php
   include 'connect.php';
-  $set = $_POST['set'];
+  $set = $_POST['stim_set'];
   $query = "SELECT * FROM stimuliGroups WHERE `stimuliSet`=$set ORDER BY `order` ASC";
   $result = mysql_query($query);
   for ($row = 0; $row < mysql_num_rows($result); $row++) {

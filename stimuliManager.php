@@ -14,40 +14,31 @@
         addBelow : "Add Group Below",
         remove : "Remove Group"
       };
-      function requestStimuliSet (parameters) {
-        if (window.XMLHttpRequest)
-        {// code for IE7+, Firefox, Chrome, Opera, Safari
-          xmlhttp=new XMLHttpRequest();
-        }
-        else
-        {// code for IE6, IE5
-          xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-        }
-        xmlhttp.onreadystatechange = function (aEvt) {
-          if (this.readyState == 4) {
-            if(this.status !== 200) {
-              location.href="servererror.php?status=" + this.status + "&statusText=" + encodeURIComponent(this.statusText);
-            } else {
-              var data = JSON.parse(this.responseText);
-              _parseEndURLAndSetSelectBox(data.endURL);
-              $('#responseCount').text(data.responseCount);
-              if (data.stimuliGroups) {
-                var num = data.stimuliGroups.length;
-                stimuliData = data.stimuliGroups;
-                for (var i=0; i < num; i++) {
-                  insertGroup(i,data.stimuliGroups[i].groupName,data.stimuliGroups[i].stimuli,data.stimuliGroups[i].randomize,data.stimuliGroups[i].group_id);
-                }
-              } else {
-                addNoGroup();
+      function requestStimuliSet () {
+        $.ajax({
+          url:"requestStimuliSet.php",
+          type:"POST",
+          data:{
+            stim_set:set
+          },
+          success:function (received_data, textStatus, XMLHttpRequest) {
+            var data = JSON.parse(received_data);
+            _parseEndURLAndSetSelectBox(data.endURL);
+            $('#responseCount').text(data.responseCount);
+            if (data.stimuliGroups) {
+              var num = data.stimuliGroups.length;
+              stimuliData = data.stimuliGroups;
+              for (var i=0; i < num; i++) {
+                insertGroup(i,data.stimuliGroups[i].groupName,data.stimuliGroups[i].stimuli,data.stimuliGroups[i].randomize,data.stimuliGroups[i].group_id);
               }
+            } else {
+              addNoGroup();
             }
+          },
+          error:function (XMLHttpRequest, textStatus, errorThrown) {
+            alert("Error requesting stimuli data. Please check your network connection.");
           }
-        };
-        xmlhttp.open("POST","requestStimuliSet.php",true);
-        xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xmlhttp.setRequestHeader("Content-length", parameters.length);
-        xmlhttp.setRequestHeader("Connection", "close");
-        xmlhttp.send(parameters);
+        });
       }
       function _parseEndURLAndSetSelectBox(url) {
         url.toLowerCase();
@@ -432,50 +423,37 @@
         cell.appendChild(maskingButton);
         cell.appendChild(document.createTextNode("Mask"));
       }
-      function addGroupRow (name) {
-        var stimuliTable = document.getElementById('stimuliBody');
-        var row = document.createElement('tr');
-        var disclosureCell = document.createElement('td'); //TODO add disclosure functionality for groups
-        var nameCell = document.createElement('td');
-        nameCell.appendChild(document.createTextNode(name));
-        row.appendChild(disclosureCell);
-        row.appendChild(nameCell);
-        stimuliTable.appendChild(row);
-      }
       function insert_row(index) {
         alert("insert row at " + index);
       }
-      function make_row_editable(evt) {
-        //TODO disable all other edit buttons
+      function make_row_editable(stimulusRow) {
         //TODO make this work for instruction rows. also. make it possible to switch.
-        var stimulusTable = this.parentNode.parentNode.childNodes[1].childNodes[0];
+        var $stimulusTable = $(stimulusRow).find('table');
         var row = 0;
-        if (stimulusTable.rows) {
+        if ($stimulusTable.find('tr').length > 0) {
           while (row < 2) {
             var cell = 0;
-            while (cell < stimulusTable.rows[row].cells.length) {
-              var text = stimulusTable.rows[row].cells[cell].childNodes[0].textContent;
-              stimulusTable.rows[row].cells[cell].removeChild(stimulusTable.rows[row].cells[cell].childNodes[0]);
-              var elem = document.createElement('input');
-              elem.type = 'text';
-              elem.value = text;
-              stimulusTable.rows[row].cells[cell].appendChild(elem);
+            while (cell < $stimulusTable.find('tr').eq(row).find('td').length) {
+              var text = $stimulusTable.find('tr').eq(row).find('td').eq(cell).text();
+              $stimulusTable.find('tr').eq(row).find('td').eq(cell).text('');
+              var $elem = $('<input>').attr('type','text').val(text);
+              $stimulusTable.find('tr').eq(row).find('td').eq(cell).append($elem);
               cell++;
             }
             row++;
           }
-          $(stimulusTable).find('input[name="correct"]').removeAttr('disabled');
+          $stimulusTable.find('input[name="correct"]').removeAttr('disabled');
         } else {
           var text = stimulusTable.textContent;
           var elem = document.createElement('input');
           elem.type = 'text';
           elem.value = text;
-          stimulusTable.parentNode.appendChild(elem);
+          $(stimulusTable).parentNode.appendChild(elem);
           stimulusTable.parentNode.removeChild(stimulusTable);
         }
-        addOptionsCell(this.parentNode.parentNode.childNodes[1].childNodes[0]);
-        this.onclick = make_row_uneditable;
-        this.innerHTML = "Save";
+        addOptionsCell($stimulusTable.get(0));
+        $button = $(stimulusRow).find('button').eq(0);
+        $button.click(make_row_uneditable).html("Save");
       }
       function make_row_uneditable(evt) {
         //TODO reenable all edit buttons
@@ -516,7 +494,7 @@
         } else if (set === "new experiment") {
           new_experiment();
         } else {
-          requestStimuliSet("set=" + set);
+          requestStimuliSet();
           $('#experiment_action_selector').removeAttr("disabled");
           $('#end_of_experiment_selector').removeAttr("disabled");
         }
