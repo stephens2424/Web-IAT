@@ -257,7 +257,7 @@
         // edit cell
         var editCell = stimulusRow.insertCell(2);
         var button = document.createElement('button');
-        button.onclick = make_row_editable;
+        $(button).click(make_row_editable);
         button.innerHTML = "Edit";
         editCell.appendChild(button);
 
@@ -426,9 +426,9 @@
       function insert_row(index) {
         alert("insert row at " + index);
       }
-      function make_row_editable(stimulusRow) {
+      function make_row_editable() {
         //TODO make this work for instruction rows. also. make it possible to switch.
-        var $stimulusTable = $(stimulusRow).find('table');
+        var $stimulusTable = $(this).closest('table').find('table');
         var row = 0;
         if ($stimulusTable.find('tr').length > 0) {
           while (row < 2) {
@@ -444,16 +444,16 @@
           }
           $stimulusTable.find('input[name="correct"]').removeAttr('disabled');
         } else {
-          var text = stimulusTable.textContent;
+          var text = $stimulusTable.text();
           var elem = document.createElement('input');
           elem.type = 'text';
           elem.value = text;
-          $(stimulusTable).parentNode.appendChild(elem);
-          stimulusTable.parentNode.removeChild(stimulusTable);
+          $stimulusTable.parent().append(elem);
+          $stimulusTable.remove();
         }
         addOptionsCell($stimulusTable.get(0));
-        $button = $(stimulusRow).find('button').eq(0);
-        $button.click(make_row_uneditable).html("Save");
+        var $button = $stimulusTable.closest('tr').find('button').eq(0);
+        $button.unbind('click').click(make_row_uneditable).html("Save");
       }
       function make_row_uneditable(evt) {
         //TODO reenable all edit buttons
