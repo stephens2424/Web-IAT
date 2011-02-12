@@ -5,6 +5,10 @@
     <title></title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript"></script>
     <script type="text/javascript">
+      $(document).ready(function() {
+        console.log("Running with jQuery version:" + $().jquery);
+        experiment_change();
+      });
       var stimuliData;
       var set;
       var groupOptions = {
@@ -702,7 +706,7 @@
       }
     </style>
   </head>
-  <body onload="experiment_change();">
+  <body>
     <fieldset>
       <legend>
         <select id="experiment_selector" onchange="experiment_change();">
