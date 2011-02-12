@@ -5,6 +5,10 @@
     <title></title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript"></script>
     <script type="text/javascript">
+      $(document).ready(function() {
+        console.log("Running with jQuery version:" + $().jquery);
+        experiment_change();
+      });
       var stimuliData;
       var set;
       var groupOptions = {
@@ -257,7 +261,7 @@
         // edit cell
         var editCell = stimulusRow.insertCell(2);
         var button = document.createElement('button');
-        button.onclick = make_row_editable;
+        $(button).click(make_row_editable);
         button.innerHTML = "Edit";
         editCell.appendChild(button);
 
@@ -274,10 +278,13 @@
         addBelowOption.appendChild(document.createTextNode("Add Row Below"));
         var copyOption = document.createElement('option');
         copyOption.appendChild(document.createTextNode("Copy"));
+        var quickBulkCopyOption = document.createElement('option');
+        quickBulkCopyOption.appendChild(document.createTextNode("Quick Bulk Copy"));
         selectBox.appendChild(noOption);
         selectBox.appendChild(removeOption);
         selectBox.appendChild(addAboveOption);
         selectBox.appendChild(addBelowOption);
+        selectBox.appendChild(quickBulkCopyOption);
         selectBox.onchange = function () {handleRowAction(selectBox);};
         selectBoxCell.appendChild(selectBox);
         return stimulusRow;
@@ -317,11 +324,37 @@
             selectBox.selectedIndex = 0;
             break;
           case 4:
-            alert("copy");
+            quickCopyUsing($(selectBox).closest('tr'));
             selectBox.selectedIndex = 0;
             break;
           default:
             selectBox.selectedIndex = 0;
+        }
+      }
+      function quickCopyUsing($row) {
+        var newWord = prompt("Enter new stimulus word. Press escape or cancel to discontinue.");
+        if (newWord === null || newWord === "") {
+          alert("Quick Copy Cancelled");
+        } else {
+          $.ajax({
+              type:"POST",
+              url:"insertNewStimulus.php",
+              data:{
+                below:true,
+                group:$row.parent().closest('tr').parent().closest('tr').find('th').eq(2).text(),
+                position:$row.index(),
+                stim_set:set,
+                copy:true,
+                newWord:newWord
+              },
+              success:function (received_data) {
+                var data = JSON.parse(received_data)[0];
+                stimuliData[$row.parent().closest('tr').index()].stimuli.splice($row.index(),0,data);
+                var $newRow = $(createStimulusRow(data.stim_id,data.category1,data.category2,data.subcategory1,data.subcategory2,data.word,data.correct_response,data.instruction));
+                $row.after($newRow);
+                quickCopyUsing($newRow);
+              }
+            });
         }
       }
       function remove_row (row) {
@@ -366,7 +399,7 @@
         if (instruction == null || instruction == '') {
           var $table = $('<table>'), $row0 = $('<tr>'), $row1 = $('<tr>'), $row2 = $('<tr>');
           var $t0x0 = $('<td>').text(cat1);
-          var $t0x1 = $('<td>').text(word).attr('rowspan',2);
+          var $t0x1 = $('<td>').attr('rowspan',2).text(word);
           var $t0x2 = $('<td>').text(cat2);
           var $t1x0 = $('<td>').text(subcat1);
           var $t1x2 = $('<td>').text(subcat2);
@@ -426,9 +459,9 @@
       function insert_row(index) {
         alert("insert row at " + index);
       }
-      function make_row_editable(stimulusRow) {
+      function make_row_editable() {
         //TODO make this work for instruction rows. also. make it possible to switch.
-        var $stimulusTable = $(stimulusRow).find('table');
+        var $stimulusTable = $(this).closest('tr').find('table');
         var row = 0;
         if ($stimulusTable.find('tr').length > 0) {
           while (row < 2) {
@@ -444,16 +477,16 @@
           }
           $stimulusTable.find('input[name="correct"]').removeAttr('disabled');
         } else {
-          var text = stimulusTable.textContent;
+          var text = $stimulusTable.text();
           var elem = document.createElement('input');
           elem.type = 'text';
           elem.value = text;
-          $(stimulusTable).parentNode.appendChild(elem);
-          stimulusTable.parentNode.removeChild(stimulusTable);
+          $stimulusTable.parent().append(elem);
+          $stimulusTable.remove();
         }
         addOptionsCell($stimulusTable.get(0));
-        $button = $(stimulusRow).find('button').eq(0);
-        $button.click(make_row_uneditable).html("Save");
+        var $button = $stimulusTable.closest('tr').find('button').eq(0);
+        $button.unbind('click').click(make_row_uneditable).html("Save");
       }
       function make_row_uneditable(evt) {
         //TODO reenable all edit buttons
@@ -702,7 +735,7 @@
       }
     </style>
   </head>
-  <body onload="experiment_change();">
+  <body>
     <fieldset>
       <legend>
         <select id="experiment_selector" onchange="experiment_change();">
