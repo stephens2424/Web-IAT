@@ -366,7 +366,7 @@
         if (instruction == null || instruction == '') {
           var $table = $('<table>'), $row0 = $('<tr>'), $row1 = $('<tr>'), $row2 = $('<tr>');
           var $t0x0 = $('<td>').text(cat1);
-          var $t0x1 = $('<td>').text(word).attr('rowspan',2);
+          var $t0x1 = $('<td>').attr('rowspan',2).text(word);
           var $t0x2 = $('<td>').text(cat2);
           var $t1x0 = $('<td>').text(subcat1);
           var $t1x2 = $('<td>').text(subcat2);
