@@ -432,7 +432,7 @@
       }
       function make_row_editable() {
         //TODO make this work for instruction rows. also. make it possible to switch.
-        var $stimulusTable = $(this).closest('table').find('table');
+        var $stimulusTable = $(this).closest('tr').find('table');
         var row = 0;
         if ($stimulusTable.find('tr').length > 0) {
           while (row < 2) {
