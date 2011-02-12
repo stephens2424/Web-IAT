@@ -278,10 +278,13 @@
         addBelowOption.appendChild(document.createTextNode("Add Row Below"));
         var copyOption = document.createElement('option');
         copyOption.appendChild(document.createTextNode("Copy"));
+        var quickBulkCopyOption = document.createElement('option');
+        quickBulkCopyOption.appendChild(document.createTextNode("Quick Bulk Copy"));
         selectBox.appendChild(noOption);
         selectBox.appendChild(removeOption);
         selectBox.appendChild(addAboveOption);
         selectBox.appendChild(addBelowOption);
+        selectBox.appendChild(quickBulkCopyOption);
         selectBox.onchange = function () {handleRowAction(selectBox);};
         selectBoxCell.appendChild(selectBox);
         return stimulusRow;
@@ -321,11 +324,37 @@
             selectBox.selectedIndex = 0;
             break;
           case 4:
-            alert("copy");
+            quickCopyUsing($(selectBox).closest('tr'));
             selectBox.selectedIndex = 0;
             break;
           default:
             selectBox.selectedIndex = 0;
+        }
+      }
+      function quickCopyUsing($row) {
+        var newWord = prompt("Enter new stimulus word. Press escape or cancel to discontinue.");
+        if (newWord === null || newWord === "") {
+          alert("Quick Copy Cancelled");
+        } else {
+          $.ajax({
+              type:"POST",
+              url:"insertNewStimulus.php",
+              data:{
+                below:true,
+                group:$row.parent().closest('tr').parent().closest('tr').find('th').eq(2).text(),
+                position:$row.index(),
+                stim_set:set,
+                copy:true,
+                newWord:newWord
+              },
+              success:function (received_data) {
+                var data = JSON.parse(received_data)[0];
+                stimuliData[$row.parent().closest('tr').index()].stimuli.splice($row.index(),0,data);
+                var $newRow = $(createStimulusRow(data.stim_id,data.category1,data.category2,data.subcategory1,data.subcategory2,data.word,data.correct_response,data.instruction));
+                $row.after($newRow);
+                quickCopyUsing($newRow);
+              }
+            });
         }
       }
       function remove_row (row) {
