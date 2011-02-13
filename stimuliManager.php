@@ -342,7 +342,7 @@
             word:$table.find('input').eq(0).val(),
             mask:$table.find('input').eq(3).attr('checked') === true ? 1 : 0,
             stim_id:$row.closest('tr').find('img').attr('alt'),
-            correct:$table.find('input[name="correct"]').eq(0).attr('checked') == true ? '0' : ($table.find('input[name="correct"]').eq(1).attr('checked') == true ? '1' : 'NULL')
+            correct:$table.find('input[name|="correct"]').eq(0).attr('checked') == true ? '0' : ($table.find('input[name|="correct"]').eq(1).attr('checked') == true ? '1' : 'NULL')
           },
           success:function (data, textStatus, XMLHttpRequest) {
             var stimuli = JSON.parse(data);
@@ -363,7 +363,7 @@
 
         //stimulus cell
         var stimulusCell = stimulusRow.insertCell(1);
-        $(stimulusCell).append($(createStimulusTable(cat1,cat2,subcat1,subcat2,word,correct,instruction)));
+        $(stimulusCell).append($(createStimulusTable(cat1,cat2,subcat1,subcat2,word,correct,instruction,stim_id)));
 
         // edit cell
         var editCell = stimulusRow.insertCell(2);
@@ -522,7 +522,7 @@
         }
         return $selectBox;
       }
-      function createStimulusTable (cat1,cat2,subcat1,subcat2,word,correct,instruction) {
+      function createStimulusTable (cat1,cat2,subcat1,subcat2,word,correct,instruction,id) {
         if (instruction == null || instruction == '') {
           var $table = $('<table>'), $row0 = $('<tr>'), $row1 = $('<tr>'), $row2 = $('<tr>');
           var $t0x0 = $('<td>').append(createCategorySelectBox(cat1));
@@ -530,9 +530,9 @@
           var $t0x2 = $('<td>').append(createCategorySelectBox(cat2));
           var $t1x0 = $('<td>').append(createCategorySelectBox(subcat1));
           var $t1x2 = $('<td>').append(createCategorySelectBox(subcat2));
-          var $t2x0 = $('<td>').append($('<input>').attr('type','radio').attr('name','correct').attr('value','0').attr('disabled','true'));
+          var $t2x0 = $('<td>').append($('<input>').attr('type','radio').attr('name','correct-'+id).attr('value','0').attr('disabled','true'));
           var $t2x1 = $('<td>').text("Correct");
-          var $t2x2 = $('<td>').append($('<input>').attr('type','radio').attr('name','correct').attr('value','1').attr('disabled','true'));
+          var $t2x2 = $('<td>').append($('<input>').attr('type','radio').attr('name','correct-'+id).attr('value','1').attr('disabled','true'));
           if (correct === '0') {
             $t2x0.children('input').attr('checked','true');
           } else if (correct === '1') {
@@ -595,7 +595,7 @@
           $stimulusTable.find('tr').eq(0).find('td').eq(1).text('');
           var $elem = $('<input>').attr('type','text').val(text);
           $stimulusTable.find('tr').eq(0).find('td').eq(1).append($elem);
-          $stimulusTable.find('input[name="correct"]').removeAttr('disabled');
+          $stimulusTable.find('input[name|="correct"]').removeAttr('disabled');
         } else {
           var text = $stimulusTable.text();
           var elem = document.createElement('input');
