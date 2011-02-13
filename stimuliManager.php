@@ -3,13 +3,14 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title></title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.min.js" type="text/javascript"></script>
     <script type="text/javascript">
       $(document).ready(function() {
         console.log("Running with jQuery version:" + $().jquery);
         experiment_change();
       });
       var stimuliData;
+      var stimuliCategories;
       var set;
       var groupOptions = {
         def : "Group Actions",
@@ -19,7 +20,8 @@
         remove : "Remove Group"
       };
       function requestStimuliSet () {
-        $.ajax({
+        requestCategories(set).success(function () {
+          $.ajax({
           url:"requestStimuliSet.php",
           type:"POST",
           data:{
@@ -41,6 +43,25 @@
           },
           error:function (XMLHttpRequest, textStatus, errorThrown) {
             alert("Error requesting stimuli data. Please check your network connection.");
+          }
+        })});
+      }
+      function requestCategories(_set) {
+        return $.ajax({
+          url:"requestStimuliCategories.php",
+          type:"POST",
+          data:{
+            set:_set
+          },
+          success:function (received_data, textStatus, XMLHttpRequest) {
+            stimuliCategories = JSON.parse(received_data);
+            $('.stimuliCategorySelectBox').each(function (index,element) {
+              var $element = $(element);
+              $element.children().remove()
+              for (var i = 0; i < stimuliCategories.length; i++) {
+                $element.append($('<option>').attr('value',stimuliCategories[i].id).text(stimuliCategories[i].name));
+              }
+            });
           }
         });
       }
@@ -228,12 +249,12 @@
           type:"POST",
           url:"updateStimulus.php",
           data:{
-            leftCategory:$table.find('input').eq(0).val(),
-            rightCategory:$table.find('input').eq(2).val(),
-            subLeftCategory:$table.find('input').eq(6).val(),
-            subRightCatebory:$table.find('input').eq(7).val(),
-            word:$table.find('input').eq(1).val(),
-            mask:$table.find('input').eq(5).attr('checked') === true ? 1 : 0,
+            leftCategory:$table.find('select option:selected').eq(0).val(),
+            rightCategory:$table.find('select option:selected').eq(1).val(),
+            subLeftCategory:$table.find('select option:selected').eq(2).val(),
+            subRightCategory:$table.find('select option:selected').eq(3).val(),
+            word:$table.find('input').eq(0).val(),
+            mask:$table.find('input').eq(3).attr('checked') === true ? 1 : 0,
             stim_id:$row.closest('tr').find('img').attr('alt'),
             correct:$table.find('input[name="correct"]').eq(0).attr('checked') == true ? '0' : ($table.find('input[name="correct"]').eq(1).attr('checked') == true ? '1' : 'NULL')
           },
@@ -395,14 +416,31 @@
         $row.click(function() {replaceRowWithNewStimulus($row)});
         $table.append($row.append($('<td>Empty Group. Click here to add a stimulus</td>').attr("colspan",4)));
       }
+      function createCategorySelectBox(selectedId) {
+        var $selectBox = $('<select>').attr('disabled','true');
+        $selectBox.append($('<option>').attr('value','0'));
+        var anythingSelected = false;
+        for (var i = 0; i < stimuliCategories.length; i++) {
+          var $newOption = $('<option>').attr('value',stimuliCategories[i].id).text(stimuliCategories[i].name);
+          if (selectedId === stimuliCategories[i].id) {
+            $newOption.attr('selected','selected')
+            anythingSelected = true;
+          }
+          $selectBox.append($newOption);
+        }
+        if (anythingSelected === false) {
+          $selectBox.find('option').eq(0).attr('selected','selected');
+        }
+        return $selectBox;
+      }
       function createStimulusTable (cat1,cat2,subcat1,subcat2,word,correct,instruction) {
         if (instruction == null || instruction == '') {
           var $table = $('<table>'), $row0 = $('<tr>'), $row1 = $('<tr>'), $row2 = $('<tr>');
-          var $t0x0 = $('<td>').text(cat1);
+          var $t0x0 = $('<td>').append(createCategorySelectBox(cat1));
           var $t0x1 = $('<td>').attr('rowspan',2).text(word);
-          var $t0x2 = $('<td>').text(cat2);
-          var $t1x0 = $('<td>').text(subcat1);
-          var $t1x2 = $('<td>').text(subcat2);
+          var $t0x2 = $('<td>').append(createCategorySelectBox(cat2));
+          var $t1x0 = $('<td>').append(createCategorySelectBox(subcat1));
+          var $t1x2 = $('<td>').append(createCategorySelectBox(subcat2));
           var $t2x0 = $('<td>').append($('<input>').attr('type','radio').attr('name','correct').attr('value','0').attr('disabled','true'));
           var $t2x1 = $('<td>').text("Correct");
           var $t2x2 = $('<td>').append($('<input>').attr('type','radio').attr('name','correct').attr('value','1').attr('disabled','true'));
@@ -462,19 +500,12 @@
       function make_row_editable() {
         //TODO make this work for instruction rows. also. make it possible to switch.
         var $stimulusTable = $(this).closest('tr').find('table');
-        var row = 0;
         if ($stimulusTable.find('tr').length > 0) {
-          while (row < 2) {
-            var cell = 0;
-            while (cell < $stimulusTable.find('tr').eq(row).find('td').length) {
-              var text = $stimulusTable.find('tr').eq(row).find('td').eq(cell).text();
-              $stimulusTable.find('tr').eq(row).find('td').eq(cell).text('');
-              var $elem = $('<input>').attr('type','text').val(text);
-              $stimulusTable.find('tr').eq(row).find('td').eq(cell).append($elem);
-              cell++;
-            }
-            row++;
-          }
+          $stimulusTable.find('select').removeAttr('disabled');
+          var text = $stimulusTable.find('tr').eq(0).find('td').eq(1).text();
+          $stimulusTable.find('tr').eq(0).find('td').eq(1).text('');
+          var $elem = $('<input>').attr('type','text').val(text);
+          $stimulusTable.find('tr').eq(0).find('td').eq(1).append($elem);
           $stimulusTable.find('input[name="correct"]').removeAttr('disabled');
         } else {
           var text = $stimulusTable.text();
@@ -773,7 +804,13 @@
       </select><span id="end_of_experiment_zone"></span>
       <p>
         Active: <span id="active"></span><br>
-        Responses: <span id="responseCount"></span>
+        Responses: <span id="responseCount"></span><br>
+        Stimulus Categories:
+        <select id="categorySelectBox" class="stimuliCategorySelectBox" onchange="handle_category_change()">
+          <option>Categories</option>
+        </select>
+        <button id="addCategoryButton" onclick="add_category()">Add Category</button>
+        <button id="removeCategoryButton" onclick="remove_category()">Remove Category</button>
       </p>
     </fieldset>
     <fieldset><legend>Stimuli</legend>
