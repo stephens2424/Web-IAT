@@ -422,13 +422,15 @@
         $selectBox.addClass('stimuliCategorySelectBox');
         $selectBox.append($('<option>').attr('value','0'));
         var anythingSelected = false;
-        for (var i = 0; i < stimuliCategories.length; i++) {
-          var $newOption = $('<option>').attr('value',stimuliCategories[i].id).text(stimuliCategories[i].name);
-          if (selectedId === stimuliCategories[i].id) {
-            $newOption.attr('selected','selected')
-            anythingSelected = true;
+        if (stimuliCategories !== null) {
+          for (var i = 0; i < stimuliCategories.length; i++) {
+            var $newOption = $('<option>').attr('value',stimuliCategories[i].id).text(stimuliCategories[i].name);
+            if (selectedId === stimuliCategories[i].id) {
+              $newOption.attr('selected','selected')
+              anythingSelected = true;
+            }
+            $selectBox.append($newOption);
           }
-          $selectBox.append($newOption);
         }
         if (anythingSelected === false) {
           $selectBox.find('option').eq(0).attr('selected','selected');
