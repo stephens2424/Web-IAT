@@ -6,10 +6,22 @@
       var successfulResponses = 0;
       var responses = 0;
       var totalStimuli = 0;
+      var endURL;
     <?php
       //TODO add web management tool for stimuli
       //TODO figure out how to make this full screen
       $development = false;
+      include 'connect.php';
+      if (isset($_GET['qid'])) {
+        $qid = $_GET['qid'];
+        $query = "INSERT INTO subjects (`qualtrics_id`) VALUES ($qid)";
+      } else {
+        $query = "INSERT INTO subjects VALUES ()";
+      }
+      $result = mysql_query($query);
+      $subj = mysql_insert_id();
+      printf("var subj=%d;\n", $subj);
+      mysql_close();
       ?>
         function load() {
           $.ajax({
@@ -19,7 +31,12 @@
             },
             type:"POST",
             success:function (data, textStatus, XMLHttpRequest) {
-              stimuliData = JSON.parse(data);
+              var upperData = JSON.parse(data);
+              endURL = upperData.endURL;
+              if (endURL.substr(0,34) === "http://ucla.qualtrics.com/SE/?SID=") {
+                endURL += "&iat-id=" + subj;
+              }
+              stimuliData = upperData.stimuli;
               for (var i = 0; i < stimuliData.length; i++) {
                 totalStimuli += stimuliData[i].stimulus.length;
               }
@@ -32,14 +49,6 @@
             }
           });
         }
-    <?
-      include 'connect.php';
-      $query = "INSERT INTO subjects VALUES ()"; //TODO make sure that the timezone for the beginTime inserted into the database will be consistent/understandable
-      $result = mysql_query($query);
-      $subj = mysql_insert_id();
-      printf("var subj=%d;\n", $subj);
-      mysql_close();
-    ?>
         var wordNum = 0;
         var groupNum = 0;
         var instruction = false;
@@ -145,7 +154,7 @@
           success:function (data, textStatus, XMLHttpRequest) {
             successfulResponses++;
             responses++;
-            if (responses >= totalStimuli) {location.href="<?php if ($development) { echo "results.php?subj=$subj"; } else { echo "thankyou.php"; } ?>";}
+            if (responses >= totalStimuli) {location.href=endURL;}
           },
           error:function (XMLHttpRequest, textStatus, errorThrown) {
             responses++;

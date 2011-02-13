@@ -8,7 +8,8 @@
   $instruction = $_POST['instruction'];
   $stim_id = $_POST['stim_id'];
   $mask = $_POST['mask'];
-  $query = "UPDATE stimuli SET category1='$cat1',category2='$cat2',subcategory1='$subcat1',subcategory2='$subcat2',word='$word',instruction='$instruction',mask=$mask WHERE stimulus_id=$stim_id";
+  $correct = $_POST['correct'];
+  $query = "UPDATE stimuli SET category1='$cat1',category2='$cat2',subcategory1='$subcat1',subcategory2='$subcat2',word='$word',instruction='$instruction',mask=$mask,correct_response=$correct WHERE stimulus_id=$stim_id";
   mysql_query($query);
   $query = "SELECT stimulus_id,category1,category2,subcategory1,subcategory2,word,correct_response,instruction,mask FROM stimuli WHERE `stimulus_id`=$stim_id";
   $result = mysql_query($query);
