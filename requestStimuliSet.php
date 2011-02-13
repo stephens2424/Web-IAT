@@ -26,6 +26,7 @@
       "group_id" => $group,
       "randomize" => mysql_result($result,$row,"randomize"),
       "groupName" => mysql_result($result,$row,"name"),
+      "stage" => mysql_result($result,$row,"stage"),
       "stimuli" => $array ? $array : array()
     );
     unset($array);

@@ -19,6 +19,14 @@
         addBelow : "Add Group Below",
         remove : "Remove Group"
       };
+      var groupStages = {
+        0 : "No Greenwald Stage",
+        3 : "Greenwald Stage 3",
+        4 : "Greenwald Stage 4",
+        6 : "Greenwald Stage 6",
+        7 : "Greenwald Stage 7",
+        help : "What is this?"
+      }
       function requestStimuliSet () {
         requestCategories(set).success(function () {
           $.ajax({
@@ -35,7 +43,7 @@
                 var num = data.stimuliGroups.length;
                 stimuliData = data.stimuliGroups;
                 for (var i=0; i < num; i++) {
-                  insertGroup(i,data.stimuliGroups[i].groupName,data.stimuliGroups[i].stimuli,data.stimuliGroups[i].randomize,data.stimuliGroups[i].group_id);
+                  insertGroup(i,data.stimuliGroups[i].groupName,data.stimuliGroups[i].stage,data.stimuliGroups[i].stimuli,data.stimuliGroups[i].randomize,data.stimuliGroups[i].group_id);
                 }
               } else {
                 addNoGroup();
@@ -101,23 +109,36 @@
           stimuliData = new Array(data);
         });
       }
-      function insertGroup (atPosition,name,content,randomize,groupId) {
+      function insertGroup (atPosition,name,stage,content,randomize,groupId) {
         var $row = $('#stimuliBody').children().eq(atPosition);
-        var newRow = _createGroupRow(name,content,randomize,groupId,atPosition);
+        var newRow = _createGroupRow(name,stage,content,randomize,groupId,atPosition);
         if ($row.size() <= atPosition) {
           $('#stimuliBody').append(newRow);
         } else {
           $row.before(newRow);
         }
       }
-      function _createGroupRow (name,content,randomize,groupId,groupNum) {
+      function _createGroupRow (name,stage,content,randomize,groupId,groupNum) {
         var body = $('<tr>').appendTo($('<tbody>')).append('<td>').append($('<td>').attr('colspan','2').append(_createGroupContent(content)));
         var disclose = $('<input>').attr('type','image').click(function () {discloseGroupToggle(body)}).attr('src','disclosureTriangle.png');
         var $actions = _createGroupActionsSelectBox();
-        var head = $('<thead>').append($('<th>').append(disclose)).append('<th>' + name + '</th>').append($('<th>' + groupId + '</th>').attr('style','display:none')).append($('<th>').append($actions)).append($("<th>").append($('<input>').attr("type","checkbox").attr("checked",((randomize === "1") ? true : false)).click(function () {toggleGroupRandomization(groupNum,groupId)})).append(" Randomize"));
+        var $stages = _createGroupStageSelectBox(stage);
+        var head = $('<thead>').append($('<th>').append(disclose)).append('<th>' + name + '</th>').append($('<th>' + groupId + '</th>').attr('style','display:none')).append($('<th>').append($stages)).append($('<th>').append($actions)).append($("<th>").append($('<input>').attr("type","checkbox").attr("checked",((randomize === "1") ? true : false)).click(function () {toggleGroupRandomization(groupNum,groupId)})).append(" Randomize"));
         var table = $('<table>').append(head).append(body);
         var tableRow = $('<tr>').append(table);
         return tableRow;
+      }
+      function _createGroupStageSelectBox(stage) {
+        var $stages = $('<select>');
+        $.each(groupStages,function (val,text) {
+          var $option = $('<option></option>').val(val).html(text);
+          if (val === stage) {
+            $option.attr('selected',true);
+          }
+          $stages.append($option);
+        });
+        $stages.change(function () {handleStageChange(this);});
+        return $stages;
       }
       function _createGroupActionsSelectBox() {
         var $actions = $('<select>');
@@ -236,6 +257,70 @@
             selectBox.selectedIndex = 0;
             break;
         }
+      }
+      function handleStageChange (selectBox) {
+        var groupId = $(selectBox).closest('th').siblings().eq(2).text();
+        switch (selectBox.selectedIndex) {
+          case 0: {
+              setGroupStage(groupId,'0');
+              break;
+          }
+          case 1: {
+              setGroupStage(groupId,'3');
+              break;
+          }
+          case 2: {
+              setGroupStage(groupId,'4');
+              break;
+          }
+          case 3: {
+              setGroupStage(groupId,'6');
+              break;
+          }
+          case 4: {
+              setGroupStage(groupId,'7');
+              break;
+          }
+          case 5: {
+              alert("These stages correspond to Anthony Greenwald's general IAT instructions. See http://faculty.washington.edu/agg/pdf/GB&N.JPSP.2003.pdf for more information.");
+              requestAndSetGroupStage(groupId,selectBox);
+              break;
+          }
+        }
+      }
+      function requestAndSetGroupStage (groupId,selectBox) {
+        $.get("getGroupStage.php",{
+          group:groupId
+        },function (data, textStatus, jqXHR) {
+          switch (data) {
+            case '3': {
+                selectBox.selectedIndex = 1;
+                break;
+            }
+            case '4': {
+                selectBox.selectedIndex = 2;
+                break;
+            }
+            case '6': {
+                selectBox.selectedIndex = 3;
+                break;
+            }
+            case '7': {
+                selectBox.selectedIndex = 4;
+                break;
+            }
+            default: {
+                selectBox.selectedIndex = 0;
+                break;
+            }
+          }
+        });
+      }
+      function setGroupStage (groupId,stage) {
+        $.get("setGroupStage.php",{
+          group:groupId,
+          stage:stage
+        });
       }
       function _createStimulusRow (data) {
         return createStimulusRow(data.stim_id,data.category1,data.category2,data.subcategory1,data.subcategory2,data.word,data.correct_response,data.instruction);
