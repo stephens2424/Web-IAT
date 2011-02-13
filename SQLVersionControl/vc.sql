@@ -122,7 +122,7 @@ CREATE TABLE `stimuliGroups` (
   `stage` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `stimuliSet` (`stimuliSet`)
-) ENGINE=MyISAM AUTO_INCREMENT=71 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=85 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -131,7 +131,7 @@ CREATE TABLE `stimuliGroups` (
 
 LOCK TABLES `stimuliGroups` WRITE;
 /*!40000 ALTER TABLE `stimuliGroups` DISABLE KEYS */;
-INSERT INTO `stimuliGroups` VALUES (3,2,1,'group1','\0',NULL),(4,2,2,'','\0',NULL),(63,1,0,'New Group','\0',3),(64,1,1,'New Group','\0',NULL),(65,14,0,'New Group','\0',NULL),(66,14,5,'New Group','\0',3),(70,14,1,'New Group','\0',NULL);
+INSERT INTO `stimuliGroups` VALUES (3,2,1,'group1','\0',NULL),(4,2,1,'','\0',NULL),(63,1,0,'New Group','\0',3),(64,1,1,'New Group','\0',NULL),(65,14,0,'First','\0',NULL),(79,14,2,'Test 1','\0',NULL),(82,14,1,'Test 2','\0',NULL);
 /*!40000 ALTER TABLE `stimuliGroups` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -194,4 +194,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2011-02-13 14:44:20
+-- Dump completed on 2011-02-13 15:21:54

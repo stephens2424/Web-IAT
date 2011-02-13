@@ -112,7 +112,7 @@
       function insertGroup (atPosition,name,stage,content,randomize,groupId) {
         var $row = $('#stimuliBody').children().eq(atPosition);
         var newRow = _createGroupRow(name,stage,content,randomize,groupId,atPosition);
-        if ($row.size() <= atPosition) {
+        if ($row.index() === -1) {
           $('#stimuliBody').append(newRow);
         } else {
           $row.before(newRow);
@@ -228,11 +228,11 @@
           case 2:
             $.post("insertGroup.php",{
               set:set,
-              position:$(selectBox).parent().parent().index(),
+              position:$(selectBox).closest('tr').index(),
               below:"false"
             },function(receivedData) {
               var data = JSON.parse(receivedData);
-              insertGroup($(selectBox).parent().parent().index(),data.groupName,data.stage,data.stimuli,data.randomize,data.group_id);
+              insertGroup($(selectBox).closest('tr').index(),data.groupName,data.stage,data.stimuli,data.randomize,data.group_id);
               stimuliData.splice($(selectBox).parent().parent().index(),0,data);
             });
             selectBox.selectedIndex = 0;
@@ -240,11 +240,11 @@
           case 3:
             $.post("insertGroup.php",{
               set:set,
-              position:$(selectBox).parent().parent().index(),
+              position:$(selectBox).closest('tr').index(),
               below:"true"
             },function(receivedData) {
               var data = JSON.parse(receivedData);
-              insertGroup($(selectBox).parent().parent().index()+1,data.groupName,data.stage,data.stimuli,data.randomize,data.group_id);
+              insertGroup($(selectBox).closest('tr').index()+1,data.groupName,data.stage,data.stimuli,data.randomize,data.group_id);
               stimuliData.splice($(selectBox).parent().parent().index()+1,0,data);
             });
             selectBox.selectedIndex = 0;
