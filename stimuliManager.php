@@ -232,7 +232,7 @@
               below:"false"
             },function(receivedData) {
               var data = JSON.parse(receivedData);
-              insertGroup($(selectBox).parent().parent().index(),data.name,data.stimuli,data.randomize,data.group_id);
+              insertGroup($(selectBox).parent().parent().index(),data.groupName,data.stage,data.stimuli,data.randomize,data.group_id);
               stimuliData.splice($(selectBox).parent().parent().index(),0,data);
             });
             selectBox.selectedIndex = 0;
@@ -244,7 +244,7 @@
               below:"true"
             },function(receivedData) {
               var data = JSON.parse(receivedData);
-              insertGroup($(selectBox).parent().parent().index()+1,data.name,data.stimuli,data.randomize,data.group_id);
+              insertGroup($(selectBox).parent().parent().index()+1,data.groupName,data.stage,data.stimuli,data.randomize,data.group_id);
               stimuliData.splice($(selectBox).parent().parent().index()+1,0,data);
             });
             selectBox.selectedIndex = 0;
@@ -526,7 +526,8 @@
         if (instruction == null || instruction == '') {
           var $table = $('<table>'), $row0 = $('<tr>'), $row1 = $('<tr>'), $row2 = $('<tr>');
           var $t0x0 = $('<td>').append(createCategorySelectBox(cat1));
-          var $t0x1 = $('<td>').attr('rowspan',2).text(word);
+          var $t0x1 = $('<td>').attr('rowspan',2);
+          $t0x1.text(word);
           var $t0x2 = $('<td>').append(createCategorySelectBox(cat2));
           var $t1x0 = $('<td>').append(createCategorySelectBox(subcat1));
           var $t1x2 = $('<td>').append(createCategorySelectBox(subcat2));
