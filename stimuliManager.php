@@ -22,29 +22,29 @@
       function requestStimuliSet () {
         requestCategories(set).success(function () {
           $.ajax({
-          url:"requestStimuliSet.php",
-          type:"POST",
-          data:{
-            stim_set:set
-          },
-          success:function (received_data, textStatus, XMLHttpRequest) {
-            var data = JSON.parse(received_data);
-            _parseEndURLAndSetSelectBox(data.endURL);
-            $('#responseCount').text(data.responseCount);
-            if (data.stimuliGroups) {
-              var num = data.stimuliGroups.length;
-              stimuliData = data.stimuliGroups;
-              for (var i=0; i < num; i++) {
-                insertGroup(i,data.stimuliGroups[i].groupName,data.stimuliGroups[i].stimuli,data.stimuliGroups[i].randomize,data.stimuliGroups[i].group_id);
+            url:"requestStimuliSet.php",
+            type:"POST",
+            data:{
+              stim_set:set
+            },
+            success:function (received_data, textStatus, XMLHttpRequest) {
+              var data = JSON.parse(received_data);
+              _parseEndURLAndSetSelectBox(data.endURL);
+              $('#responseCount').text(data.responseCount);
+              if (data.stimuliGroups) {
+                var num = data.stimuliGroups.length;
+                stimuliData = data.stimuliGroups;
+                for (var i=0; i < num; i++) {
+                  insertGroup(i,data.stimuliGroups[i].groupName,data.stimuliGroups[i].stimuli,data.stimuliGroups[i].randomize,data.stimuliGroups[i].group_id);
+                }
+              } else {
+                addNoGroup();
               }
-            } else {
-              addNoGroup();
+            },
+            error:function (XMLHttpRequest, textStatus, errorThrown) {
+              alert("Error requesting stimuli data. Please check your network connection.");
             }
-          },
-          error:function (XMLHttpRequest, textStatus, errorThrown) {
-            alert("Error requesting stimuli data. Please check your network connection.");
-          }
-        })});
+          })});
       }
       function requestCategories(_set) {
         return $.ajax({
@@ -56,12 +56,13 @@
           success:function (received_data, textStatus, XMLHttpRequest) {
             stimuliCategories = JSON.parse(received_data);
             $('.stimuliCategorySelectBox').each(function (index,element) {
-              var $element = $(element);
-              $element.children().remove()
-              for (var i = 0; i < stimuliCategories.length; i++) {
-                $element.append($('<option>').attr('value',stimuliCategories[i].id).text(stimuliCategories[i].name));
-              }
+              $(element).replaceWith(createCategorySelectBox($(element).find('option:selected').eq(0).val()));
             });
+            var $newBox = createCategorySelectBox($('#categorySelectBox option:selected').val());
+            var $oldBox = $('#categorySelectBox');
+            $oldBox.removeAttr('id');
+            $newBox.removeAttr('disabled').removeClass('stimuliCategorySelectBox').attr('id','categorySelectBox').find('option:empty').remove();
+            $oldBox.replaceWith($newBox);
           }
         });
       }
@@ -418,6 +419,7 @@
       }
       function createCategorySelectBox(selectedId) {
         var $selectBox = $('<select>').attr('disabled','true');
+        $selectBox.addClass('stimuliCategorySelectBox');
         $selectBox.append($('<option>').attr('value','0'));
         var anythingSelected = false;
         for (var i = 0; i < stimuliCategories.length; i++) {
@@ -637,6 +639,67 @@
             }
         }
       }
+      function handle_category_change() {
+
+      }
+      function handle_category_action() {
+        switch ($('#categoryActions').attr('selectedIndex')) {
+          case 0: {
+              $('#categoryActions').attr('selectedIndex','0');
+              break;
+            }
+          case 1: {//add category
+              var newName = prompt("Please enter a name for the new category:");
+              if (newName === null || newName === '') {
+                $('#categoryActions').attr('selectedIndex','0');
+                break;
+              }
+              $.get("addCategory.php",{
+                name:newName,
+                set:set
+              },function (data, textStatus, jqXHR) {
+                requestCategories(set);
+              }
+            );
+              $('#categoryActions').attr('selectedIndex','0');
+              break;
+            }
+          case 2: {//rename category
+              var newName = prompt("Please enter a new name for the category:");
+              if (newName === null || newName === '') {
+                $('#categoryActions').attr('selectedIndex','0');
+                break;
+              } else {
+                $.get("renameCategory.php",{
+                  name:newName,
+                  id:$('#categorySelectBox option:selected').val()
+                },function (data, textStatus, jqXHR) {
+                  requestCategories(set);
+                }
+              );
+              }
+              $('#categoryActions').attr('selectedIndex','0');
+              break;
+            }
+          case 3: {//delete category
+              var c = confirm("Are you sure you want to delete this category? This action cannot be undone.");
+              if (c === true) {
+                $.get("removeCategory.php",{
+                  id:$('#categorySelectBox option:selected').val(),
+                  set:set
+                },function (data, textStatus, jqXHR) {
+                  requestCategories(set);
+                }
+              );
+              }
+              $('#categoryActions').attr('selectedIndex','0');
+              break;
+            }
+          default : {
+              $('#categoryActions').attr('selectedIndex','0');
+            }
+        }
+      }
       function handle_end_of_experiment_change() {
         switch ($('#end_of_experiment_selector').attr('selectedIndex')) {
           case 0: {
@@ -806,11 +869,15 @@
         Active: <span id="active"></span><br>
         Responses: <span id="responseCount"></span><br>
         Stimulus Categories:
-        <select id="categorySelectBox" class="stimuliCategorySelectBox" onchange="handle_category_change()">
+        <select id="categorySelectBox" onchange="handle_category_change()">
           <option>Categories</option>
         </select>
-        <button id="addCategoryButton" onclick="add_category()">Add Category</button>
-        <button id="removeCategoryButton" onclick="remove_category()">Remove Category</button>
+        <select id="categoryActions" onchange="handle_category_action()">
+          <option>Category Actions</option>
+          <option>Add Category</option>
+          <option>Rename Category</option>
+          <option>Delete Category</option>
+        </select>
       </p>
     </fieldset>
     <fieldset><legend>Stimuli</legend>
