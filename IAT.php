@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <html>
   <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript"></script>
@@ -7,8 +8,7 @@
       var successfulResponses = 0;
       var responses = 0;
       var totalStimuli = 0;
-      var endURL;
-    <?php
+    <?
       //TODO add web management tool for stimuli
       //TODO figure out how to make this full screen
       $development = false;
@@ -21,6 +21,8 @@
       }
       $result = mysql_query($query);
       $subj = mysql_insert_id();
+      $_SESSION['subj'] = $subj;
+      $_SESSION['set'] = $_GET['s'];
       printf("var subj=%d;\n", $subj);
       mysql_close();
       ?>
@@ -33,10 +35,6 @@
             type:"POST",
             success:function (data, textStatus, XMLHttpRequest) {
               var upperData = JSON.parse(data);
-              endURL = upperData.endURL;
-              if (endURL.substr(0,34) === "http://ucla.qualtrics.com/SE/?SID=") {
-                endURL += "&iat-id=" + subj;
-              }
               stimuliData = upperData.stimuli;
               categories = upperData.categories;
               for (var i = 0; i < stimuliData.length; i++) {
@@ -161,7 +159,7 @@
           success:function (data, textStatus, XMLHttpRequest) {
             successfulResponses++;
             responses++;
-            if (responses >= totalStimuli) {location.href=endURL;}
+            if (responses >= totalStimuli) {location.href="processing.php";}
           },
           error:function (XMLHttpRequest, textStatus, errorThrown) {
             responses++;
