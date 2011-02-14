@@ -442,7 +442,6 @@
       function quickCopyUsing($row) {
         var newWord = prompt("Enter new stimulus word. Press escape or cancel to discontinue.");
         if (newWord === null || newWord === "") {
-          alert("Quick Copy Cancelled");
         } else {
           $.ajax({
               type:"POST",
@@ -494,7 +493,7 @@
         stimuliData[$(row).parent().parent().parent().parent().parent().parent().index()].stimuli.splice($(row).index(),1);
         $table = $(row).closest('table');
         row.parentNode.removeChild(row);
-        if ($table.length === 1) {
+        if ($table.length < 1) {
           addNoStimuliNoticeRow($table);
         }
       }
