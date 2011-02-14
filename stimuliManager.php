@@ -729,7 +729,7 @@
         location.href="csvGenerator.php";
       }
       function download_calculated_data() {
-        location.href="CalculatedResultsGenerator.php?set="+set;
+        location.href="BatchCalculatedResultsGenerator.php?set="+set;
       }
       function handle_category_change() {
 
