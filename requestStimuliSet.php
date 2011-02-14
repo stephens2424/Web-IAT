@@ -1,6 +1,6 @@
 <?php
   include 'connect.php';
-  $set = $_POST['set'];
+  $set = $_POST['stim_set'];
   $query = "SELECT * FROM stimuliGroups WHERE `stimuliSet`=$set ORDER BY `order` ASC";
   $result = mysql_query($query);
   for ($row = 0; $row < mysql_num_rows($result); $row++) {
@@ -26,6 +26,7 @@
       "group_id" => $group,
       "randomize" => mysql_result($result,$row,"randomize"),
       "groupName" => mysql_result($result,$row,"name"),
+      "stage" => mysql_result($result,$row,"stage"),
       "stimuli" => $array ? $array : array()
     );
     unset($array);
@@ -35,6 +36,9 @@
   $query = "SELECT COUNT(DISTINCT subj) AS responses FROM responses INNER JOIN stimuli ON responses.stimulus=stimuli.stimulus_id WHERE stimuli.`set`=$set";
   $result = mysql_query($query);
   $upperArray["responseCount"] = mysql_result($result, 0, "responses");
+  $query = "SELECT endUrl FROM experiments WHERE `stimuli_set`=$set";
+  $result = mysql_query($query);
+  $upperArray['endURL'] = mysql_result($result,0,"endUrl");
   mysql_free_result($result);
   mysql_close();
   echo json_encode($upperArray);

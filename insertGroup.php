@@ -12,7 +12,8 @@ $result = mysql_query($query);
 $array = array(
   "group_id" => $id,
   "randomize" => mysql_result($result,0,"randomize"),
-  "name" => mysql_result($result,0,"name"),
+  "groupName" => mysql_result($result,0,"name"),
+  "stage" => mysql_result($result, 0, "stage"),
   "stimuli" => array()
 );
 mysql_free_result($result);

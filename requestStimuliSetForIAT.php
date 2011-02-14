@@ -32,7 +32,16 @@
     );
     unset($array);
   }
+  $query = "SELECT name,id FROM stimulusCategories WHERE `experiment`=$set";
+  $result = mysql_query($query);
+  while ($row = mysql_fetch_assoc($result)) {
+    $categoryArray[$row['id']] = $row['name'];
+  }
+  $upperArray = array(
+    "stimuli" => $groupArray,
+    "categories" => $categoryArray
+  );
   mysql_free_result($result);
   mysql_close();
-  echo json_encode($groupArray);
+  echo json_encode($upperArray);
 ?>

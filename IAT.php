@@ -1,38 +1,64 @@
+<?php session_start(); ?>
 <html>
   <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript"></script>
     <script type="text/javascript">
       var stimuliData;
-      var done = false;
-    <?php
+      var categories;
+      var successfulResponses = 0;
+      var responses = 0;
+      var totalStimuli = 0;
+    <?
       //TODO add web management tool for stimuli
       //TODO figure out how to make this full screen
       $development = false;
-      ?>
-        function load() {
-          $.post("requestStimuliSetForIAT.php", {
-            stim_set:<? echo $_GET['s'] ?>
-          },function (receivedData) {
-            stimuliData = JSON.parse(receivedData);
-            new_word();
-          });
-        }
-    <?
       include 'connect.php';
-      $query = "INSERT INTO subjects VALUES ()"; //TODO make sure that the timezone for the beginTime inserted into the database will be consistent/understandable
+      if (isset($_GET['qid'])) {
+        $qid = $_GET['qid'];
+        $query = "INSERT INTO subjects (`qualtrics_id`) VALUES ($qid)";
+      } else {
+        $query = "INSERT INTO subjects VALUES ()";
+      }
       $result = mysql_query($query);
       $subj = mysql_insert_id();
+      $_SESSION['subj'] = $subj;
+      $_SESSION['set'] = $_GET['s'];
       printf("var subj=%d;\n", $subj);
       mysql_close();
-    ?>
+      ?>
+        function load() {
+          $.ajax({
+            url:"requestStimuliSetForIAT.php",
+            data:{
+              stim_set:<? echo $_GET['s'] ?>
+            },
+            type:"POST",
+            success:function (data, textStatus, XMLHttpRequest) {
+              var upperData = JSON.parse(data);
+              stimuliData = upperData.stimuli;
+              categories = upperData.categories;
+              for (var i = 0; i < stimuliData.length; i++) {
+                totalStimuli += stimuliData[i].stimulus.length;
+              }
+              $("#ajaxImage").remove();
+              new_word();
+            },
+            error:function (XMLHttpRequest, textStatus, errorThrown) {
+              $("#ajaxImage").remove();
+              $("#word").text("Error loading stimulus data.");
+            }
+          });
+        }
         var wordNum = 0;
         var groupNum = 0;
         var instruction = false;
-        var wordShowed;
+        var wordShowedTime;
+        var wordShowed = false;
 
         function detect_keydown ( e ) {
           //TODO add safeguard so only the proper keys trigger any changes
           var time = new Date().getTime();
+          if (!wordShowed) return;
           var keynum;
           var keychar;
           if(window.event) // IE
@@ -49,17 +75,19 @@
               break;
             case 38:
               keychar = "up";
-              break;
+              return;
             case 39:
               keychar = "right";
               break;
             case 40:
               keychar = "down";
-              break;
+              return;
             default:
-              keychar = String.fromCharCode(keynum);
+              return;
+              //keychar = String.fromCharCode(keynum);
           }
-          sendData(keychar,(time - wordShowed).toString());
+          wordShowed = false;
+          sendData(keychar,(time - wordShowedTime).toString());
           if (wordNum >= stimuliData[groupNum].stimulus.length) {
             if (groupNum >= stimuliData.length - 1) {
               done = true;
@@ -84,7 +112,7 @@
           }
           change_categories(0);
         }
-        if (stimuliData[groupNum].stimulus[wordNum].mask)
+        if (stimuliData[groupNum].stimulus[wordNum].mask === "1")
           new_word_zero();
         else
           show_new_word();
@@ -108,14 +136,19 @@
       function show_new_word () {
         document.getElementById('word').textContent = stimuliData[groupNum].stimulus[wordNum].word;
         document.getElementById('instruction').textContent = stimuliData[groupNum].stimulus[wordNum].word;
-        wordShowed = new Date().getTime();
+        wordShowedTime = new Date().getTime();
+        wordShowed = true;
         wordNum++;
       }
       function change_categories (wordNumShift) {
-        document.getElementById('catLeft').textContent = stimuliData[groupNum].stimulus[wordNum + wordNumShift].category1;
-        document.getElementById('catRight').textContent = stimuliData[groupNum].stimulus[wordNum + wordNumShift].category2;
-        document.getElementById('subCatLeft').textContent = stimuliData[groupNum].stimulus[wordNum + wordNumShift].subcategory1;
-        document.getElementById('subCatRight').textContent = stimuliData[groupNum].stimulus[wordNum + wordNumShift].subcategory2;
+        var cat1 = categories[stimuliData[groupNum].stimulus[wordNum + wordNumShift].category1];
+        var cat2 = categories[stimuliData[groupNum].stimulus[wordNum + wordNumShift].category2];
+        var subcat1 = categories[stimuliData[groupNum].stimulus[wordNum + wordNumShift].subcategory1];
+        var subcat2 = categories[stimuliData[groupNum].stimulus[wordNum + wordNumShift].subcategory2];
+        $('#catLeft').text(cat1 ? cat1 : '');
+        $('#catRight').text(cat2 ? cat2 : '');
+        $('#subCatLeft').text(subcat1 ? subcat1 : '');
+        $('#subCatRight').text(subcat2 ? subcat2 : '');
       }
 
       function sendData(response,time) {
@@ -124,9 +157,12 @@
           url:"dataHandler.php",
           data:{"response":response,"rt":time,"subj":subj,"stim":stimuliData[groupNum].stimulus[wordNum-1].stim_id},
           success:function (data, textStatus, XMLHttpRequest) {
-            if (done) {location.href="<?php if ($development) { echo "results.php?subj=$subj"; } else { echo "thankyou.php"; } ?>";}
+            successfulResponses++;
+            responses++;
+            if (responses >= totalStimuli) {location.href="processing.php";}
           },
           error:function (XMLHttpRequest, textStatus, errorThrown) {
+            responses++;
             alert("Server error: " + textStatus + "\nerror: " + errorThrown);
           }
         });
@@ -176,6 +212,9 @@
       h1.center {
         text-align: center;
       }
+      .center {
+        text-align: center;
+      }
     </style>
   </head>
   <body onkeydown="detect_keydown(event);" onload="load()">
@@ -209,7 +248,7 @@
         <tr></tr>
         <tr>
           <td colspan="2">
-            <h1 class="center" id="word">Error - No Stimulus Data</h1>
+            <span class="center" id="wordSpace"><img src="ajaxloader.gif" id="ajaxImage"><h1 id="word"></h1></span>
           </td>
         </tr>
       </table>
