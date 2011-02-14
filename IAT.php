@@ -78,15 +78,16 @@
               break;
             case 38:
               keychar = "up";
-              break;
+              return;
             case 39:
               keychar = "right";
               break;
             case 40:
               keychar = "down";
-              break;
+              return;
             default:
-              keychar = String.fromCharCode(keynum);
+              return;
+              //keychar = String.fromCharCode(keynum);
           }
           sendData(keychar,(time - wordShowedTime).toString());
           if (wordNum >= stimuliData[groupNum].stimulus.length) {
