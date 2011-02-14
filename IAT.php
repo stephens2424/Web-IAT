@@ -59,9 +59,8 @@
 
         function detect_keydown ( e ) {
           //TODO add safeguard so only the proper keys trigger any changes
-          if (!wordShowed) return;
           var time = new Date().getTime();
-          wordShowed = false;
+          if (!wordShowed) return;
           var keynum;
           var keychar;
           if(window.event) // IE
@@ -89,6 +88,7 @@
               return;
               //keychar = String.fromCharCode(keynum);
           }
+          wordShowed = false;
           sendData(keychar,(time - wordShowedTime).toString());
           if (wordNum >= stimuliData[groupNum].stimulus.length) {
             if (groupNum >= stimuliData.length - 1) {
@@ -143,10 +143,14 @@
         wordNum++;
       }
       function change_categories (wordNumShift) {
-        $('#catLeft').text(categories[stimuliData[groupNum].stimulus[wordNum + wordNumShift].category1]);
-        $('#catRight').text(categories[stimuliData[groupNum].stimulus[wordNum + wordNumShift].category2]);
-        $('#subCatLeft').text(categories[stimuliData[groupNum].stimulus[wordNum + wordNumShift].subcategory1]);
-        $('#subCatRight').text(categories[stimuliData[groupNum].stimulus[wordNum + wordNumShift].subcategory2]);
+        var cat1 = categories[stimuliData[groupNum].stimulus[wordNum + wordNumShift].category1];
+        var cat2 = categories[stimuliData[groupNum].stimulus[wordNum + wordNumShift].category2];
+        var subcat1 = categories[stimuliData[groupNum].stimulus[wordNum + wordNumShift].subcategory1];
+        var subcat2 = categories[stimuliData[groupNum].stimulus[wordNum + wordNumShift].subcategory2];
+        $('#catLeft').text(cat1 ? cat1 : '');
+        $('#catRight').text(cat2 ? cat2 : '');
+        $('#subCatLeft').text(subcat1 ? subcat1 : '');
+        $('#subCatRight').text(subcat2 ? subcat2 : '');
       }
 
       function sendData(response,time) {
