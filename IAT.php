@@ -22,7 +22,6 @@
       $result = mysql_query($query);
       $subj = mysql_insert_id();
       $_SESSION['subj'] = $subj;
-      $_SESSION['set'] = $_GET['s'];
       printf("var subj=%d;\n", $subj);
       mysql_close();
       ?>
@@ -30,7 +29,7 @@
           $.ajax({
             url:"requestStimuliSetForIAT.php",
             data:{
-              stim_set:<? echo $_GET['s'] ?>
+              stim_set_hash:'<? echo $_GET['s'] ?>'
             },
             type:"POST",
             success:function (data, textStatus, XMLHttpRequest) {
