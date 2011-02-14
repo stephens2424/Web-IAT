@@ -38,7 +38,7 @@ CREATE TABLE `experiments` (
 
 LOCK TABLES `experiments` WRITE;
 /*!40000 ALTER TABLE `experiments` DISABLE KEYS */;
-INSERT INTO `experiments` VALUES (1,'','Test 1','http://ucla.qualtrics.com/SE/?SID=SV_e96qSgzMekRWZmc','1'),(2,'','Test 2','results.php','2'),(14,'\0','Greenwald Test','results.php','E');
+INSERT INTO `experiments` VALUES (1,'','Test 1','http://ucla.qualtrics.com/SE/?SID=SV_e96qSgzMekRWZmc','m8z2p'),(2,'','Test 2','results.php','8hy5e'),(14,'\0','Greenwald Test','results.php','nhn1q');
 /*!40000 ALTER TABLE `experiments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -196,4 +196,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2011-02-14 11:21:13
+-- Dump completed on 2011-02-14 11:26:19
