@@ -181,7 +181,8 @@
           addNoGroup();
         }
       }
-      function replaceRowWithNewStimulus($row) {
+      function replaceRowWithNewStimulus(row) {
+        var $row = $(row);
         $.post("addNewStimulus.php",{
           set:set,
           group:parseInt($row.parents('table').eq(1).find('th').eq(2).text(),10)
@@ -499,7 +500,7 @@
       }
       function addNoStimuliNoticeRow($table) {
         $row = $('<tr>');
-        $row.click(function() {replaceRowWithNewStimulus($row)});
+        $row.click(function() {replaceRowWithNewStimulus(this)});
         $table.append($row.append($('<td>Empty Group. Click here to add a stimulus</td>').attr("colspan",4)));
       }
       function createCategorySelectBox(selectedId) {
@@ -583,9 +584,6 @@
         cell.appendChild(document.createElement('br'));
         cell.appendChild(maskingButton);
         cell.appendChild(document.createTextNode("Mask"));
-      }
-      function insert_row(index) {
-        alert("insert row at " + index);
       }
       function make_row_editable() {
         //TODO make this work for instruction rows. also. make it possible to switch.
