@@ -32,11 +32,17 @@
     );
     unset($array);
   }
+  $query = "SELECT name,id FROM stimulusCategories WHERE `experiment`=$set";
+  $result = mysql_query($query);
+  while ($row = mysql_fetch_assoc($result)) {
+    $categoryArray[$row['id']] = $row['name'];
+  }
   $query = "SELECT endUrl FROM experiments WHERE `stimuli_set`=$set";
   $result = mysql_query($query);
   $upperArray = array(
     "stimuli" => $groupArray,
-    "endURL" => mysql_result($result, 0, "endUrl")
+    "endURL" => mysql_result($result, 0, "endUrl"),
+    "categories" => $categoryArray
   );
   mysql_free_result($result);
   mysql_close();

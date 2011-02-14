@@ -3,6 +3,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript"></script>
     <script type="text/javascript">
       var stimuliData;
+      var categories;
       var successfulResponses = 0;
       var responses = 0;
       var totalStimuli = 0;
@@ -37,6 +38,7 @@
                 endURL += "&iat-id=" + subj;
               }
               stimuliData = upperData.stimuli;
+              categories = upperData.categories;
               for (var i = 0; i < stimuliData.length; i++) {
                 totalStimuli += stimuliData[i].stimulus.length;
               }
@@ -140,10 +142,10 @@
         wordNum++;
       }
       function change_categories (wordNumShift) {
-        document.getElementById('catLeft').textContent = stimuliData[groupNum].stimulus[wordNum + wordNumShift].category1;
-        document.getElementById('catRight').textContent = stimuliData[groupNum].stimulus[wordNum + wordNumShift].category2;
-        document.getElementById('subCatLeft').textContent = stimuliData[groupNum].stimulus[wordNum + wordNumShift].subcategory1;
-        document.getElementById('subCatRight').textContent = stimuliData[groupNum].stimulus[wordNum + wordNumShift].subcategory2;
+        $('#catLeft').text(categories[stimuliData[groupNum].stimulus[wordNum + wordNumShift].category1]);
+        $('#catRight').text(categories[stimuliData[groupNum].stimulus[wordNum + wordNumShift].category2]);
+        $('#subCatLeft').text(categories[stimuliData[groupNum].stimulus[wordNum + wordNumShift].subcategory1]);
+        $('#subCatRight').text(categories[stimuliData[groupNum].stimulus[wordNum + wordNumShift].subcategory2]);
       }
 
       function sendData(response,time) {
