@@ -1,7 +1,4 @@
-<!--
-To change this template, choose Tools | Templates
-and open the template in the editor.
--->
+<?php session_start(); ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
     <head>
@@ -10,16 +7,17 @@ and open the template in the editor.
     </head>
     <body>
       <h1>Results</h1>
-        <?php
-          $subj = $_GET["subj"];
+        <?
+          $subj = $_SESSION["subj"];
           include 'connect.php';
 
-          $query = "SELECT beginTime FROM subjects WHERE `id`=$subj";
+          $query = "SELECT beginTime,score FROM subjects WHERE `id`=$subj";
           $result = mysql_query($query);
           $beginTime = mysql_result($result,0,"beginTime");
           mysql_free_result($result);
+          $score = $_SESSION['score'];
 
-          echo "<h2>subject: $subj start time: $beginTime</h1><p>";
+          echo "<h2>subject:$subj score:$score start time:$beginTime</h1><p>";
 
           $query = "SELECT stimuli.word,responses.response,responses.response_time FROM stimuli,responses,subjects WHERE `subj`=$subj && subjects.id=responses.subj && stimuli.stimulus_id=responses.stimulus";
           $result = mysql_query($query);
