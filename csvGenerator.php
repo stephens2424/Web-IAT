@@ -1,5 +1,4 @@
 <?php
-
   include 'connect.php';
   $query = "SELECT * FROM responses";
   $result = mysql_query($query);
@@ -31,5 +30,4 @@
   header("Content-Length: " . strlen($out));
   echo $out;
   exit;
-
 ?>

@@ -725,8 +725,11 @@
             }
         }
       }
-      function downloadData() {
+      function download_raw_data() {
         location.href="csvGenerator.php";
+      }
+      function download_calculated_data() {
+        location.href="CalculatedResultsGenerator.php?set="+set;
       }
       function handle_category_change() {
 
@@ -787,6 +790,20 @@
           default : {
               $('#categoryActions').attr('selectedIndex','0');
             }
+        }
+      }
+      function handle_download() {
+        switch ($('#download_selectbox').attr('selectedIndex')) {
+          case 1: {
+              download_raw_data();
+              $('#download_selectbox').attr('selectedIndex',0);
+              break;
+          }
+          case 2: {
+              download_calculated_data();
+              $('#download_selectbox').attr('selectedIndex',0);
+              break;
+          }
         }
       }
       function handle_end_of_experiment_change() {
@@ -956,7 +973,12 @@
       </select><span id="end_of_experiment_zone"></span>
       <p>
         Active: <span id="active"></span><br>
-        Responses: <span id="responseCount"></span><button onclick="downloadData()">Download CSV</button><br>
+        Responses: <span id="responseCount"></span>
+        <select id="download_selectbox" onchange="handle_download()">
+          <option>Download CSV</option>
+          <option>Raw Data</option>
+          <option>Greenwald Score</option>
+        </select><br>
         Stimulus Categories:
         <select id="categorySelectBox" onchange="handle_category_change()">
           <option>Categories</option>
