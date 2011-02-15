@@ -703,6 +703,7 @@ function authenticateCorrection () {
             name:newName
           },
           success:function (data, textStatus, XMLHttpRequest) {
+            data = JSON.parse(data);
             $newOption = $('<option>').val(data.id).text(newName + ' - ID:' + data.hash).insertBefore($("#experiment_selector").children('option').last()).attr('selected','selected');
             $("#experiment_selector").removeAttr("disabled");
             $('#experiment_action_selector').removeAttr("disabled");
