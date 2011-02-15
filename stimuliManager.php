@@ -570,25 +570,10 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
         var row = table.rows[0];
         var cell = row.insertCell(-1);
         cell.rowSpan = "2";
-        var iatButton = document.createElement('input');
-        iatButton.onclick = function() {changeStimulusType(table,1)};
-        iatButton.type = "radio";
-        iatButton.name = "stimulusType";
-        var instructionButton = document.createElement('input');
-        instructionButton.onclick = function() {changeStimulusType(table,2)};
-        instructionButton.type = "radio";
-        instructionButton.name = "stimulusType";
         var maskingButton = document.createElement('input');
         maskingButton.type = "checkbox";
         maskingButton.name = "masking";
         maskingButton.checked = (stimuliData[$(row).parent().parent().index()].stimuli[$(row).index()].mask == "0") ? false : true;
-        cell.appendChild(iatButton);
-        cell.appendChild(document.createTextNode("IAT/Sequential Prime"));
-        cell.appendChild(document.createElement('br'));
-        cell.appendChild(instructionButton);
-        cell.appendChild(document.createTextNode("Instruction"));
-        cell.appendChild(document.createElement('br'));
-        cell.appendChild(document.createElement('br'));
         cell.appendChild(maskingButton);
         cell.appendChild(document.createTextNode("Mask"));
       }
@@ -980,7 +965,6 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
         <option>Results Page (Recommended for development only)</option>
       </select><span id="end_of_experiment_zone"></span>
       <p>
-        Active: <span id="active"></span><br>
         Responses: <span id="responseCount"></span>
         <select id="download_selectbox" onchange="handle_download()">
           <option>Download CSV</option>
