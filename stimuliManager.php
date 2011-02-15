@@ -703,7 +703,7 @@ function authenticateCorrection () {
             name:newName
           },
           success:function (data, textStatus, XMLHttpRequest) {
-            $newOption = $('<option>').val(data).text(newName).insertBefore($("#experiment_selector").children('option').last()).attr('selected','selected');
+            $newOption = $('<option>').val(data.id).text(newName + ' - ID:' + data.hash).insertBefore($("#experiment_selector").children('option').last()).attr('selected','selected');
             $("#experiment_selector").removeAttr("disabled");
             $('#experiment_action_selector').removeAttr("disabled");
             experiment_change();
@@ -963,14 +963,14 @@ function authenticateCorrection () {
           <option value="default">Please choose an experiment to begin</option>
           <?php
             include 'connect.php';
-            $query = "SELECT name,stimuli_set FROM experiments";
+            $query = "SELECT name,stimuli_set,hash FROM experiments";
             $result = mysql_query($query);
-            $num = mysql_num_rows($result);
             $i = 0;
-            while ($i < $num) {
-              $name = mysql_result($result, $i, "name");
-              $set = mysql_result($result, $i, "stimuli_set");
-              echo "<option value=\"$set\">$name - ID:$set</option>";
+            while ($row = mysql_fetch_assoc($result)) {
+              $name = $row['name'];
+              $set = $row["stimuli_set"];
+              $hash = $row['hash'];
+              echo "<option value=\"$set\">$name - ID:$hash</option>";
               $i++;
             }
             mysql_free_result($result);

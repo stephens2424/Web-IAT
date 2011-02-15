@@ -8,5 +8,10 @@ include 'hashGenerator.php';
 $hash = HashGenerator::udihash($newSetId);
 $query = "UPDATE experiments SET `hash`='$hash' WHERE `stimuli_set`=$newSetId";
 mysql_query($query);
-echo $newSetId;
+$array = array(
+  id => $newSetId,
+  hash => $hash,
+  name => $name
+);
+echo json_encode($array);
 ?>
