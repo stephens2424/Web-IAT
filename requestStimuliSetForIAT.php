@@ -1,6 +1,15 @@
 <?php
+  session_start();
   include 'connect.php';
-  $set = $_POST['stim_set'];
+  $hash = $_POST['stim_set_hash'];
+  $query = "SELECT stimuli_set FROM experiments WHERE `hash`='$hash'";
+  $result = mysql_query($query);
+  $set = mysql_result($result, 0, 'stimuli_set');
+  if ($set == false) {
+    echo '1';
+    exit;
+  }
+  $_SESSION['set'] = $set;
   $query = "SELECT `id`,`order`,`randomize` FROM stimuliGroups WHERE `stimuliSet`=$set";
   $result = mysql_query($query);
   $rows = mysql_num_rows($result);
