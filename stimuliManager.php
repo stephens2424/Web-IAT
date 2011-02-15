@@ -1,3 +1,25 @@
+<?php
+if (!isset($_SERVER['PHP_AUTH_USER'])) {
+    header('WWW-Authenticate: Basic realm="WebIAT Administration"');
+    header('HTTP/1.0 401 Unauthorized');
+    echo 'You cannot proceed without authentication.';
+    exit;
+} else {
+  if ($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shihlabadmin") {
+  } else {
+    authenticateCorrection();
+  }
+}
+function authenticateCorrection () {
+  header('WWW-Authenticate: Basic realm="WebIAT Administration"');
+  header('HTTP/1.0 401 Unauthorized');
+  echo 'You cannot proceed without authentication.';
+  if ($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shihlabadmin") {
+  } else {
+    authenticateCorrection();
+  }
+}
+?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
   <head>
