@@ -44,7 +44,7 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
               stim_set:set
             },
             success:function (received_data, textStatus, XMLHttpRequest) {
-              var data = JSON.parse(received_data);
+              var data = $.parseJSON(received_data);
               _parseEndURLAndSetSelectBox(data.endURL);
               $('#responseCount').text(data.responseCount);
               if (data.stimuliGroups) {
@@ -70,7 +70,7 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
             set:_set
           },
           success:function (received_data, textStatus, XMLHttpRequest) {
-            stimuliCategories = JSON.parse(received_data);
+            stimuliCategories = $.parseJSON(received_data);
             $('.stimuliCategorySelectBox').each(function (index,element) {
               $(element).replaceWith(createCategorySelectBox($(element).find('option:selected').eq(0).val()));
             });
@@ -111,7 +111,7 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
           position:0,
           below:"false"
         },function(receivedData) {
-          var data = JSON.parse(receivedData);
+          var data = $.parseJSON(receivedData);
           insertGroup(0,data.name,data.stimuli,data.randomize,data.group_id);
           $row.remove();
           stimuliData = new Array(data);
@@ -195,7 +195,7 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
           set:set,
           group:parseInt($row.parents('table').eq(1).find('th').eq(2).text(),10)
         }, function (received_data) {
-          var data = JSON.parse(received_data)[0];
+          var data = $.parseJSON(received_data)[0];
           stimuliData[$row.parents('table').eq(1).index()].stimuli.splice(0,0,data);
           $row.replaceWith(createStimulusRow(data.stim_id,data.category1,data.category2,data.subcategory1,data.subcategory2,data.word,data.correct_response,data.instruction));
         });
@@ -240,7 +240,7 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
               position:$(selectBox).closest('tr').index(),
               below:"false"
             },function(receivedData) {
-              var data = JSON.parse(receivedData);
+              var data = $.parseJSON(receivedData);
               insertGroup($(selectBox).closest('tr').index(),data.groupName,data.stage,data.stimuli,data.randomize,data.group_id);
               stimuliData.splice($(selectBox).parent().parent().index(),0,data);
             });
@@ -252,7 +252,7 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
               position:$(selectBox).closest('tr').index(),
               below:"true"
             },function(receivedData) {
-              var data = JSON.parse(receivedData);
+              var data = $.parseJSON(receivedData);
               insertGroup($(selectBox).closest('tr').index()+1,data.groupName,data.stage,data.stimuli,data.randomize,data.group_id);
               stimuliData.splice($(selectBox).parent().parent().index()+1,0,data);
             });
@@ -354,7 +354,7 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
             correct:$table.find('input[name|="correct"]').eq(0).attr('checked') == true ? '0' : ($table.find('input[name|="correct"]').eq(1).attr('checked') == true ? '1' : 'NULL')
           },
           success:function (data, textStatus, XMLHttpRequest) {
-            var stimuli = JSON.parse(data);
+            var stimuli = $.parseJSON(data);
             i = 0;
             $row.replaceWith(createStimulusRow(stimuli[i].stim_id,stimuli[i].category1,stimuli[i].category2,stimuli[i].subcategory1,stimuli[i].subcategory2,stimuli[i].word,stimuli[i].correct_response,stimuli[i].instruction),stimuliRow);
           },
@@ -420,7 +420,7 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
               stim_set:set,
               group:selectBox.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.childNodes[0].childNodes[2].textContent
             }, function (received_data) {
-              var data = JSON.parse(received_data)[0];
+              var data = $.parseJSON(received_data)[0];
               stimuliData[$(selectBox).parent().parent().parent().parent().parent().parent().parent().parent().index()].stimuli.splice($(selectBox).parent().parent().index()-1,0,data);
               $(selectBox).parent().parent().before(createStimulusRow(data.stim_id,data.category1,data.category2,data.subcategory1,data.subcategory2,data.word,data.correct_response,data.instruction));
             });
@@ -433,7 +433,7 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
               stim_set:set,
               group:selectBox.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.childNodes[0].childNodes[2].textContent
             }, function (received_data) {
-              var data = JSON.parse(received_data)[0];
+              var data = $.parseJSON(received_data)[0];
               stimuliData[$(selectBox).parent().parent().parent().parent().parent().parent().parent().parent().index()].stimuli.splice($(selectBox).parent().parent().index(),0,data);
               $(selectBox).parent().parent().after(createStimulusRow(data.stim_id,data.category1,data.category2,data.subcategory1,data.subcategory2,data.word,data.correct_response,data.instruction));
             });
@@ -463,7 +463,7 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
                 newWord:newWord
               },
               success:function (received_data) {
-                var data = JSON.parse(received_data)[0];
+                var data = $.parseJSON(received_data)[0];
                 stimuliData[$row.parent().closest('tr').index()].stimuli.splice($row.index(),0,data);
                 var $newRow = $(createStimulusRow(data.stim_id,data.category1,data.category2,data.subcategory1,data.subcategory2,data.word,data.correct_response,data.instruction));
                 $row.after($newRow);
@@ -674,7 +674,7 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
             name:newName
           },
           success:function (data, textStatus, XMLHttpRequest) {
-            data = JSON.parse(data);
+            data = $.parseJSON(data);
             $newOption = $('<option>').val(data.id).text(newName + ' - ID:' + data.hash).insertBefore($("#experiment_selector").children('option').last()).attr('selected','selected');
             $("#experiment_selector").removeAttr("disabled");
             $('#experiment_action_selector').removeAttr("disabled");
