@@ -38,7 +38,7 @@
                 $('#word').text("Error: This stimuli set does not exist");
                 return;
               }
-              var upperData = JSON.parse(data);
+              var upperData = $.parseJSON(data);
               stimuliData = upperData.stimuli;
               categories = upperData.categories;
               for (var i = 0; i < stimuliData.length; i++) {
