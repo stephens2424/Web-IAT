@@ -36,9 +36,10 @@
   $query = "SELECT COUNT(DISTINCT subj) AS responses FROM responses INNER JOIN stimuli ON responses.stimulus=stimuli.stimulus_id WHERE stimuli.`set`=$set";
   $result = mysql_query($query);
   $upperArray["responseCount"] = mysql_result($result, 0, "responses");
-  $query = "SELECT endUrl FROM experiments WHERE `stimuli_set`=$set";
+  $query = "SELECT hash,endUrl FROM experiments WHERE `stimuli_set`=$set";
   $result = mysql_query($query);
   $upperArray['endURL'] = mysql_result($result,0,"endUrl");
+  $upperArray['hash'] = mysql_result($result, 0, 'hash');
   mysql_free_result($result);
   mysql_close();
   echo json_encode($upperArray);
