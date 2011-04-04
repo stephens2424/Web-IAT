@@ -20,6 +20,7 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
       var stimuliData;
       var stimuliCategories;
       var set;
+      var hash;
       var groupOptions = {
         def : "Group Actions",
         rename : "Rename Group",
@@ -46,6 +47,8 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
             success:function (received_data, textStatus, XMLHttpRequest) {
               var data = $.parseJSON(received_data);
               _parseEndURLAndSetSelectBox(data.endURL);
+              hash = data.hash;
+              updateExperimentLink();
               $('#responseCount').text(data.responseCount);
               if (data.stimuliGroups) {
                 var num = data.stimuliGroups.length;
@@ -1008,6 +1011,10 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
             }
         }
       }
+      function updateExperimentLink() {
+        var link = "http://shihlabs.xtreemhost.com/IAT.php?s=" + hash;
+        $('#experimentLink').attr('href',link).text(link);
+      }
     </script>
     <style type="text/css">
       .hidden {
@@ -1096,6 +1103,7 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
           <option>Delete Category</option>
         </select>
       </p>
+      <p>Link to the experiment: <a href="" id="experimentLink"></a></p>
     </fieldset>
     <fieldset><legend>Stimuli</legend>
       <div id="stimuliList">
