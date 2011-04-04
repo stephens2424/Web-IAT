@@ -803,6 +803,7 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
         switch ($('#end_of_experiment_selector').attr('selectedIndex')) {
           case 0: {
               $('#end_of_experiment_zone').text("");
+              remove_secondary_end_of_experiment_selector();
               $('#end_of_experiment_zone').append($('<img>').attr('src','ajaxloader.gif'));
               $.ajax({
                 type:"POST",
@@ -824,6 +825,7 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
           case 1: {
               $('#end_of_experiment_zone').text("http://ucla.qualtrics.com/SE/?SID=");
               var $box = $('<input>').attr('type','text');
+              remove_secondary_end_of_experiment_selector();
               $box.change(function () {
                 $box.after($('<img>').attr('src','ajaxloader.gif'));
                 $.ajax({
@@ -852,6 +854,7 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
           case 3: {
               $('#end_of_experiment_zone').text("http://");
               var $box = $('<input>').attr('type','text');
+              remove_secondary_end_of_experiment_selector();
               $box.change(function () {
                 $box.after($('<img>').attr('src','ajaxloader.gif'));
                 $.ajax({
@@ -874,6 +877,7 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
               break;
             }
           case 4: {
+              remove_secondary_end_of_experiment_selector();
               $('#end_of_experiment_zone').text("");
               $('#end_of_experiment_zone').append($('<img>').attr('src','ajaxloader.gif'));
               $.ajax({
@@ -892,9 +896,114 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
                 }
               });
               break;
-            }
+          }
+          case 5: {
+              $('#end_of_experiment_zone').text("");
+              $('#end_of_experiment_zone').append($('<img>').attr('src','ajaxloader.gif'));
+              $.ajax({
+                type:"POST",
+                url:"updateExperimentEndURL.php",
+                data:{
+                  newURL:"rresults.php",
+                  set:set
+                },
+                success:function (data, textStatus, XMLHttpRequest) {
+                  $('#end_of_experiment_zone').children('img').remove();
+                  add_secondary_end_of_experiment_selector();
+                },
+                error:function (XMLHttpRequest, textStatus, errorThrown) {
+                  $('#end_of_experiment_zone').children('img').remove();
+                  alert("Error. Please check your network settings.");
+                }
+              });
+              break;
           }
         }
+      }
+      function add_secondary_end_of_experiment_selector() {
+        $('#end_of_experiment_zone').append('<select id="secondary_end_of_experiment_selector" onchange="handle_secondary_end_of_experiment_change()"><option>Thank you page</option><option>Link to Qualtrics</option><option>Upload Page</option><option>Custom URL</option></select><span id="secondary_end_of_experiment_zone"></span>');
+
+      }
+      function remove_secondary_end_of_experiment_selector() {
+        $('#secondary_end_of_experiment_selector').remove();
+        $('#secondary_end_of_experiment_zone').remove();
+      }
+      function handle_secondary_end_of_experiment_change() {
+        switch ($('#secondary_end_of_experiment_selector').attr('selectedIndex')) {
+          case 0: {
+              $('#secondary_end_of_experiment_zone').text("");
+              $('#secondary_end_of_experiment_zone').append($('<img>').attr('src','ajaxloader.gif'));
+              $.ajax({
+                type:"POST",
+                url:"updateExperimentSecondaryEndURL.php",
+                data:{
+                  newURL:"results.php",
+                  set:set
+                },
+                success:function (data, textStatus, XMLHttpRequest) {
+                  $('#secondary_end_of_experiment_zone').children('img').remove();
+                },
+                error:function (XMLHttpRequest, textStatus, errorThrown) {
+                  $('#secondary_end_of_experiment_zone').children('img').remove();
+                  alert("Error. Please check your network settings.");
+                }
+              });
+              break;
+            }
+          case 1: {
+              $('#secondary_end_of_experiment_zone').text("http://ucla.qualtrics.com/SE/?SID=");
+              var $box = $('<input>').attr('type','text');
+              $box.change(function () {
+                $box.after($('<img>').attr('src','ajaxloader.gif'));
+                $.ajax({
+                  type:"POST",
+                  url:"updateExperimentSecondaryEndURL.php",
+                  data:{
+                    newURL:"http://ucla.qualtrics.com/SE/?SID=" + $box.attr('value'),
+                    set:set
+                  },
+                  success:function (data, textStatus, XMLHttpRequest) {
+                    $box.siblings('img').remove();
+                  },
+                  error:function (XMLHttpRequest, textStatus, errorThrown) {
+                    $box.siblings('img').remove();
+                    alert("Error. Please check your network settings.");
+                  }
+                });
+              });
+              $('#secondary_end_of_experiment_zone').append($box);
+              break;
+            }
+          case 2: {
+              $('#secondary_end_of_experiment_zone').text("This option not yet implemented. Will default to Thank You page");
+              break;
+            }
+          case 3: {
+              $('#secondary_end_of_experiment_zone').text("http://");
+              var $box = $('<input>').attr('type','text');
+              $box.change(function () {
+                $box.after($('<img>').attr('src','ajaxloader.gif'));
+                $.ajax({
+                  type:"POST",
+                  url:"updateExperimentSecondaryEndURL.php",
+                  data:{
+                    newURL:"http://" + $box.attr('value'),
+                    set:set
+                  },
+                  success:function (data, textStatus, XMLHttpRequest) {
+                    $box.siblings('img').remove();
+                  },
+                  error:function (XMLHttpRequest, textStatus, errorThrown) {
+                    $box.siblings('img').remove();
+                    alert("Error. Please check your network settings.");
+                  }
+                });
+              });
+              $('#secondary_end_of_experiment_zone').append($box);
+              break;
+            }
+        }
+      }
     </script>
     <style type="text/css">
       .hidden {
@@ -962,7 +1071,8 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
         <option>Link to Qualtrics</option>
         <option>Upload Page</option>
         <option>Custom URL</option>
-        <option>Results Page (Recommended for development only)</option>
+        <option>Results Page</option>
+        <option>Results Page with secondary redirect</option>
       </select><span id="end_of_experiment_zone"></span>
       <p>
         Responses: <span id="responseCount"></span>
