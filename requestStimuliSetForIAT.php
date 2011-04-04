@@ -10,7 +10,7 @@
     exit;
   }
   $_SESSION['set'] = $set;
-  $query = "SELECT `id`,`order`,`randomize` FROM stimuliGroups WHERE `stimuliSet`=$set";
+  $query = "SELECT `id`,`order`,`randomize` FROM stimuliGroups WHERE `stimuliSet`=$set ORDER BY `order`";
   $result = mysql_query($query);
   $rows = mysql_num_rows($result);
   for ($row = 0; $row < $rows; $row++) {
