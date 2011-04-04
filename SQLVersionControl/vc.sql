@@ -39,7 +39,7 @@ CREATE TABLE `experiments` (
 
 LOCK TABLES `experiments` WRITE;
 /*!40000 ALTER TABLE `experiments` DISABLE KEYS */;
-INSERT INTO `experiments` VALUES (1,'','Test 1','results.php','m8z2p',NULL),(2,'','Test 2','results.php','8hy5e',NULL),(14,'\0','Greenwald Test','rresults.php','nhn1q',NULL);
+INSERT INTO `experiments` VALUES (1,'','Test 1','results.php','m8z2p',NULL),(2,'','Test 2','results.php','8hy5e',NULL),(14,'\0','Greenwald Test','rresults.php','nhn1q','thankyou.php');
 /*!40000 ALTER TABLE `experiments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -197,4 +197,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2011-04-04 14:16:45
+-- Dump completed on 2011-04-04 14:32:31

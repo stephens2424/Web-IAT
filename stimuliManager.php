@@ -88,6 +88,8 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
           $('#end_of_experiment_selector').attr('selectedIndex',0).change();
         } else if (url === "results.php") {
           $('#end_of_experiment_selector').attr('selectedIndex',4).change();
+        } else if (url === "rresults.php") {
+          $('#end_of_experiment_selector').attr('selectedIndex',5).change();
         } else {
           if (url.substr(0,7) === "http://") {
             if (url.substr(0,34) === "http://ucla.qualtrics.com/SE/?SID=") {
@@ -848,7 +850,8 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
               break;
             }
           case 2: {
-              $('#end_of_experiment_zone').text("This option not yet implemented. Will default to Thank You page");
+              alert("This option not yet implemented. Will default to Thank You page");
+              $('#end_of_experiment_selector').attr('selectedIndex',0).change();
               break;
             }
           case 3: {
@@ -922,7 +925,7 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
       }
       function add_secondary_end_of_experiment_selector() {
         $('#end_of_experiment_zone').append('<select id="secondary_end_of_experiment_selector" onchange="handle_secondary_end_of_experiment_change()"><option>Thank you page</option><option>Link to Qualtrics</option><option>Upload Page</option><option>Custom URL</option></select><span id="secondary_end_of_experiment_zone"></span>');
-
+        handle_secondary_end_of_experiment_change();
       }
       function remove_secondary_end_of_experiment_selector() {
         $('#secondary_end_of_experiment_selector').remove();
@@ -937,7 +940,7 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
                 type:"POST",
                 url:"updateExperimentSecondaryEndURL.php",
                 data:{
-                  newURL:"results.php",
+                  newURL:"thankyou.php",
                   set:set
                 },
                 success:function (data, textStatus, XMLHttpRequest) {
@@ -975,7 +978,8 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
               break;
             }
           case 2: {
-              $('#secondary_end_of_experiment_zone').text("This option not yet implemented. Will default to Thank You page");
+              alert("This option not yet implemented. Will default to Thank You page.");
+              $('#secondary_end_of_experiment_selector').attr('selectedIndex',0);
               break;
             }
           case 3: {
