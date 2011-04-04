@@ -11,5 +11,6 @@
     <h1>IAT Web</h1>
     <h3>Instructions</h3>
     <p>Welcome to the Shih Labs IAT website.</p>
+    <p><a href="about.html">About</a></p>
   </body>
 </html>
