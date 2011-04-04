@@ -49,6 +49,12 @@
       <h2>Your results show that you are <?
         echo $adjective . $biasString;
       ?></h2>
+      <h3><a href="<?
+      $query = "SELECT secondEndURL FROM `experiments` WHERE `stimuli_set`=$set";
+      $result = mysql_query($query);
+      $url = mysql_result($result, 0, 'secondEndURL');
+      echo $url;
+      ?>">Please click here to continue with the study.</a></h3>
     </body>
 
     <? mysql_close() ?>
