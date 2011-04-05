@@ -724,7 +724,7 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
         }
       }
       function download_raw_data() {
-        location.href="csvGenerator.php";
+        location.href="csvGenerator.php?set=" + set;
       }
       function download_calculated_data() {
         location.href="BatchCalculatedResultsGenerator.php?set="+set;
