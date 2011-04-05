@@ -122,7 +122,7 @@
 
   include 'connect.php';
   $set = $_GET['set'];
-  $query = "SELECT responses.subj,responses.response,responses.response_time,stimuli.correct_response,stimuli.stimulusCategory,stimuliGroups.stage FROM responses JOIN (stimuli,stimuliGroups) ON (responses.stimulus=stimuli.stimulus_id AND stimuli.group=stimuliGroups.id) WHERE (stimuli.set=$set) ORDER BY responses.subj,responses.stimulus";
+  $query = "SELECT responses.subj,subjects.qualtrics_id,responses.response,responses.response_time,stimuli.correct_response,stimuli.stimulusCategory,stimuliGroups.stage FROM responses JOIN (stimuli,stimuliGroups,subjects) ON (responses.stimulus=stimuli.stimulus_id AND stimuli.group=stimuliGroups.id AND subjects.id=responses.`subj`) WHERE (stimuli.set=14) ORDER BY responses.subj,responses.stimulus";
   $result = mysql_query($query);
 
   while ($row = mysql_fetch_assoc($result)) {
@@ -133,6 +133,7 @@
         handleSubject($currentSubject,&$subjectScores,&$stage3correctArray,&$stage3incorrectArray,&$stage6correctArray,&$stage6incorrectArray,&$stage4correctArray,&$stage4incorrectArray,&$stage7correctArray,&$stage7incorrectArray);
         //reset for next subject
         $currentSubject = $row['subj'];
+        $qualtricsIds[$currentSubject] = $row['qualtrics_id'];
         unset($stage3correctArray);
         unset($stage3incorrectArray);
         unset($stage4correctArray);
@@ -145,13 +146,11 @@
       }
     } else {
       $currentSubject = $row['subj'];
+      $qualtricsIds[$currentSubject] = $row['qualtrics_id'];
       handleRowWithMatchingSubject($row, &$stage3correctArray, &$stage3incorrectArray, &$stage6correctArray, &$stage6incorrectArray, &$stage4correctArray, &$stage4incorrectArray, &$stage7correctArray, &$stage7incorrectArray);
     }
   }
   handleSubject($currentSubject,&$subjectScores,&$stage3correctArray,&$stage3incorrectArray,&$stage6correctArray,&$stage6incorrectArray,&$stage4correctArray,&$stage4incorrectArray,&$stage7correctArray,&$stage7incorrectArray);
-
-  $query = "SELECT DISTINCT subjects.`id`,subjects.`qualtrics_id` FROM subjects JOIN (responses,stimuli) ON (responses.subj=subjects.`id` AND stimuli.`stimulus_id`=responses.`stimulus`) WHERE stimuli.set=$set ORDER BY subjects.`id`";
-  $result = mysql_query($query);
 
   $columns = 2;
   $out = '';
@@ -162,11 +161,7 @@
   // Add all values in the table
   $row = 0;
   foreach ($subjectScores as $key => $value) {
-    while (mysql_result($result, $row, 'id') != $key) {
-      $row++;
-    }
-    $qualtricsId = mysql_result($result, $row, 'qualtrics_id');
-    $out .= '"'.$key.'","'.$qualtricsId.'","'.$value.'"';
+    $out .= '"'.$key.'","'.$qualtricsIds[$key].'","'.$value.'"';
     $out .= "\n";
     $row++;
   }
