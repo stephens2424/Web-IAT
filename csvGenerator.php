@@ -1,6 +1,7 @@
 <?php
   include 'connect.php';
-  $query = "SELECT * FROM responses";
+  $set = $_GET['set'];
+  $query = "SELECT response_id,subj,stimulus,response,correct_response,response_time FROM responses JOIN stimuli ON responses.stimulus=stimuli.stimulus_id WHERE stimuli.set=$set ORDER BY subj,response_id ASC";
   $result = mysql_query($query);
   $columns = mysql_num_fields($result);
   $out = '';

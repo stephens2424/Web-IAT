@@ -1,5 +1,6 @@
 <?php
   function standard_deviation($array) {
+    if ($array == null) return null;
     $mean = mean($array);
     foreach ($array as $value) {
       $variance += pow($value - $mean,2);
@@ -7,6 +8,7 @@
     return sqrt($variance/(count($array)-1));
   }
   function mean($array) {
+    if ($array == null) return null;
     $sum = array_sum($array);
     $num = count($array);
     return $sum/$num;
@@ -97,6 +99,11 @@
     $stage6array = reconcileStage($stage6correctArray, $stage6incorrectArray);
     $stage4array = reconcileStage($stage4correctArray, $stage4incorrectArray);
     $stage7array = reconcileStage($stage7correctArray, $stage7incorrectArray);
+    //null check -- not part of greenwald procedure, but necessary programming check
+    if($stage3array == null) return;
+    if($stage6array == null) return;
+    if($stage4array == null) return;
+    if($stage7array == null) return;
     //"inclusive" standard deviations
     $stage3_6sd = standard_deviation(array_merge($stage3array,$stage6array));
     $stage4_7sd = standard_deviation(array_merge($stage4array,$stage7array));
