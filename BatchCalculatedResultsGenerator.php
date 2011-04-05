@@ -150,34 +150,26 @@
   }
   handleSubject($currentSubject,&$subjectScores,&$stage3correctArray,&$stage3incorrectArray,&$stage6correctArray,&$stage6incorrectArray,&$stage4correctArray,&$stage4incorrectArray,&$stage7correctArray,&$stage7incorrectArray);
 
+  $query = "SELECT DISTINCT subjects.`id`,subjects.`qualtrics_id` FROM subjects JOIN (responses,stimuli) ON (responses.subj=subjects.`id` AND stimuli.`stimulus_id`=responses.`stimulus`) WHERE stimuli.set=$set ORDER BY subjects.`id`";
+  $result = mysql_query($query);
+
   $columns = 2;
   $out = '';
     // Put the name of all fields
-  $out .= '"subject","score"';
+  $out .= '"subject","qualtricsId","score"';
   $out .= "\n";
-  /*
-  for ($i = 0; $i < $columns; $i++) {
-    $l= mysql_field_name($result, $i);
-    $out .= '"'.$l.'",';
-  }
-  $out = trim($out,",");
-  $out .="\n";
-  */
 
   // Add all values in the table
+  $row = 0;
   foreach ($subjectScores as $key => $value) {
-    $out .= '"'.$key.'","'.$value.'"';
-    $out .= "\n";
-  }
-  /*
-  while ($l = mysql_fetch_array($result)) {
-    for ($i = 0; $i < $columns; $i++) {
-      $out .='"'.$l["$i"].'",';
+    while (mysql_result($result, $row, 'id') != $key) {
+      $row++;
     }
-    $out = trim($out,",");
-    $out .="\n";
+    $qualtricsId = mysql_result($result, $row, 'qualtrics_id');
+    $out .= '"'.$key.'","'.$qualtricsId.'","'.$value.'"';
+    $out .= "\n";
+    $row++;
   }
-   */
   $filename = "results.csv";
   // Output to browser with appropriate mime type
   //header("Content-type: text/x-csv");
