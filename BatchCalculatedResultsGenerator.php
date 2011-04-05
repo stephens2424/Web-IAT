@@ -1,6 +1,7 @@
 <?php
   function standard_deviation($array) {
     if ($array == null) return null;
+    if (count($array) <= 1) return null;
     $mean = mean($array);
     foreach ($array as $value) {
       $variance += pow($value - $mean,2);
