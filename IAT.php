@@ -15,7 +15,7 @@
       include 'connect.php';
       if (isset($_GET['qid'])) {
         $qid = $_GET['qid'];
-        $query = "INSERT INTO subjects (`qualtrics_id`) VALUES ($qid)";
+        $query = "INSERT INTO subjects (`qualtrics_id`) VALUES ('$qid')";
       } else {
         $query = "INSERT INTO subjects VALUES ()";
       }
