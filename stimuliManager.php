@@ -890,7 +890,7 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
                 type:"POST",
                 url:"updateExperimentEndURL.php",
                 data:{
-                  newURL:"results.php",
+                  newURL:"thankyou.php",
                   set:set
                 },
                 success:function (data, textStatus, XMLHttpRequest) {
