@@ -1,9 +1,9 @@
 <?php
 if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shihlabadmin")) {
-    header('WWW-Authenticate: Basic realm="WebIAT Administration"');
-    header('HTTP/1.0 401 Unauthorized');
-    echo 'You cannot proceed without authentication.';
-    exit;
+  header('WWW-Authenticate: Basic realm="WebIAT Administration"');
+  header('HTTP/1.0 401 Unauthorized');
+  echo 'You cannot proceed without authentication.';
+  exit;
 }
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -278,28 +278,28 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
           case 0: {
               setGroupStage(groupId,'0');
               break;
-          }
+            }
           case 1: {
               setGroupStage(groupId,'3');
               break;
-          }
+            }
           case 2: {
               setGroupStage(groupId,'4');
               break;
-          }
+            }
           case 3: {
               setGroupStage(groupId,'6');
               break;
-          }
+            }
           case 4: {
               setGroupStage(groupId,'7');
               break;
-          }
+            }
           case 5: {
               alert("These stages correspond to Anthony Greenwald's general IAT instructions. See http://faculty.washington.edu/agg/pdf/GB&N.JPSP.2003.pdf for more information.");
               requestAndSetGroupStage(groupId,selectBox);
               break;
-          }
+            }
         }
       }
       function requestAndSetGroupStage (groupId,selectBox) {
@@ -310,23 +310,23 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
             case '3': {
                 selectBox.selectedIndex = 1;
                 break;
-            }
+              }
             case '4': {
                 selectBox.selectedIndex = 2;
                 break;
-            }
+              }
             case '6': {
                 selectBox.selectedIndex = 3;
                 break;
-            }
+              }
             case '7': {
                 selectBox.selectedIndex = 4;
                 break;
-            }
+              }
             default: {
                 selectBox.selectedIndex = 0;
                 break;
-            }
+              }
           }
         });
       }
@@ -457,24 +457,24 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
         if (newWord === null || newWord === "") {
         } else {
           $.ajax({
-              type:"POST",
-              url:"insertNewStimulus.php",
-              data:{
-                below:true,
-                group:$row.parent().closest('tr').parent().closest('tr').find('th').eq(2).text(),
-                position:$row.index(),
-                stim_set:set,
-                copy:true,
-                newWord:newWord
-              },
-              success:function (received_data) {
-                var data = $.parseJSON(received_data)[0];
-                stimuliData[$row.parent().closest('tr').index()].stimuli.splice($row.index(),0,data);
-                var $newRow = $(createStimulusRow(data.stim_id,data.category1,data.category2,data.subcategory1,data.subcategory2,data.word,data.correct_response,data.instruction));
-                $row.after($newRow);
-                quickCopyUsing($newRow);
-              }
-            });
+            type:"POST",
+            url:"insertNewStimulus.php",
+            data:{
+              below:true,
+              group:$row.parent().closest('tr').parent().closest('tr').find('th').eq(2).text(),
+              position:$row.index(),
+              stim_set:set,
+              copy:true,
+              newWord:newWord
+            },
+            success:function (received_data) {
+              var data = $.parseJSON(received_data)[0];
+              stimuliData[$row.parent().closest('tr').index()].stimuli.splice($row.index(),0,data);
+              var $newRow = $(createStimulusRow(data.stim_id,data.category1,data.category2,data.subcategory1,data.subcategory2,data.word,data.correct_response,data.instruction));
+              $row.after($newRow);
+              quickCopyUsing($newRow);
+            }
+          });
         }
       }
       function remove_row (row) {
@@ -796,12 +796,12 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
               download_raw_data();
               $('#download_selectbox').attr('selectedIndex',0);
               break;
-          }
+            }
           case 2: {
               download_calculated_data();
               $('#download_selectbox').attr('selectedIndex',0);
               break;
-          }
+            }
         }
       }
       function handle_end_of_experiment_change() {
@@ -814,7 +814,7 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
                 type:"POST",
                 url:"updateExperimentEndURL.php",
                 data:{
-                  newURL:"results.php",
+                  newURL:"thankyou.php",
                   set:set
                 },
                 success:function (data, textStatus, XMLHttpRequest) {
@@ -890,7 +890,7 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
                 type:"POST",
                 url:"updateExperimentEndURL.php",
                 data:{
-                  newURL:"thankyou.php",
+                  newURL:"results.php",
                   set:set
                 },
                 success:function (data, textStatus, XMLHttpRequest) {
@@ -902,7 +902,7 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
                 }
               });
               break;
-          }
+            }
           case 5: {
               $('#end_of_experiment_zone').text("");
               $('#end_of_experiment_zone').append($('<img>').attr('src','ajaxloader.gif'));
@@ -923,98 +923,98 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
                 }
               });
               break;
+            }
           }
         }
-      }
-      function add_secondary_end_of_experiment_selector() {
-        $('#end_of_experiment_zone').append('<select id="secondary_end_of_experiment_selector" onchange="handle_secondary_end_of_experiment_change()"><option>Thank you page</option><option>Link to Qualtrics</option><option>Upload Page</option><option>Custom URL</option></select><span id="secondary_end_of_experiment_zone"></span>');
-        handle_secondary_end_of_experiment_change();
-      }
-      function remove_secondary_end_of_experiment_selector() {
-        $('#secondary_end_of_experiment_selector').remove();
-        $('#secondary_end_of_experiment_zone').remove();
-      }
-      function handle_secondary_end_of_experiment_change() {
-        switch ($('#secondary_end_of_experiment_selector').attr('selectedIndex')) {
-          case 0: {
-              $('#secondary_end_of_experiment_zone').text("");
-              $('#secondary_end_of_experiment_zone').append($('<img>').attr('src','ajaxloader.gif'));
-              $.ajax({
-                type:"POST",
-                url:"updateExperimentSecondaryEndURL.php",
-                data:{
-                  newURL:"thankyou.php",
-                  set:set
-                },
-                success:function (data, textStatus, XMLHttpRequest) {
-                  $('#secondary_end_of_experiment_zone').children('img').remove();
-                },
-                error:function (XMLHttpRequest, textStatus, errorThrown) {
-                  $('#secondary_end_of_experiment_zone').children('img').remove();
-                  alert("Error. Please check your network settings.");
-                }
-              });
-              break;
-            }
-          case 1: {
-              $('#secondary_end_of_experiment_zone').text("http://ucla.qualtrics.com/SE/?SID=");
-              var $box = $('<input>').attr('type','text');
-              $box.change(function () {
-                $box.after($('<img>').attr('src','ajaxloader.gif'));
-                $.ajax({
-                  type:"POST",
-                  url:"updateExperimentSecondaryEndURL.php",
-                  data:{
-                    newURL:"http://ucla.qualtrics.com/SE/?SID=" + $box.attr('value'),
-                    set:set
-                  },
-                  success:function (data, textStatus, XMLHttpRequest) {
-                    $box.siblings('img').remove();
-                  },
-                  error:function (XMLHttpRequest, textStatus, errorThrown) {
-                    $box.siblings('img').remove();
-                    alert("Error. Please check your network settings.");
-                  }
-                });
-              });
-              $('#secondary_end_of_experiment_zone').append($box);
-              break;
-            }
-          case 2: {
-              alert("This option not yet implemented. Will default to Thank You page.");
-              $('#secondary_end_of_experiment_selector').attr('selectedIndex',0);
-              break;
-            }
-          case 3: {
-              $('#secondary_end_of_experiment_zone').text("http://");
-              var $box = $('<input>').attr('type','text');
-              $box.change(function () {
-                $box.after($('<img>').attr('src','ajaxloader.gif'));
-                $.ajax({
-                  type:"POST",
-                  url:"updateExperimentSecondaryEndURL.php",
-                  data:{
-                    newURL:"http://" + $box.attr('value'),
-                    set:set
-                  },
-                  success:function (data, textStatus, XMLHttpRequest) {
-                    $box.siblings('img').remove();
-                  },
-                  error:function (XMLHttpRequest, textStatus, errorThrown) {
-                    $box.siblings('img').remove();
-                    alert("Error. Please check your network settings.");
-                  }
-                });
-              });
-              $('#secondary_end_of_experiment_zone').append($box);
-              break;
-            }
+        function add_secondary_end_of_experiment_selector() {
+          $('#end_of_experiment_zone').append('<select id="secondary_end_of_experiment_selector" onchange="handle_secondary_end_of_experiment_change()"><option>Thank you page</option><option>Link to Qualtrics</option><option>Upload Page</option><option>Custom URL</option></select><span id="secondary_end_of_experiment_zone"></span>');
+          handle_secondary_end_of_experiment_change();
         }
-      }
-      function updateExperimentLink() {
-        var link = "http://shihlabs.xtreemhost.com/IAT.php?s=" + hash;
-        $('#experimentLink').attr('href',link).text(link);
-      }
+        function remove_secondary_end_of_experiment_selector() {
+          $('#secondary_end_of_experiment_selector').remove();
+          $('#secondary_end_of_experiment_zone').remove();
+        }
+        function handle_secondary_end_of_experiment_change() {
+          switch ($('#secondary_end_of_experiment_selector').attr('selectedIndex')) {
+            case 0: {
+                $('#secondary_end_of_experiment_zone').text("");
+                $('#secondary_end_of_experiment_zone').append($('<img>').attr('src','ajaxloader.gif'));
+                $.ajax({
+                  type:"POST",
+                  url:"updateExperimentSecondaryEndURL.php",
+                  data:{
+                    newURL:"thankyou.php",
+                    set:set
+                  },
+                  success:function (data, textStatus, XMLHttpRequest) {
+                    $('#secondary_end_of_experiment_zone').children('img').remove();
+                  },
+                  error:function (XMLHttpRequest, textStatus, errorThrown) {
+                    $('#secondary_end_of_experiment_zone').children('img').remove();
+                    alert("Error. Please check your network settings.");
+                  }
+                });
+                break;
+              }
+            case 1: {
+                $('#secondary_end_of_experiment_zone').text("http://ucla.qualtrics.com/SE/?SID=");
+                var $box = $('<input>').attr('type','text');
+                $box.change(function () {
+                  $box.after($('<img>').attr('src','ajaxloader.gif'));
+                  $.ajax({
+                    type:"POST",
+                    url:"updateExperimentSecondaryEndURL.php",
+                    data:{
+                      newURL:"http://ucla.qualtrics.com/SE/?SID=" + $box.attr('value'),
+                      set:set
+                    },
+                    success:function (data, textStatus, XMLHttpRequest) {
+                      $box.siblings('img').remove();
+                    },
+                    error:function (XMLHttpRequest, textStatus, errorThrown) {
+                      $box.siblings('img').remove();
+                      alert("Error. Please check your network settings.");
+                    }
+                  });
+                });
+                $('#secondary_end_of_experiment_zone').append($box);
+                break;
+              }
+            case 2: {
+                alert("This option not yet implemented. Will default to Thank You page.");
+                $('#secondary_end_of_experiment_selector').attr('selectedIndex',0);
+                break;
+              }
+            case 3: {
+                $('#secondary_end_of_experiment_zone').text("http://");
+                var $box = $('<input>').attr('type','text');
+                $box.change(function () {
+                  $box.after($('<img>').attr('src','ajaxloader.gif'));
+                  $.ajax({
+                    type:"POST",
+                    url:"updateExperimentSecondaryEndURL.php",
+                    data:{
+                      newURL:"http://" + $box.attr('value'),
+                      set:set
+                    },
+                    success:function (data, textStatus, XMLHttpRequest) {
+                      $box.siblings('img').remove();
+                    },
+                    error:function (XMLHttpRequest, textStatus, errorThrown) {
+                      $box.siblings('img').remove();
+                      alert("Error. Please check your network settings.");
+                    }
+                  });
+                });
+                $('#secondary_end_of_experiment_zone').append($box);
+                break;
+              }
+            }
+          }
+          function updateExperimentLink() {
+            var link = "http://shihlabs.xtreemhost.com/IAT.php?s=" + hash;
+            $('#experimentLink').attr('href',link).text(link);
+          }
     </script>
     <style type="text/css">
       .hidden {
@@ -1054,19 +1054,19 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
         <select id="experiment_selector" onchange="experiment_change();">
           <option value="default">Please choose an experiment to begin</option>
           <?php
-            include 'connect.php';
-            $query = "SELECT name,stimuli_set,hash FROM experiments";
-            $result = mysql_query($query);
-            $i = 0;
-            while ($row = mysql_fetch_assoc($result)) {
-              $name = $row['name'];
-              $set = $row["stimuli_set"];
-              $hash = $row['hash'];
-              echo "<option value=\"$set\">$name - ID:$hash</option>";
-              $i++;
-            }
-            mysql_free_result($result);
-            mysql_close();
+          include 'connect.php';
+          $query = "SELECT name,stimuli_set,hash FROM experiments";
+          $result = mysql_query($query);
+          $i = 0;
+          while ($row = mysql_fetch_assoc($result)) {
+            $name = $row['name'];
+            $set = $row["stimuli_set"];
+            $hash = $row['hash'];
+            echo "<option value=\"$set\">$name - ID:$hash</option>";
+            $i++;
+          }
+          mysql_free_result($result);
+          mysql_close();
           ?>
           <option value="new experiment">Make New Experiment</option>
         </select>
