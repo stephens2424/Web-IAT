@@ -59,68 +59,71 @@
         var wordShowedTime;
         var wordShowed = false;
 
-        function detect_keydown ( e ) {
-          //TODO add safeguard so only the proper keys trigger any changes
-          var time = new Date().getTime();
-          if (!wordShowed) return;
-          var keynum;
-          var keychar;
-          if(window.event) // IE
-          {
-            keynum = e.keyCode;
-          }
-          else if(e.which) // Netscape/Firefox/Opera
-          {
-            keynum = e.which;
-          }
-          switch (keynum) {
-            case 37:
-              keychar = "left";
-              break;
-            case 38:
-              keychar = "up";
-              return;
-            case 39:
-              keychar = "right";
-              break;
-            case 40:
-              keychar = "down";
-              return;
-            default:
-              return;
-              //keychar = String.fromCharCode(keynum);
-          }
-          wordShowed = false;
-          sendData(keychar,(time - wordShowedTime).toString());
-          if (wordNum >= stimuliData[groupNum].stimulus.length) {
-            if (groupNum >= stimuliData.length - 1) {
-              done = true;
-            } else {
-              groupNum++;
-              wordNum = 0;
-              new_word();
-            }
-          } else {
-            new_word ();
-          }
       }
       function new_word () {
         if (stimuliData[groupNum].stimulus[wordNum].word === '') {
           toggleLayer('IAT');
           toggleLayer('instructionDiv');
           instruction = true;
+  function detect_keydown ( e ) {
+    //TODO add safeguard so only the proper keys trigger any changes
+    var time = new Date().getTime();
+    if (!((!wordShowed && correctingResponse) || (wordShowed && !correctingResponse))) return;
+    var keynum;
+    var keychar;
+    if(window.event) // IE
+    {
+      keynum = e.keyCode;
+    }
+    else if(e.which) // Netscape/Firefox/Opera
+    {
+      keynum = e.which;
+    }
+    switch (keynum) {
+      case 37:
+        keychar = "left";
+        break;
+      case 38:
+        keychar = "up";
+        return;
+      case 39:
+        keychar = "right";
+        break;
+      case 40:
+        keychar = "down";
+        return;
+      default:
+        return;
+      //keychar = String.fromCharCode(keynum);
+  }
+  wordShowed = false;
+  if (!correctingResponse) {
+    sendData(keychar,(time - wordShowedTime).toString());
+  }
+  var correct;
+    switch (parseInt(stimuliData[groupNum].stimulus[wordNum-1].correct_response)) {
+      case 0 :
+        if (keychar === "left") correct = true;
+        else correct = false;
+        break;
+      case 1 :
+        if (keychar === "right") correct = true;
+        else correct = false;
+        break;
+      default :
+        correct = true;
+        break;
+    }
+    if (correct) {
+      correctingResponse = false;
+      if (wordNum >= stimuliData[groupNum].stimulus.length) {
+        if (groupNum >= stimuliData.length - 1) {
+          done = true;
         } else {
-          if (instruction) {
-            toggleLayer('instructionDiv');
-            toggleLayer('IAT')
-          }
-          change_categories(0);
+          groupNum++;
+          wordNum = 0;
+          new_word();
         }
-        if (stimuliData[groupNum].stimulus[wordNum].mask === "1")
-          new_word_zero();
-        else
-          show_new_word();
-      }
       function new_word_zero () {
         document.getElementById('word').textContent = "%%%%%%%%%%%%%%";
         setTimeout("new_word_one (document.getElementById('word'))",200);
