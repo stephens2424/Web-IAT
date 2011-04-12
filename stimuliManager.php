@@ -182,6 +182,46 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
         });
         stimuliData[groupNum].randomize = stimuliData[groupNum].randomize === "0" ? "1" : "0";
       }
+      function moveGroupUp($groupRow) {
+        if ($groupRow.index() === 0) return;
+        $.post(
+        "moveGroup.php",{
+          group:stimuliData[$groupRow.index()].group_id,
+          up:1
+        }
+      );
+        stimuliData.splice($groupRow.index(),1);
+        $groupRow.remove();
+        if ($('#stimuliBody').children('tr').length === 0) {
+          addNoGroup();
+        }
+      }
+      function moveGroupDown($groupRow) {
+        if ($groupRow.index() >= stimuliData.length) return;
+        $.post(
+        "moveGroup.php",{
+          group:stimuliData[$groupRow.index()].group_id,
+          up:0
+        }
+      );
+        stimuliData.splice($groupRow.index(),1);
+        $groupRow.remove();
+        if ($('#stimuliBody').children('tr').length === 0) {
+          addNoGroup();
+        }
+      }
+      function copyGroup($groupRow) {
+        $.post(
+        "removeGroup.php",{
+          group:stimuliData[$groupRow.index()].group_id
+        }
+      );
+        stimuliData.splice($groupRow.index(),1);
+        $groupRow.remove();
+        if ($('#stimuliBody').children('tr').length === 0) {
+          addNoGroup();
+        }
+      }
       function removeGroup($groupRow) {
         $.post(
         "removeGroup.php",{

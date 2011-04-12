@@ -1,4 +1,5 @@
 <?php
+
 $set = $_POST['set'];
 $order = $_POST['below'] == "true" ? $_POST['position'] + 1 : $_POST['position'];
 $query = "UPDATE stimuliGroups SET `order`=(`order` + 1) WHERE (`stimuliSet`=$set AND `order`>=$order)";
@@ -10,11 +11,11 @@ $id = mysql_insert_id();
 $query = "SELECT * FROM stimuliGroups WHERE `id`=$id";
 $result = mysql_query($query);
 $array = array(
-  "group_id" => $id,
-  "randomize" => mysql_result($result,0,"randomize"),
-  "groupName" => mysql_result($result,0,"name"),
-  "stage" => mysql_result($result, 0, "stage"),
-  "stimuli" => array()
+    "group_id" => $id,
+    "randomize" => mysql_result($result, 0, "randomize"),
+    "groupName" => mysql_result($result, 0, "name"),
+    "stage" => mysql_result($result, 0, "stage"),
+    "stimuli" => array()
 );
 mysql_free_result($result);
 mysql_close();
