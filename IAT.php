@@ -2,6 +2,7 @@
 <html>
   <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript"></script>
+    <script src="JSON-js/json2.js"></script>
     <script type="text/javascript">
       //data
       var stimuliData;
