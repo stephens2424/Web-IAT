@@ -6,6 +6,7 @@
     <script type="text/javascript">
       //data
       var stimuliData;
+      var responseData = new Array();
       var categories;
       //status trackers
       var successfulResponses = 0;
@@ -13,6 +14,7 @@
       var totalStimuli = 0;
       var correctingResponse = false;
       //configurations
+      var sendDataConcurrently = false;
       var checkCorrectResponse = false;
       var maskingOverride = false;
 <?
@@ -100,7 +102,11 @@ mysql_close();
   }
   wordShowed = false;
   if (!correctingResponse) {
-    sendData(keychar,(time - wordShowedTime).toString());
+    if (sendDataConcurrently) {
+      sendData(keychar,(time - wordShowedTime).toString());
+    } else {
+      storeData(keychar,(time - wordShowedTime).toString());
+    }
   }
   var correct;
   if (checkCorrectResponse) {
@@ -192,7 +198,39 @@ function change_categories (wordNumShift) {
   $('#subCatLeft').text(subcat1 ? subcat1 : '');
   $('#subCatRight').text(subcat2 ? subcat2 : '');
 }
-
+function storeData(response,time) {
+  wordNum--;
+  if (responseData[groupNum] == null) responseData[groupNum] = new Object();
+  if (responseData[groupNum].stimulus == null) responseData[groupNum].stimulus = new Array();
+  if (responseData[groupNum].stimulus[wordNum] == null) responseData[groupNum].stimulus[wordNum] = new Object();
+  responseData[groupNum].stimulus[wordNum].response = response;
+  responseData[groupNum].stimulus[wordNum].time = time;
+  responseData[groupNum].stimulus[wordNum].stim = stimuliData[groupNum].stimulus[wordNum].stim_id;
+  successfulResponses++;
+  responses++;
+  wordNum++;
+  if (responses >= totalStimuli) {sendStoredData();}
+}
+function sendStoredData() {
+  sendStoredData(0);
+}
+function sendStoredData(trialNum) {
+  $.ajax({
+    type:"POST",
+    url:"uploadStoredData.php",
+    data:{
+      "responseData":JSON.stringify(responseData),
+      "subj":subj
+    },
+    success:function(data,textStatus,XMLHttpRequest) {
+      location.href="processing.php";
+    },
+    error:function (XMLHttpRequest, textStatus, errorThrown) {
+      if (trialNum > 0) alert("Error uploading your result data. Please check your internet connection.");
+      else sendStoredData(1);
+    }
+  });
+}
 function sendData(response,time) {
   $.ajax({
     type:"POST",
