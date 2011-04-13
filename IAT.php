@@ -3,12 +3,17 @@
   <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript"></script>
     <script type="text/javascript">
+      //data
       var stimuliData;
       var categories;
+      //status trackers
       var successfulResponses = 0;
       var responses = 0;
       var totalStimuli = 0;
       var correctingResponse = false;
+      //configurations
+      var checkCorrectResponse = false;
+      var maskingOverride = false;
 <?
 //TODO add web management tool for stimuli
 //TODO figure out how to make this full screen
@@ -97,18 +102,22 @@ mysql_close();
     sendData(keychar,(time - wordShowedTime).toString());
   }
   var correct;
-  switch (parseInt(stimuliData[groupNum].stimulus[wordNum-1].correct_response)) {
-    case 0 :
-      if (keychar === "left") correct = true;
-      else correct = false;
-      break;
-    case 1 :
-      if (keychar === "right") correct = true;
-      else correct = false;
-      break;
-    default :
-      correct = true;
-      break;
+  if (checkCorrectResponse) {
+      switch (parseInt(stimuliData[groupNum].stimulus[wordNum-1].correct_response)) {
+        case 0 :
+          if (keychar === "left") correct = true;
+          else correct = false;
+          break;
+        case 1 :
+          if (keychar === "right") correct = true;
+          else correct = false;
+          break;
+        default :
+          correct = true;
+          break;
+    }
+  } else {
+    correct = true;
   }
   if (correct) {
     correctingResponse = false;
@@ -144,7 +153,7 @@ function new_word () {
     }
     change_categories(0);
   }
-  if (stimuliData[groupNum].stimulus[wordNum].mask === "1")
+  if (stimuliData[groupNum].stimulus[wordNum].mask === "1" && !maskingOverride)
     new_word_zero();
   else
     show_new_word();
