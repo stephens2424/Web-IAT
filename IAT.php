@@ -35,9 +35,10 @@ printf("var subj=%d;\n", $subj);
 mysql_close();
 ?>
   function load() {
-    document.onkeydown=detect_keydown;
+    $(document).bind('keydown',detect_keydown);
     $.ajax({
       url:"requestStimuliSetForIAT.php",
+      type:"post",
       data:{
         stim_set_hash:'<? echo $_GET['s'] ?>'
       },
@@ -75,14 +76,7 @@ mysql_close();
     if (!((!wordShowed && correctingResponse) || (wordShowed && !correctingResponse))) return;
     var keynum;
     var keychar;
-    if(window.event) // IE
-    {
-      keynum = e.keyCode;
-    }
-    else if(e.which) // Netscape/Firefox/Opera
-    {
-      keynum = e.which;
-    }
+    keynum = e.which;
     switch (keynum) {
       case 37:
         keychar = "left";
