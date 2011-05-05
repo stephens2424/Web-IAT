@@ -769,6 +769,21 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
       function download_calculated_data() {
         location.href="downloadScoresFromExperiment.php?set="+set;
       }
+      function download_log() {
+        location.href="downloadLogForExperiment.php?set="+set;
+      }
+      function confirm_delete(thing) {
+        var input = prompt("This action cannot be undone. Please confirm you would like to delete this " + thing + " by typing \"delete\" into the box below.");
+        if (input === null) {
+          return false;
+        } else {
+          if (input.toLowerCase() === "delete") {
+            return true;
+          } else {
+            return false;
+          }
+        }
+      }
       function handle_category_change() {
 
       }
@@ -842,6 +857,21 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
               $('#download_selectbox').attr('selectedIndex',0);
               break;
             }
+          case 3: {
+              download_log();
+              $('#download_selectbox').attr('selectedIndex',0);
+              break;
+          }
+          case 4: {
+              if (confirm_delete("log")) {
+                $.get('unlinkLogFileForExperiment.php',{set:set}).success(function (receivedData) {
+                  if (receivedData !== true) {
+                    alert("Delete failed. The log is probably in use elsewhere.");
+                  }
+                });
+              }
+              $('#download_selectbox').attr('selectedIndex',0);
+          }
         }
       }
       function handle_end_of_experiment_change() {
@@ -1131,6 +1161,8 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
           <option>Download CSV</option>
           <option>Raw Data</option>
           <option>Greenwald Score</option>
+          <option>Log File</option>
+          <option>Delete Log</option>
         </select><br>
         Stimulus Categories:
         <select id="categorySelectBox" onchange="handle_category_change()">

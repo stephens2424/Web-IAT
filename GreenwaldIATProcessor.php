@@ -34,9 +34,10 @@ abstract class GreenwaldIATProcessor {
 
   function handleRowWithMatchingSubject($theRow, $s3, $s3in, $s6, $s6in, $s4, $s4in, $s7, $s7in) {
     global $subject;
+    global $log;
     if (intval($theRow['response_time'], 10) > 10000) {
       $responseId = $theRow['response_id'];
-      logInfo("Ignoring response ID $responseId on subject $subject. Response time is greater than 10,000 msec.");
+      eLogInfo("Ignoring response ID $responseId on subject $subject. Response time is greater than 10,000 msec.",$log);
       return;
     }
     switch ($theRow['stage']) {
@@ -104,51 +105,52 @@ abstract class GreenwaldIATProcessor {
 
   function handleSubjectAndReturnScore($stage3correctArray, $stage3incorrectArray, $stage6correctArray, $stage6incorrectArray, $stage4correctArray, $stage4incorrectArray, $stage7correctArray, $stage7incorrectArray) {
     global $subject;
+    global $log;
     //check amount of correct answers
     if (count($stage3correctArray) < 1) {
-      logInfo("Dropping subject $subject. Stage 3 has zero correct answers.");
+      eLogInfo("Dropping subject $subject. Stage 3 has zero correct answers.",$log);
       return null;
     }
     if (count($stage4correctArray) < 1) {
-      logInfo("Dropping subject $subject. Stage 4 has zero correct answers.");
+      eLogInfo("Dropping subject $subject. Stage 4 has zero correct answers.",$log);
       return null;
     }
     if (count($stage6correctArray) < 1) {
-      logInfo("Dropping subject $subject. Stage 6 has zero correct answers.");
+      eLogInfo("Dropping subject $subject. Stage 6 has zero correct answers.",$log);
       return null;
     }
     if (count($stage7correctArray) < 1) {
-      logInfo("Dropping subject $subject. Stage 7 has zero correct answers.");
+      eLogInfo("Dropping subject $subject. Stage 7 has zero correct answers.",$log);
       return null;
     }
     if (count($stage3correctArray) < count($stage3incorrectArray)) {
-      logWarn("Subject $subject has more incorrect answers than correct answers in stage 3.");
+      eLogWarn("Subject $subject has more incorrect answers than correct answers in stage 3.",$log);
     }
     if (count($stage4correctArray) < count($stage4incorrectArray)) {
-      logWarn("Subject $subject has more incorrect answers than correct answers in stage 4.");
+      eLogWarn("Subject $subject has more incorrect answers than correct answers in stage 4.",$log);
     }
     if (count($stage6correctArray) < count($stage6incorrectArray)) {
-      logWarn("Subject $subject has more incorrect answers than correct answers in stage 6.");
+      eLogWarn("Subject $subject has more incorrect answers than correct answers in stage 6.",$log);
     }
     if (count($stage7correctArray) < count($stage7incorrectArray)) {
-      logWarn("Subject $subject has more incorrect answers than correct answers in stage 7.");
+      eLogWarn("Subject $subject has more incorrect answers than correct answers in stage 7.",$log);
     }
     
     //reconcile incorrect arrays
     if (!($stage3array = GreenwaldIATProcessor::reconcileStage($stage3correctArray, $stage3incorrectArray))) {
-      logInfo("Dropping subject $subject. Stage 3 is empty; bailing out.");
+      eLogInfo("Dropping subject $subject. Stage 3 is empty; bailing out.",$log);
       return null;
     }
     if (!($stage4array = GreenwaldIATProcessor::reconcileStage($stage4correctArray, $stage4incorrectArray))) {
-      logInfo("Dropping subject $subject. Stage 4 is empty; bailing out.");
+      eLogInfo("Dropping subject $subject. Stage 4 is empty; bailing out.",$log);
       return null;
     }
     if (!($stage6array = GreenwaldIATProcessor::reconcileStage($stage6correctArray, $stage6incorrectArray))) {
-      logInfo("Dropping subject $subject. Stage 6 is empty; bailing out.");
+      eLogInfo("Dropping subject $subject. Stage 6 is empty; bailing out.",$log);
       return null;
     }
     if (!($stage7array = GreenwaldIATProcessor::reconcileStage($stage7correctArray, $stage7incorrectArray))) {
-      logInfo("Dropping subject $subject. Stage 7 is empty; bailing out.");
+      eLogInfo("Dropping subject $subject. Stage 7 is empty; bailing out.",$log);
       return null;
     }
     //"inclusive" standard deviations
@@ -180,15 +182,17 @@ abstract class GreenwaldIATProcessor {
       return true;
     }
   }
-  function calculateAndSetScore($subj) {
+  function calculateAndSetScore($subj,$logFile) {
     global $subject;
     $subject = $subj;
+    global $log;
+    $log = KLogger::instance($logFile, KLogger::INFO);
     include 'connect.php';
     $query = "SELECT responses.response,responses.response_id,responses.response_time,stimuli.correct_response,stimuli.stimulusCategory,stimuliGroups.stage FROM responses JOIN (stimuli,stimuliGroups) ON (responses.stimulus=stimuli.stimulus_id AND stimuli.group=stimuliGroups.id) WHERE (responses.subj=$subj) ORDER BY responses.response_id";
-    logDebug("Calculating score with query:$query");
+    eLogDebug("Calculating score with query:$query",$log);
     $result = mysql_query($query);
     if (mysql_num_rows($result) < 1) {
-      logInfo("Dropping subject $subject. Missing subject or responses.");
+      eLogInfo("Dropping subject $subject. Missing subject or responses.",$log);
       return null;
     }
     $verify = GreenwaldIATProcessor::verifyResponseTimes($result);
@@ -200,10 +204,10 @@ abstract class GreenwaldIATProcessor {
       $query = "UPDATE subjects SET `score`=$score WHERE `id`=$subj";
       mysql_query($query);
       mysql_close();
-      logDebug("Successful calculation. Subject $subject's score is $score.");
+      eLogDebug("Successful calculation. Subject $subject's score is $score.",$log);
       return $score;
     } else {
-      logInfo("Dropping subject $subject. Greater than 10% of response times are less than 300 msec.");
+      eLogInfo("Dropping subject $subject. Greater than 10% of response times are less than 300 msec.",$log);
     }
   }
 }

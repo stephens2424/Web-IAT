@@ -2,32 +2,49 @@
 
 require_once 'KLogger/src/KLogger.php';
 date_default_timezone_set("UTC");
-$log = new KLogger("log", KLogger::INFO);
+$_log = new KLogger("default", KLogger::INFO);
 
 function logInfo($line) {
-  global $log;
-  $log -> logInfo($line);
+  global $_log;
+  $_log -> logInfo($line);
 }
-
 function logDebug($line) {
-  global $log;
-  $log -> logDebug($line);
+  global $_log;
+  $_log -> logDebug($line);
 }
 function logNotice($line) {
-  global $log;
-  $log -> logNotice($line);
+  global $_log;
+  $_log -> logNotice($line);
 }
 function logWarn($line) {
-  global $log;
-  $log -> logWarn($line);
+  global $_log;
+  $_log -> logWarn($line);
 }
 function logError($line) {
-  global $log;
-  $log -> logError($line);
+  global $_log;
+  $_log -> logError($line);
 }
 function logFatal($line) {
-  global $log;
-  $log -> logFatal($line);
+  global $_log;
+  $_log -> logFatal($line);
 }
 
+function eLogInfo($line,$log) {
+  $log -> logInfo($line);
+}
+function eLogDebug($line,$log) {
+  $log -> logDebug($line);
+}
+function eLogNotice($line,$log) {
+  $log -> logNotice($line);
+}
+function eLogWarn($line,$log) {
+  $log -> logWarn($line);
+}
+function eLogError($line,$log) {
+  $log -> logError($line);
+}
+function eLogFatal($line,$log) {
+  $log -> logFatal($line);
+}
 ?>
