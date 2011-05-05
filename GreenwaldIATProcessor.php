@@ -1,4 +1,5 @@
 <?php
+require_once 'GlobalKLogger.php';
 abstract class GreenwaldIATProcessor {
   function standard_deviation($array) {
     $mean = mean($array);
@@ -33,6 +34,8 @@ abstract class GreenwaldIATProcessor {
 
   function handleRowWithMatchingSubject($theRow, $s3, $s3in, $s6, $s6in, $s4, $s4in, $s7, $s7in) {
     if (intval($theRow['response_time'], 10) > 10000) {
+      $responseId = $theRow['response_id'];
+      logInfo("Ignoring response $responseId for subject $subject. Response time is greater than 10,000 msec.");
       return;
     }
     switch ($theRow['stage']) {
@@ -120,8 +123,10 @@ abstract class GreenwaldIATProcessor {
   }
 
   function calculateAndSetScore($subj) {
+    global $subject;
+    $subject = $subj;
     include 'connect.php';
-    $query = "SELECT responses.response,responses.response_time,stimuli.correct_response,stimuli.stimulusCategory,stimuliGroups.stage FROM responses JOIN (stimuli,stimuliGroups) ON (responses.stimulus=stimuli.stimulus_id AND stimuli.group=stimuliGroups.id) WHERE (responses.subj=$subj) ORDER BY responses.response_id";
+    $query = "SELECT responses.response,responses.response_id,responses.response_time,stimuli.correct_response,stimuli.stimulusCategory,stimuliGroups.stage FROM responses JOIN (stimuli,stimuliGroups) ON (responses.stimulus=stimuli.stimulus_id AND stimuli.group=stimuliGroups.id) WHERE (responses.subj=$subj) ORDER BY responses.response_id";
     $result = mysql_query($query);
     while ($row = mysql_fetch_assoc($result)) {
       handleRowWithMatchingSubject($row, &$stage3correctArray, &$stage3incorrectArray, &$stage6correctArray, &$stage6incorrectArray, &$stage4correctArray, &$stage4incorrectArray, &$stage7correctArray, &$stage7incorrectArray);
