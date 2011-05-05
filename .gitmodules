@@ -1,3 +1,6 @@
 [submodule "JSON-js"]
 	path = JSON-js
 	url = git://github.com/douglascrockford/JSON-js.git
+[submodule "KLogger"]
+	path = KLogger
+	url = https://github.com/katzgrau/KLogger.git
