@@ -1,6 +1,7 @@
 <?php
 
 require_once 'KLogger/src/KLogger.php';
+date_default_timezone_set("UTC");
 $log = new KLogger("log", KLogger::INFO);
 
 function logInfo($line) {
