@@ -1,0 +1,31 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+  var subj = 0;
+  $(document).ready(function() {
+    nextSubject();
+  });
+  function subjectReturn(received_data, textStatus, XMLHttpRequest) {
+    $('#dataTable').append('<tr><td>' + subj + '</td><td>' + received_data + '</td></tr>');
+    if (subj < 329) {
+      nextSubject();
+    }
+  }
+  function nextSubject() {
+    subj += 1;
+    $.get("calculateScore.php",{'subj':subj}).success(subjectReturn);
+  }
+</script>
+<html>
+  <head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+  <body>
+    <div><table id="dataTable"><thead><th>Subject</th><th>Response</th></thead></table></div>
+  </body>
+</html>
