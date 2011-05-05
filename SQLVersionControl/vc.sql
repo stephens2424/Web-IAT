@@ -39,7 +39,7 @@ CREATE TABLE `experiments` (
 
 LOCK TABLES `experiments` WRITE;
 /*!40000 ALTER TABLE `experiments` DISABLE KEYS */;
-INSERT INTO `experiments` VALUES (1,'','Test 1','http://ucla.qualtrics.com/SE/?SID=SV_e96qSgzMekRWZmc','m8z2p',''),(2,'','Test 2','results.php','8hy5e',''),(14,'\0','Greenwald Test','thankyou.php','nhn1q','thankyou.php'),(18,'\0','null','results.php','4hjci',''),(20,'\0','New Experiment','results.php','czhhw',''),(21,'\0','null','results.php','z8gkl','');
+INSERT INTO `experiments` VALUES (1,'','Test 1','http://ucla.qualtrics.com/SE/?SID=SV_e96qSgzMekRWZmc','m8z2p',''),(2,'','Test 2','results.php','8hy5e',''),(14,'\0','Greenwald Test','thankyou.php','nhn1q','thankyou.php'),(18,'\0','null','results.php','4hjci',''),(20,'\0','New Experiment','results.php','czhhw','');
 /*!40000 ALTER TABLE `experiments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -197,4 +197,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2011-05-05  3:35:30
+-- Dump completed on 2011-05-05  3:39:39

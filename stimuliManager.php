@@ -744,8 +744,7 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
               break;
             }
           case 2: {//delete experiment
-              var c = confirm("Are you sure you want to delete this experiment?\nThis action cannot be undone.");
-              if (c === true) {
+              if (confirm_delete("experiment")) {
                 $.post("deleteExperiment.php",{
                   experiment:set
                 },function (receivedData) {
@@ -773,7 +772,7 @@ if (!($_SERVER['PHP_AUTH_USER'] == "shihlab" && $_SERVER['PHP_AUTH_PW'] == "shih
         location.href="downloadLogForExperiment.php?set="+set;
       }
       function confirm_delete(thing) {
-        var input = prompt("This action cannot be undone. Please confirm you would like to delete this " + thing + " by typing \"delete\" into the box below.");
+        var input = prompt("Warning: this action cannot be undone.\nPlease confirm you would like to delete this " + thing + " by typing \"delete\" into the box below.");
         if (input === null) {
           return false;
         } else {
