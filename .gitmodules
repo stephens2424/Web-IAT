@@ -3,4 +3,4 @@
 	url = git://github.com/douglascrockford/JSON-js.git
 [submodule "KLogger"]
 	path = KLogger
-	url = https://github.com/katzgrau/KLogger.git
+	url = https://stephens2424@github.com/stephens2424/KLogger.git
