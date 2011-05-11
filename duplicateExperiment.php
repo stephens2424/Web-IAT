@@ -1,5 +1,6 @@
 <?php
 include 'connect.php';
+include 'GlobalKLogger.php';
 $oldSet = $_GET['set'];
 try {
   $query = "START TRANSACTION";
@@ -29,7 +30,9 @@ try {
     if (!mysql_query($query)) {
       throw new Exception("Query failed");
     }
-    $translateCategoryArray[$row['id']] = mysql_insert_id();
+    $key = $row['id'];
+    $value = mysql_insert_id();
+    $translateCategoryArray["$key"] = "$value";
   }
 
   $query = "SELECT * FROM stimuliGroups WHERE stimuliSet=$oldSet";
@@ -45,7 +48,9 @@ try {
     if (!mysql_query($query)) {
       throw new Exception("Query failed");
     }
-    $translateGroupArray[$row['id']] = mysql_insert_id();
+    $key = $row['id'];
+    $value = mysql_insert_id();
+    $translateGroupArray["$key"] = "$value";
   }
 
   $query = "SELECT * FROM stimuli WHERE `set`=$oldSet";
@@ -85,7 +90,7 @@ try {
     $dupStimuliQuery .= ",$mask,$order,$group,$stimCat)";
   }
   if (!mysql_query($dupStimuliQuery)) {
-    throw new Exception(@"Query failed");
+    throw new Exception(@"Query failed - $dupStimuliQuery");
   }
   $query = "COMMIT";
   if (!mysql_query($query)) {
@@ -94,9 +99,11 @@ try {
 } catch (Exception $e) {
   $query = "ROLLBACK";
   if (!mysql_query($query)) {
+    logFatal($e->getMessage());
     echo 3; //unable to rollback
     exit;
   } else {
+    logFatal($e->getMessage());
     echo 2;
     exit;
   }
