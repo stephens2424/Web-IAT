@@ -9,16 +9,19 @@
 <?
 $subj = $_SESSION['subj'];
 echo "var subject = $subj;\n";
+$set = $_SESSION['set'];
+$query = "SELECT endUrl,hash FROM experiments WHERE `stimuli_set`=$set";
+include 'connect.php';
+$result = mysql_query($query);
 ?>
   $(document).ready(function() {
     $.post("calculateScore.php",{
-      subj:subject
+      subj:subject,
+      logfile:"<?
+      echo mysql_result($result, 0, "hash");
+      ?>"
     },function () {
       var endURL ='<?
-$set = $_SESSION['set'];
-$query = "SELECT endUrl FROM experiments WHERE `stimuli_set`=$set";
-include 'connect.php';
-$result = mysql_query($query);
 echo mysql_result($result, 0, "endUrl");
 ?>';
       if (endURL.substr(0,34) === "http://ucla.qualtrics.com/SE/?SID=") {
