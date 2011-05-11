@@ -10,8 +10,8 @@ $set = $_POST['set'];
 if (isset($_GET['set'])) {
   $set = $_GET['set'];
 }
-$hash = HashGenerator::udihash($set);
-$score = GreenwaldIATProcessor::calculateAndSetScore($subj,$hash);
+$logfile = $_POST['logfile'];
+$score = GreenwaldIATProcessor::calculateAndSetScore($subj,$logfile);
 $_SESSION['score'] = $score;
 echo $score;
 exit;
