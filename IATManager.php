@@ -3,11 +3,11 @@
 require_once 'connectDatabase.php';
 require_once 'GlobalKLogger.php';
 
-$requestObject = $_GET['requestObject'];
-$iatManager = new IATManager;
 
-$requestName = $requestObject['requestName'];
-echo $iatManager->$requestName($requestObject['data']);
+$iatManager = new IATManager;
+$requestObject = $_POST['data'];
+$requestName = $_POST['requestName'];
+echo $iatManager->$requestName($requestObject);
 
 /**
  * Description of IATManager
@@ -20,13 +20,6 @@ class IATManager {
   
   function __construct() {
     $this->databaseConnection = getDatabaseConnection();
-  }
-  
-  function arrayFromResult($result,$fields) {
-    while ($row = mysql_fetch_assoc($result)) {
-      $array[] = $row;
-    }
-    return $array;
   }
   
   function requestExperimentList() {
@@ -94,5 +87,12 @@ class IATManager {
   }
   
 }
+
+function arrayFromResult($result) {
+    while ($row = mysql_fetch_assoc($result)) {
+      $array[] = $row;
+    }
+    return $array;
+  }
 
 ?>
