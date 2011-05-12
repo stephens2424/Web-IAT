@@ -1,0 +1,47 @@
+/* 
+    Document   : ClientIATManager
+    Created on : May 12, 2011, 9:31:26 AM
+    Author     : Stephen
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/* 
+   TODO customize this sample style
+   Syntax recommendation http://www.w3.org/TR/REC-CSS2/
+*/
+
+root { 
+  display: block;
+}
+
+.center {
+  text-align: center;
+}
+
+table.stimuliGroupTable {
+  border : 1px solid green;
+}
+
+td,th {
+  border : 1px dotted red;
+}
+
+table.stimuliTable {
+  border : 1px solid blue;
+}
+
+table.stimuliGroupTable,table.stimuliTable {
+  width : 100%;
+}
+
+th.randomization,td.randomization,th.disclosure {
+  width : 10px;
+}
+th.greenwaldHeader,th.groupActionHeader {
+  width : 150px;
+}
+th.stimuliHeader {
+  
+}
+

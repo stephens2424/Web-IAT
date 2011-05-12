@@ -28,7 +28,20 @@ class IATManager {
     return json_encode(arrayFromResult($result));
   }
   function requestExperiment($experimentNumber) {
-    $query = "SELECT ";
+    $experiment = $this->getExperiment($experimentNumber);
+    $experiment['stimuliGroups'] = $this->getStimuliGroups($experimentNumber);
+    return json_encode($experiment);
+  }
+  function getExperiment($experimentNumber) {
+    $query = "SELECT * FROM experiments WHERE stimuli_set=$experimentNumber";
+    $result = mysql_query($query, $this->databaseConnection);
+    $experiment = objectFromResult($result);
+    return objectFromResult($result);
+  }
+  function getStimuliGroups($experimentNumber) {
+    $query = "SELECT * FROM stimuliGroups WHERE stimuliSet=$experimentNumber ORDER BY `order`";
+    $result = mysql_query($query,  $this->databaseConnection);
+    return arrayFromResult($result);
   }
   
   function addExperiment() {
@@ -88,11 +101,19 @@ class IATManager {
   
 }
 
+function objectFromResult($result,$rowOffset = 0) {
+  if ($result == null) return array();
+  mysql_data_seek($result, $rowOffset);
+  return mysql_fetch_assoc($result);
+}
 function arrayFromResult($result) {
-    while ($row = mysql_fetch_assoc($result)) {
-      $array[] = $row;
-    }
-    return $array;
+  if ($result == null) return array();
+  $array = array();
+  mysql_data_seek($result, $rowOffset);
+  while ($row = mysql_fetch_assoc($result)) {
+    $array[] = $row;
   }
+  return $array;
+}
 
 ?>
