@@ -41,6 +41,15 @@ class IATManager {
   function getStimuliGroups($experimentNumber) {
     $query = "SELECT * FROM stimuliGroups WHERE stimuliSet=$experimentNumber ORDER BY `order`";
     $result = mysql_query($query,  $this->databaseConnection);
+    $groups = arrayFromResult($result);
+    foreach ($groups as $group) {
+      $group['stimuli'] = $this->getStimuliInGroup($group['id']);
+    }
+    return $groups;
+  }
+  function getStimuliInGroup($groupNumber) {
+    $query = "SELECT * FROM stimuli WHERE `group`=$groupNumber ORDER BY `order`";
+    $result = mysql_query($query, $this->databaseConnection);
     return arrayFromResult($result);
   }
   
