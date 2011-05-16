@@ -164,9 +164,43 @@ var IAT = (function() {
         $tableHeader.append($('<th>').addClass('center').addClass('groupActionHeader').text('action selector'));
         $tableHeader.append($('<th>').addClass('center').addClass('randomization').text('randomization box'));
         $innerTable.append($tableHeader);
+        for (var stimulus in group.stimuli) {
+          $innerTable.append(this.stimulusRowFromObject(group.stimuli[stimulus]));
+        }
         $cell.append($innerTable);
         $row.append($cell);
         return $row;
+      },
+      stimulusRowFromObject : function(stimulus) {
+        var $row = $('<tr>');
+        var $emptyShifterCell = $('<td>');
+        var $stimulusDataCell = this.stimulusDataTableFromObject(stimulus);
+        var $stimulusOptionsCell = $('<td>').append('TODO - stimulus options');
+        $row.append($emptyShifterCell).append($stimulusDataCell).append($stimulusOptionsCell);
+        return $row;
+      },
+      stimulusDataTableFromObject : function(stimulus) {
+        var $table = $('<table>').addClass('stimulusDataTable');
+        var $topRow = $('<tr>');
+        var $middleRow = $('<tr>');
+        var $bottomRow = $('<tr>');
+        
+        var $cat1cell = $('<td>').addClass('stimulusDataCell').addClass('leftCategoryCell').addClass('topCategoryCell');
+        $cat1cell.text(stimulus.category1);
+        var $cat2cell = $('<td>').addClass('stimulusDataCell').addClass('rightCategoryCell').addClass('topCategoryCell');
+        $cat2cell.text(stimulus.category2);
+        var $subcat1cell = $('<td>').addClass('stimulusDataCell').addClass('leftCategoryCell').addClass('bottomCategoryCell');
+        $subcat1cell.text(stimulus.subcategory1);
+        var $subcat2cell = $('<td>').addClass('stimulusDataCell').addClass('rightCategoryCell').addClass('bottomCategoryCell');
+        $subcat2cell.text(stimulus.subcategory2);
+        var $wordCell = $('<td colspan="2">').addClass('stimulusDataCell').addClass('wordCell');
+        $wordCell.text(stimulus.word);
+        
+        $topRow.append($cat1cell).append($cat2cell);
+        $middleRow.append($subcat1cell).append($subcat2cell);
+        $bottomRow.append($wordCell);
+        $table.append($topRow).append($middleRow).append($bottomRow);
+        return $table;
       },
       //index-id translations
       groupIdFromIndex : function(index) {
