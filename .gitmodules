@@ -4,3 +4,6 @@
 [submodule "KLogger"]
 	path = KLogger
 	url = https://stephens2424@github.com/stephens2424/KLogger.git
+[submodule "corner"]
+	path = corner
+	url = https://github.com/malsup/corner.git
