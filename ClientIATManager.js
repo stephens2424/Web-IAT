@@ -40,7 +40,7 @@ var IAT = (function() {
       //data
       experimentNumber : null,
       stimuliGroups :  null,
-      stimuliCategories : null,
+      stimulusCategories : null,
       //manipulation functions
       removeExperiment : function(experimentNumber) {
         return sendRequest(bundleIATManagerRequestData("removeExperiment",{
@@ -157,12 +157,12 @@ var IAT = (function() {
         var $innerTable = $('<table>').addClass('stimuliTable');
         var $tableHeader = $('<thead>');
         $tableHeader.append($(DISCLOSURE_HEADER_CELL_STRING));
-        var $stimuliHeader = $('<th>').addClass('center').addClass('stimuliHeader');
+        var $stimuliHeader = $('<th>').addClass('stimuliHeader');
         $stimuliHeader.text(group.name);
         $tableHeader.append($stimuliHeader);
-        $tableHeader.append($('<th>').addClass('center').addClass('greenwaldHeader').text('greenwald selector'));
-        $tableHeader.append($('<th>').addClass('center').addClass('groupActionHeader').text('action selector'));
-        $tableHeader.append($('<th>').addClass('center').addClass('randomization').text('randomization box'));
+        $tableHeader.append($('<th>').addClass('greenwaldHeader').text('greenwald selector'));
+        $tableHeader.append($('<th>').addClass('groupActionHeader').text('action selector'));
+        $tableHeader.append($('<th>').addClass('randomization').text('randomization box'));
         $innerTable.append($tableHeader);
         for (var stimulus in group.stimuli) {
           $innerTable.append(this.stimulusRowFromObject(group.stimuli[stimulus]));
@@ -174,9 +174,10 @@ var IAT = (function() {
       stimulusRowFromObject : function(stimulus) {
         var $row = $('<tr>');
         var $emptyShifterCell = $('<td>');
+        var $stimulusEditButtonCell = $('<td>').append('TODO - edit button');
         var $stimulusDataCell = this.stimulusDataTableFromObject(stimulus);
-        var $stimulusOptionsCell = $('<td>').append('TODO - stimulus options');
-        $row.append($emptyShifterCell).append($stimulusDataCell).append($stimulusOptionsCell);
+        var $stimulusActionsCell = $('<td>').append('TODO - stimulus actions');
+        $row.append($emptyShifterCell).append($stimulusDataCell).append($stimulusEditButtonCell).append($stimulusActionsCell);
         return $row;
       },
       stimulusDataTableFromObject : function(stimulus) {
@@ -186,13 +187,13 @@ var IAT = (function() {
         var $bottomRow = $('<tr>');
         
         var $cat1cell = $('<td>').addClass('stimulusDataCell').addClass('leftCategoryCell').addClass('topCategoryCell');
-        $cat1cell.text(stimulus.category1);
+        $cat1cell.text(this.categoryNameFromId(stimulus.category1));
         var $cat2cell = $('<td>').addClass('stimulusDataCell').addClass('rightCategoryCell').addClass('topCategoryCell');
-        $cat2cell.text(stimulus.category2);
+        $cat2cell.text(this.categoryNameFromId(stimulus.category2));
         var $subcat1cell = $('<td>').addClass('stimulusDataCell').addClass('leftCategoryCell').addClass('bottomCategoryCell');
-        $subcat1cell.text(stimulus.subcategory1);
+        $subcat1cell.text(this.categoryNameFromId(stimulus.subcategory1));
         var $subcat2cell = $('<td>').addClass('stimulusDataCell').addClass('rightCategoryCell').addClass('bottomCategoryCell');
-        $subcat2cell.text(stimulus.subcategory2);
+        $subcat2cell.text(this.categoryNameFromId(stimulus.subcategory2));
         var $wordCell = $('<td colspan="2">').addClass('stimulusDataCell').addClass('wordCell');
         $wordCell.text(stimulus.word);
         
@@ -202,9 +203,13 @@ var IAT = (function() {
         $table.append($topRow).append($middleRow).append($bottomRow);
         return $table;
       },
-      //index-id translations
+      //translations
       groupIdFromIndex : function(index) {
         return this.stimuliGroups[index].id;
+      },
+      categoryNameFromId : function(id) {
+        if (id === "0" | id === null | id === undefined) return "";
+        else return this.stimulusCategories[id];
       }
   };
   
@@ -230,7 +235,7 @@ var IAT = (function() {
       experiment.endUrl = data.endUrl;
       experiment.secondEndUrl = data.secondEndUrl;
       experiment.stimuliGroups = data.stimuliGroups;
-      experiment.stimuliCategories = data.stimuliCategories;
+      experiment.stimulusCategories = data.stimulusCategories;
       experimentPromise.resolve();
     });
     return experiment;

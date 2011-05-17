@@ -30,6 +30,7 @@ class IATManager {
   function requestExperiment($experimentNumber) {
     $experiment = $this->getExperiment($experimentNumber);
     $experiment['stimuliGroups'] = $this->getStimuliGroups($experimentNumber);
+    $experiment['stimulusCategories'] = $this->getStimulusCategories($experimentNumber);
     return json_encode($experiment);
   }
   function getExperiment($experimentNumber) {
@@ -55,7 +56,11 @@ class IATManager {
     $result = mysql_query($query, $this->databaseConnection);
     return arrayFromResult($result);
   }
-  
+  function getStimulusCategories($experimentNumber) {
+    $query = "SELECT * FROM stimulusCategories WHERE `experiment`=$experimentNumber";
+    $result = mysql_query($query);
+    return assocArrayFromResult($result, "id", "name");
+  }
   function addExperiment() {
     
   }
@@ -118,12 +123,21 @@ function objectFromResult($result,$rowOffset = 0) {
   mysql_data_seek($result, $rowOffset);
   return mysql_fetch_assoc($result);
 }
-function arrayFromResult($result) {
+function arrayFromResult($result,$rowOffset = 0) {
   if ($result == null) return array();
   $array = array();
   mysql_data_seek($result, $rowOffset);
   while ($row = mysql_fetch_assoc($result)) {
     $array[] = $row;
+  }
+  return $array;
+}
+function assocArrayFromResult($result,$keyField,$valueField,$rowOffset = 0) {
+  if ($result == null) return array();
+  $array = array();
+  mysql_data_seek($result, $rowOffset);
+  while ($row = mysql_fetch_assoc($result)) {
+    $array[$row[$keyField]] = $row[$valueField];
   }
   return $array;
 }
