@@ -7,3 +7,6 @@
 [submodule "corner"]
 	path = corner
 	url = https://github.com/malsup/corner.git
+[submodule "jquery-animate-css-rotate-scale"]
+	path = jquery-animate-css-rotate-scale
+	url = https://github.com/zachstronaut/jquery-animate-css-rotate-scale.git
