@@ -172,11 +172,11 @@ var IAT = (function() {
         return $row;
       },
       stimulusRowFromObject : function(stimulus) {
-        var $row = $('<tr>');
+        var $row = $('<tr>').addClass('stimulusRow');
         var $emptyShifterCell = $('<td>');
-        var $stimulusEditButtonCell = $('<td>').append('TODO - edit button');
-        var $stimulusDataCell = this.stimulusDataTableFromObject(stimulus);
-        var $stimulusActionsCell = $('<td>').append('TODO - stimulus actions');
+        var $stimulusEditButtonCell = $('<td>').append('TODO - edit button').addClass('midRowRounding');
+        var $stimulusDataCell = $('<td>').append(this.stimulusDataTableFromObject(stimulus)).addClass('beginRowRounding');
+        var $stimulusActionsCell = $('<td>').append('TODO - stimulus actions').addClass('endRowRounding');
         $row.append($emptyShifterCell).append($stimulusDataCell).append($stimulusEditButtonCell).append($stimulusActionsCell);
         return $row;
       },
@@ -208,7 +208,7 @@ var IAT = (function() {
         return this.stimuliGroups[index].id;
       },
       categoryNameFromId : function(id) {
-        if (id === "0" | id === null | id === undefined) return "";
+        if (id === "0" | id === null | id === undefined) return "—";
         else return this.stimulusCategories[id];
       }
   };
