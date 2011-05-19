@@ -156,7 +156,17 @@ var IAT = (function() {
         var $cell = $('<td>');
         var $innerTable = $('<table>').addClass('stimuliTable');
         var $tableHeader = $('<thead>');
-        $tableHeader.append($(DISCLOSURE_HEADER_CELL_STRING));
+        var $disclosureCell = $(DISCLOSURE_HEADER_CELL_STRING);
+        $disclosureCell.children('img').first().click(function() {
+          if (group.disclosed === undefined | group.disclosed === null) {
+            group.disclosed = false;
+          }
+          group.disclosed = !group.disclosed;
+          $row.find('tbody').first().fadeToggle().find('div').slideToggle();
+          if (group.disclosed) $row.find('img').first().animate({rotate : '-90deg'});
+          else $row.find('img').first().animate({rotate : '0deg'});
+        });
+        $tableHeader.append($disclosureCell);
         var $stimuliHeader = $('<th>').addClass('stimuliHeader');
         $stimuliHeader.text(group.name);
         $tableHeader.append($stimuliHeader);
@@ -174,9 +184,9 @@ var IAT = (function() {
       stimulusRowFromObject : function(stimulus) {
         var $row = $('<tr>').addClass('stimulusRow');
         var $emptyShifterCell = $('<td>');
-        var $stimulusEditButtonCell = $('<td>').append('TODO - edit button').addClass('midRowRounding');
-        var $stimulusDataCell = $('<td>').append(this.stimulusDataTableFromObject(stimulus)).addClass('beginRowRounding');
-        var $stimulusActionsCell = $('<td>').append('TODO - stimulus actions').addClass('endRowRounding');
+        var $stimulusEditButtonCell = $('<td>').append($('<div>').append('TODO - edit button')).addClass('midRowRounding');
+        var $stimulusDataCell = $('<td>').append($('<div>').append(this.stimulusDataTableFromObject(stimulus))).addClass('beginRowRounding');
+        var $stimulusActionsCell = $('<td>').append($('<div>').append('TODO - stimulus actions')).addClass('endRowRounding');
         $row.append($emptyShifterCell).append($stimulusDataCell).append($stimulusEditButtonCell).append($stimulusActionsCell);
         return $row;
       },
@@ -213,7 +223,7 @@ var IAT = (function() {
       }
   };
   
-  const DISCLOSURE_HEADER_CELL_STRING = '<th class="disclosure">d</th>';
+  const DISCLOSURE_HEADER_CELL_STRING = '<th class="disclosure"><img src="disclosureTriangle.png"></th>';
 
   function requestExperiment(experimentNumber,callback) {
     var experimentPromise = $.Deferred().done(callback);
