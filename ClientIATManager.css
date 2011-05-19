@@ -10,57 +10,54 @@ root {
   display: block;
 }
 
-table.stimuliGroupTable {
+div.stimuliGroup,span.stimuliGroupHeader {
+  width:100%;
 }
-
-td,th {
+.randomization,.groupActionHeader,.greenwaldHeader,.stimuliHeader,.disclosure {
+  margin-right:30px;
+}
+.stimulus {
+  position:relative;
+  padding: 5px;
+  left:30px;
+  width:95%;
+  min-width: 810px;
+  margin-bottom:5px;
+  background-color: lightblue;
+  border-radius:10px;
+  -moz-border-radius:10px;
+}
+.stimulusData {
+  width:75%;
+}
+.stimulusOptions {
+  width:25%;
+  max-width:100px;
+}
+.stimulusDatum {
+}
+.stimulusWord {
+  margin-left:auto;
+  margin-right:auto;
+  max-width:500px;
+}
+.center {
   text-align: center;
+  margin-left: auto;
+  margin-right: auto;
 }
-
-tr.stimulusRow {
+.floatLeft {
+  float: left;
+  text-align: left;
+  margin-right: 10px;
+  padding-left:10px;
 }
-
-td.beginRowRounding {
-  border-bottom: 2px white solid;
-  background-color: lightblue;
-  -moz-border-top-left-radius:10px;
-  -moz-border-bottom-left-radius:10px;
-  border-top-left-radius:10px;
-  border-bottom-left-radius:10px;
+.floatRight {
+  float: right;
+  text-align: right;
+  margin-left: 10px;
+  padding-right: 10px;
 }
-td.midRowRounding {
-  border-bottom: 2px white solid;
-  background-color: lightblue;
-  border-left: 1px lightblue;
-  border-right: 1px lightblue;
+.clear {
+  clear:both;
 }
-td.endRowRounding {
-  border-bottom: 2px white solid;
-  background-color: lightblue;
-  -moz-border-top-right-radius:10px;
-  -moz-border-bottom-right-radius:10px;
-  border-top-right-radius:10px;
-  border-bottom-right-radius:10px;
-}
-
-table.stimuliTable {
-  border-spacing: 0px;
-}
-
-table {
-}
-
-table.stimuliGroupTable,table.stimuliTable,table.stimulusDataTable {
-  width : 100%;
-}
-
-th.randomization,td.randomization,th.disclosure {
-  width : 10px;
-}
-th.greenwaldHeader,th.groupActionHeader {
-  width : 150px;
-}
-th.stimuliHeader {
-  
-}
-
