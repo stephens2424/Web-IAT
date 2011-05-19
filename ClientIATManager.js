@@ -182,7 +182,7 @@ var IAT = (function() {
       stimulusDivFromObject : function(stimulus) {
         var $stimulus = $('<div>').addClass('stimulus');
         var $stimulusData = this.stimulusDataFromObject(stimulus).addClass('floatLeft');
-        var $stimulusOptions = $('<span>').addClass('floatRight');
+        var $stimulusOptions = $('<span>').addClass('floatRight').addClass('stimulusOptions');
         var $stimulusEditButton = $('<div>').append('TODO - edit button');
         var $stimulusActions = $('<div>').append('TODO - stimulus actions');
         var $clear = $('<div>').addClass('clear');
