@@ -155,28 +155,36 @@ var IAT = (function() {
         var $groupDiv = $('<div>').addClass('stimuliGroup').corner();
         var $groupHeader = $('<div>').addClass('stimuliGroupHeader');
         var $stimuli = $('<div>').addClass('stimuliDiv');
-        var $disclosureSpan = $(DISCLOSURE_HEADER_STRING);
+        var $groupFooter = $('<div>').addClass('stimuliGroupFooter');
+        var $disclosureSpan = $(DISCLOSURE_HEADER_STRING).addClass('groupHeader');
         $disclosureSpan.children('img').first().click(function() {
           if (group.disclosed === undefined | group.disclosed === null) {
             group.disclosed = false;
           }
           group.disclosed = !group.disclosed;
+          if (group.disclosed === true) $groupFooter.find('.actionLink').fadeTo(400,0);
+          else $groupFooter.find('.actionLink').fadeTo(400,1);
           $stimuli.slideToggle();
           if (group.disclosed) $groupDiv.find('img').first().animate({rotate : '-90deg'});
           else $groupDiv.find('img').first().animate({rotate : '0deg'});
         });
         $groupHeader.append($disclosureSpan);
-        var $stimuliHeader = $('<span>').addClass('stimuliHeader');
+        var $stimuliHeader = $('<span>').addClass('groupHeader').addClass('stimuliHeader');
         $stimuliHeader.text(group.name);
         $groupHeader.append($stimuliHeader);
-        $groupHeader.append($('<span>').addClass('greenwaldHeader').text('greenwald selector'));
-        $groupHeader.append($('<span>').addClass('groupActionHeader').text('action selector'));
-        $groupHeader.append($('<span>').addClass('randomization').text('randomization box'));
+        $groupHeader.append($('<span>').addClass('groupHeader').addClass('greenwaldHeader').text('greenwald selector'));
+        $groupHeader.append($('<span>').addClass('groupHeader').addClass('groupActionHeader').text('action selector'));
+        $groupHeader.append($('<span>').addClass('groupHeader').addClass('randomization').text('randomization box'));
+        $groupHeader.append($('<span>').addClass('groupHeader').addClass('groupUpArrow').append($("<a>\u2B06</a>").click(function () {alert('Implement:Up');})));
         $groupDiv.append($groupHeader);
         for (var stimulus in group.stimuli) {
           $stimuli.append(this.stimulusDivFromObject(group.stimuli[stimulus]));
         }
         $groupDiv.append($stimuli);
+        $groupFooter.append($('<span>').addClass('groupFooter').addClass('groupDownArrow').append($("<a>\u2B07</a>").click(function () {alert('Implement:Up');})));
+        $groupFooter.append($('<span>').addClass('groupFooter').addClass('copyGroup').append($('<a>copy</a>').addClass('actionLink').click(function () {alert('Implement: copy.')})));
+        $groupFooter.append($('<span>').addClass('groupFooter').addClass('deleteGroup').append($('<a>delete</a>').addClass('actionLink').click(function () {alert('Implement: delete.')})));
+        $groupDiv.append($groupFooter);
         return $groupDiv;
       },
       stimulusDivFromObject : function(stimulus) {

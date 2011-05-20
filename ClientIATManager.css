@@ -21,14 +21,59 @@ div.stimuliGroup {
   padding-left:10px;
   margin-bottom:10px;
 }
-.randomization,.groupActionHeader,.greenwaldHeader,.stimuliHeader,.disclosure {
-  margin-right:30px;
+.groupHeader {
+  position: relative;
+  font-size: large;
+}
+.stimuliHeader {
+  left: 10%;
+  font-weight: bold;
+}
+.greenwaldHeader {
+  left: 20%;
+}
+.groupActionHeader {
+  left: 30%
+}
+.randomization {
+  left: 40%;
 }
 .stimuliDiv {
   position:relative;
   left:30px;
   width:95%;
   padding-right:10px;
+}
+.stimuliGroupFooter {
+  padding-top: 5px;
+  font-size: large;
+}
+.copyGroup {
+  position:relative;
+  left: 90%;
+}
+.deleteGroup {
+  position:relative;
+  left: 75%;
+}
+.actionLink {
+  color:blue;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.groupUpArrow {
+  float: right;
+  position:relative;
+  right: 5px;
+  color: #999999;
+  cursor: pointer;
+}
+.groupDownArrow {
+  float: right;
+  position: relative;
+  right: 5px;
+  color: #999999;
+  cursor: pointer;
 }
 .stimulus {
   width:auto;
