@@ -71,3 +71,6 @@ div.stimuliGroup {
 .clear {
   clear:both;
 }
+.disclosure {
+  cursor: pointer;
+}
