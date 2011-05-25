@@ -10,3 +10,6 @@
 [submodule "jquery-animate-css-rotate-scale"]
 	path = jquery-animate-css-rotate-scale
 	url = https://github.com/zachstronaut/jquery-animate-css-rotate-scale.git
+[submodule "Lightbox_me"]
+	path = Lightbox_me
+	url = https://github.com/buckwilson/Lightbox_me.git
