@@ -16,8 +16,53 @@ if (typeof Object.create !== 'function') {
 }
 (function( window, undefined ) {
 var IAT = (function() {
+  
   var IAT = function (experimentNumber,callback) {
     return requestExperiment(experimentNumber,callback);
+  }
+  var IATManager = {
+    authenticate : function() {
+      var authentication = Object.create({});
+      authentication.promise = $.Deferred();
+      var $authenticationBox = $('<div>').addClass('authenticationBox');
+      var $authenticationDiv = $('<div>').addClass('innerAuthentication');
+      var $form = $('<form id="loginForm" action="javascript:$.noop();">');
+      var $username = $('<input type="text" name="username">');
+      var $password = $('<input type="password" name="password">');
+      $form.append($('<div>').append('Username: ').append($username));
+      $form.append($('<div>').append('Password: ').append($password));
+      $form.append($('<div>').append($('<input type="submit" value="Log in">')));
+      $form.submit(function () {
+        $form.find().each().prop('disabled',true);
+        var username = $username.val();
+        var password = $password.val();
+        var passwordHash = hex_sha1(password);
+        password = '';
+        sendRequest(bundleIATManagerRequestData('authenticate',{
+          username:username,
+          passwordHash:passwordHash
+        })).success(function (data) {
+          var parsedData = JSON.parse(data);
+          $form.append($('<div>').append(parsedData.authenticationMessage));
+          authentication.data = parsedData;
+          authentication.valid = parsedData.valid;
+          authentication.promise.resolve();
+          if (authentication.valid === true) $form.trigger('close');
+        });
+      });
+      $authenticationDiv.append($form);
+      $authenticationBox.append($authenticationDiv);
+      $authenticationBox.lightbox_me();
+      return authentication;
+    },
+    verifyAuthentication : function(authentication) {
+      sendRequest(bundleIATManagerRequestData('verifyAuthentication',{
+        authentication:authentication
+      }));
+    }
+  };
+  IAT.IATManager = function (experimentNumber,callback) {
+    return requestExperimentWithAuthentication(experimentNumber,callback,IATManager.authenticate());
   }
   //Server Upload Connection functions
   function bundleIATManagerRequestData(requestName, dataObject) {
@@ -35,12 +80,23 @@ var IAT = (function() {
     return sendRequest(bundleIATManagerRequestData("requestExperimentList",null));
   }
   
-  //experiment constructor
-  var ExperimentPrototype = {
-      //data
-      experimentNumber : null,
-      stimuliGroups :  null,
-      stimulusCategories : null,
+  //experiment constructors
+  var Experiment = {
+    //data
+    experimentNumber : null,
+    stimuliGroups :  null,
+    stimulusCategories : null,
+    authenticated: null,
+    //translations
+    groupIdFromIndex : function(index) {
+      return this.stimuliGroups[index].id;
+    },
+    categoryNameFromId : function(id) {
+      if (id === "0" | id === null | id === undefined) return "\u2013";
+      else return this.stimulusCategories[id];
+    }
+  }
+  var ExperimentManager = {
       //manipulation functions
       removeExperiment : function(experimentNumber) {
         return sendRequest(bundleIATManagerRequestData("removeExperiment",{
@@ -223,32 +279,43 @@ var IAT = (function() {
         $centerDiv.append($word);
         $table.append($categoryDiv).append($centerDiv);
         return $table;
-      },
-      //dynamic actions
-      //translations
-      groupIdFromIndex : function(index) {
-        return this.stimuliGroups[index].id;
-      },
-      categoryNameFromId : function(id) {
-        if (id === "0" | id === null | id === undefined) return "\u2013";
-        else return this.stimulusCategories[id];
       }
+      //dynamic actions
   };
   
   const DISCLOSURE_HEADER_STRING = '<span class="disclosure"><img src="disclosureTriangle.png"></span>';
-
-  function requestExperiment(experimentNumber,callback) {
+  function requestExperimentWithAuthentication(experimentNumber,callback,authentication) {
     var experimentPromise = $.Deferred().done(callback);
-    var experiment = Object.create(ExperimentPrototype,{
-      'experimentNumber' : {
-        value : experimentNumber,
-        writable : false
-      },
-      'experimentPromise' : {
-        value : experimentPromise,
-        writable : true
+    var experiment = Object.create(Experiment);
+    experiment.experimentNumber = experimentNumber;
+    experiment.experimentPromise = experimentPromise;
+    experiment.authentication = authentication;
+    authentication.promise.done(function () {
+      if (authentication.valid === true) {
+        for (var propName in ExperimentManager) {
+          experiment[propName] = ExperimentManager[propName];
+        }
+        sendRequest(bundleIATManagerRequestData('requestExperiment',experimentNumber,null)).success(function (receivedData) {
+          var data = JSON.parse(receivedData);
+          experiment.hash = data.hash;
+          experiment.name = data.name;
+          experiment.active = data.active;
+          experiment.endUrl = data.endUrl;
+          experiment.secondEndUrl = data.secondEndUrl;
+          experiment.stimuliGroups = data.stimuliGroups;
+          experiment.stimulusCategories = data.stimulusCategories;
+          experimentPromise.resolve();
+        });
       }
     });
+    return experiment;
+  }
+  function requestExperiment(experimentNumber,callback) {
+    var experimentPromise = $.Deferred().done(callback);
+    var experiment = Object.create(Experiment);
+    experiment.experimentNumber = experimentNumber;
+    experiment.experimentPromise = experimentPromise;
+    experiment.authentication = null;
     sendRequest(bundleIATManagerRequestData('requestExperiment',experimentNumber,null)).success(function (receivedData) {
       var data = JSON.parse(receivedData);
       experiment.hash = data.hash;

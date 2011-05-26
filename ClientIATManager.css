@@ -9,7 +9,16 @@
 root { 
   display: block;
 }
-
+div.authenticationBox {
+  height: 400px;
+  width: 500px;
+  background-color: white;
+  border-radius:10px;
+  -moz-border-radius:10px;
+}
+div.innerAuthentication {
+  margin:50px;
+}
 div.stimuliGroup {
   width:99%;
   min-width:700px;

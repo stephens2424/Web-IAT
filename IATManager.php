@@ -1,7 +1,10 @@
 <?php
+session_start();
 
 require_once 'connectDatabase.php';
 require_once 'GlobalKLogger.php';
+
+$FAILED_AUTHENTICATION_RETURN_VALUE = json_encode(array());
 
 
 $iatManager = new IATManager;
@@ -22,7 +25,27 @@ class IATManager {
     $this->databaseConnection = getDatabaseConnection();
   }
   
+  function authenticate($credentials) {
+    $username = $credentials['username'];
+    $query = "SELECT * FROM users WHERE `username`='$username'";
+    $authenticationResult = array();
+    $result = mysql_query($query);
+    if (mysql_result($result, 0, 'passwordHash') === $credentials['passwordHash']) {
+      $_SESSION['authenticated'] = true;
+      $authenticationResult['authenticationMessage'] = 'Authentication successful';
+      $authenticationResult['valid'] = true;
+    } else {
+      $authenticationResult['authenticationMessage'] = 'Authentication failed';
+      $authenticationResult['valid'] = false;
+    }
+    return json_encode($authenticationResult);
+  }
   function requestExperimentList() {
+    if (isset($_SESSION['authenticated'])) {
+      if ($_SESSION['authenticated'] == false) return $FAILED_AUTHENTICATION_RETURN_VALUE;
+    } else {
+      return $FAILED_AUTHENTICATION_RETURN_VALUE;
+    }
     $query = "SELECT stimuli_set,name,hash FROM experiments";
     $result = mysql_query($query,  $this->databaseConnection);
     return json_encode(arrayFromResult($result));
@@ -73,7 +96,7 @@ class IATManager {
   function setExperimentProperties() {
     
   }
-  
+
   function addStimulus() {
     
   }
