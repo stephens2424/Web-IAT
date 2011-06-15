@@ -108,9 +108,9 @@ var IAT = (function() {
     experimentName : null,
     experimentHash : null,
     generateExperimentListItem : function () {
-      var $listItemDiv = $('<div>');
-      $listItemDiv.append($('<span>').text(this.experimentNumber));
-      $listItemDiv.append($('<span>').text(this.experimentName));
+      var $listItemDiv = $('<div class="experimentListItem">');
+      $listItemDiv.append($('<span class="experimentNumber floatLeft">').text(this.experimentNumber));
+      $listItemDiv.append($('<span class="experimentName floatLeft">').text(this.experimentName));
       return $listItemDiv;
     }
   }
@@ -119,7 +119,7 @@ var IAT = (function() {
     array : [],
     authentication : null,
     generateExperimentList : function () {
-      var $list = $('<div>');
+      var $list = $('<div class="stimuliGroup">');
       for (var experiment in this.array) {
         $list.append(this.array[experiment].generateExperimentListItem());
       }

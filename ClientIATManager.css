@@ -159,3 +159,23 @@ div.stimuliGroup {
 .changed {
   background-color: lightcoral;
 }
+
+.experimentNumber {
+  margin-left: 15px;
+}
+
+.experimentName {
+  margin-left: 30px;
+}
+
+.experimentListItem {
+  width:auto;
+  padding: 5px;
+  margin-bottom:5px;
+  background-color: lightblue;
+  border-radius:10px;
+  -moz-border-radius:10px;
+  height: 30px;
+  font-family: helvetica;
+  font-size: medium;
+}
