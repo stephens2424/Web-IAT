@@ -21,6 +21,15 @@ var IAT = (function() {
     return requestExperiment(experimentNumber,callback);
   }
   var IATManager = {
+    appendExperimentSelectorTo : function ($domObj) {
+      return generateExperimentSelector(function (selector) {
+        var $list = selector.generateExperimentList();
+        $domObj.append($list);
+      },IATManager.authenticate());
+    },
+    getExperimentManager : function (experimentNumber,callback,authentication) {
+      return requestExperimentWithAuthentication(experimentNumber,callback,authentication);
+    },
     authenticate : function() {
       var authentication = Object.create({});
       authentication.promise = $.Deferred();
@@ -75,8 +84,8 @@ var IAT = (function() {
       }));
     }
   };
-  IAT.IATManager = function (experimentNumber,callback) {
-    return requestExperimentWithAuthentication(experimentNumber,callback,IATManager.authenticate());
+  IAT.IATManager = function () {
+    return Object.create(IATManager);
   }
   //Server Upload Connection functions
   function bundleIATManagerRequestData(requestName, dataObject) {
@@ -92,6 +101,31 @@ var IAT = (function() {
   }
   IAT.requestExperimentList = function() {
     return sendRequest(bundleIATManagerRequestData("requestExperimentList",null));
+  }
+  
+  var ExperimentListItem = {
+    experimentNumber : null,
+    experimentName : null,
+    experimentHash : null,
+    generateExperimentListItem : function () {
+      var $listItemDiv = $('<div>');
+      $listItemDiv.append($('<span>').text(this.experimentNumber));
+      $listItemDiv.append($('<span>').text(this.experimentName));
+      return $listItemDiv;
+    }
+  }
+  
+  var ExperimentList = {
+    array : [],
+    authentication : null,
+    generateExperimentList : function () {
+      var $list = $('<div>');
+      for (var experiment in this.array) {
+        $list.append(this.array[experiment].generateExperimentListItem());
+      }
+      $list.sortable();
+      return $list;
+    }
   }
   
   //experiment constructors
@@ -329,6 +363,28 @@ var IAT = (function() {
   ExperimentManager = ExperimentManager();
   
   var DISCLOSURE_HEADER_STRING = '<span class="disclosure"><img src="disclosureTriangle.png"></span>';
+  function generateExperimentSelector(callback,authentication) {
+    var experiments = Object.create(ExperimentList);
+    var experimentListPromise = $.Deferred().done(function() {callback(experiments)});
+    experiments.promise = experimentListPromise;
+    experiments.authentication = authentication;
+    authentication.promise.done(function () {
+      if (authentication.valid === true) {
+        sendRequest(bundleIATManagerRequestData('requestExperimentList')).success(function (receivedData) {
+          var data = JSON.parse(receivedData);
+          for (var dataExp in data) {
+            var experiment = Object.create(ExperimentListItem);
+            experiment.experimentNumber = data[dataExp].stimuli_set;
+            experiment.experimentHash = data[dataExp].hash;
+            experiment.experimentName = data[dataExp].name;
+            experiments.array[dataExp] = experiment;
+          }
+          experimentListPromise.resolve();
+        });
+      }
+    });
+    return experiments;
+  }
   function requestExperimentWithAuthentication(experimentNumber,callback,authentication) {
     var experimentPromise = $.Deferred().done(callback);
     var experiment = Object.create(Experiment);

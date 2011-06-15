@@ -19,9 +19,8 @@ and open the template in the editor.
     <link rel="stylesheet" type="text/css" href="ClientIATManager.css"/>
     <script type="text/javascript">
       $('document').ready(function() {
-        var myExp = IAT.IATManager(14,function () {
-          $('#contentDiv').append(myExp.generateStimuliTable().fadeIn());
-        });
+        var IATManager = IAT.IATManager();
+        IATManager.appendExperimentSelectorTo($('#contentDiv'));
       });
   </script>
     <title></title>
