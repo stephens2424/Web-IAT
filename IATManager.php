@@ -28,16 +28,28 @@ class IATManager {
   function authenticate($credentials) {
     $username = $credentials['username'];
     $query = "SELECT * FROM users WHERE `username`='$username'";
-    $authenticationResult = array();
     $result = mysql_query($query);
-    if (mysql_result($result, 0, 'passwordHash') === $credentials['passwordHash']) {
-      $_SESSION['authenticated'] = true;
-      $authenticationResult['authenticationMessage'] = 'Authentication successful';
-      $authenticationResult['valid'] = true;
-    } else {
-      $authenticationResult['authenticationMessage'] = 'Authentication failed';
-      $authenticationResult['valid'] = false;
+    if (mysql_num_rows($result) < 1) {
+      return $this->authenticationFailed();
     }
+    if (mysql_result($result, 0, 'passwordHash') === $credentials['passwordHash']) {
+      return $this->authenticationSuccess();
+    } else {
+      return $this->authenticationFailed();
+    }
+    
+  }
+  function authenticationFailed() {
+    $authenticationResult = array();
+    $authenticationResult['authenticationMessage'] = 'Authentication failed';
+    $authenticationResult['valid'] = false;
+    return json_encode($authenticationResult);
+  }
+  function authenticationSuccess() {
+    $authenticationResult = array();
+    $_SESSION['authenticated'] = true;
+    $authenticationResult['authenticationMessage'] = 'Authentication successful';
+    $authenticationResult['valid'] = true;
     return json_encode($authenticationResult);
   }
   function requestExperimentList() {

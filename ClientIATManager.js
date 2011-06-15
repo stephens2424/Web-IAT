@@ -26,12 +26,16 @@ var IAT = (function() {
       authentication.promise = $.Deferred();
       var $authenticationBox = $('<div>').addClass('authenticationBox');
       var $authenticationDiv = $('<div>').addClass('innerAuthentication');
+      var $labelSpan = $('<span>').append($('<div>').append('Username: ')).append($('<div>').append('Password: ')).addClass('floatLeft');
+      var $inputSpan = $('<span>').addClass('floatRight');
       var $form = $('<form id="loginForm" action="javascript:$.noop();">');
-      var $username = $('<input type="text" name="username">');
-      var $password = $('<input type="password" name="password">');
-      $form.append($('<div>').append('Username: ').append($username));
-      $form.append($('<div>').append('Password: ').append($password));
-      $form.append($('<div>').append($('<input type="submit" value="Log in">')));
+      var $username = $('<input type="text" name="username" id="usernameInput">').addClass('innerAuthenticationInput');
+      var $password = $('<input type="password" name="password" id="passwordInput">').addClass('innerAuthenticationInput');
+      $inputSpan.append($('<div>').append($username));
+      $inputSpan.append($('<div>').append($password));
+      $form.append($labelSpan).append($inputSpan);
+      $form.append($('<div>').append($('<input type="submit" value="Log in">').addClass('center').addClass('innerAuthenticationSubmit')).addClass('floatRight'));
+      $form.append($('<div class="authenticationError">').append('<span id="authenticationErrorSpan">'));
       $form.submit(function () {
         $form.find().each().prop('disabled',true);
         var username = $username.val();
@@ -43,7 +47,10 @@ var IAT = (function() {
           passwordHash:passwordHash
         })).success(function (data) {
           var parsedData = JSON.parse(data);
-          $form.append($('<div>').append(parsedData.authenticationMessage));
+          if (parsedData.errorString) {
+            $('#authenticationErrorSpan').text(parsedData.errorString);
+          }
+          $('#authenticationErrorSpan').append(parsedData.authenticationMessage);
           authentication.data = parsedData;
           authentication.valid = parsedData.valid;
           authentication.promise.resolve();
@@ -52,7 +59,14 @@ var IAT = (function() {
       });
       $authenticationDiv.append($form);
       $authenticationBox.append($authenticationDiv);
-      $authenticationBox.lightbox_me();
+      $authenticationBox.lightbox_me({
+        onLoad: function () {
+          $('#usernameInput').focus();
+        },
+        closeEsc:false,
+        closeClick:false,
+        destroyOnClose:true
+      });
       return authentication;
     },
     verifyAuthentication : function(authentication) {
