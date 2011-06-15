@@ -110,7 +110,11 @@ var IAT = (function() {
       else return this.stimulusCategories[id];
     }
   }
-  var ExperimentManager = {
+  var ExperimentManager = function () {
+    var changedItems = [];
+      return {
+      //data
+      changedItems : [],
       //manipulation functions
       removeExperiment : function(experimentNumber) {
         return sendRequest(bundleIATManagerRequestData("removeExperiment",{
@@ -219,6 +223,12 @@ var IAT = (function() {
         for (var group in this.stimuliGroups) {
           $table.append(this.groupFromObject(this.stimuliGroups[group]));
         }
+        var myExp = this;
+        $table.sortable({
+          update : function (event, ui) {
+            myExp.changedItems.push("group order");
+          }
+        });
         return $table;
       },
       groupFromObject : function(group) {
@@ -245,16 +255,29 @@ var IAT = (function() {
         $groupHeader.append($('<span>').addClass('groupHeader').addClass('greenwaldHeader').text('greenwald selector'));
         $groupHeader.append($('<span>').addClass('groupHeader').addClass('groupActionHeader').text('action selector'));
         $groupHeader.append($('<span>').addClass('groupHeader').addClass('randomization').text('randomization box'));
-        $groupHeader.append($('<span>').addClass('groupHeader').addClass('groupUpArrow').append($("<a>\u2B06</a>").click(function () {alert('Implement:Up');})));
         $groupDiv.append($groupHeader);
+        var myExp = this;
         for (var stimulus in group.stimuli) {
           $stimuli.append(this.stimulusDivFromObject(group.stimuli[stimulus]));
         }
+        $stimuli.sortable({
+          update: function(event,ui) {
+            var $stimuliGroup = $(this);
+            if ($stimuliGroup.attr('changed') === "true") {
+              return;
+            } else {
+              $stimuliGroup.attr('changed',"true")
+              myExp.changedItems.push(myExp.stimuliGroups[$stimuliGroup.index()]);
+            }
+          }
+        });
+        $stimuli.attr('id','stimuliGroupDiv_' + group.id);
         $groupDiv.append($stimuli);
-        $groupFooter.append($('<span>').addClass('groupFooter').addClass('groupDownArrow').append($("<a>\u2B07</a>").click(function () {alert('Implement:Up');})));
         $groupFooter.append($('<span>').addClass('groupFooter').addClass('copyGroup').append($('<a>copy</a>').addClass('actionLink').click(function () {alert('Implement: copy.')})));
         $groupFooter.append($('<span>').addClass('groupFooter').addClass('deleteGroup').append($('<a>delete</a>').addClass('actionLink').click(function () {alert('Implement: delete.')})));
         $groupDiv.append($groupFooter);
+        $groupDiv.attr('id','group_' + group.id);
+        $groupDiv[0].groupModel = group;
         return $groupDiv;
       },
       stimulusDivFromObject : function(stimulus) {
@@ -266,6 +289,9 @@ var IAT = (function() {
         var $clear = $('<div>').addClass('clear');
         $stimulusOptions.append($stimulusEditButton).append($stimulusActions);
         $stimulus.append($stimulusOptions).append($stimulusData).append($clear);
+        $stimulus[0].stimulusModel = stimulus;
+        stimulus.stimulusView = $stimulus[0];
+        $stimulus.attr('id','stimulus_' + stimulus.stimulus_id);
         return $stimulus;
       },
       stimulusDataFromObject : function(stimulus) {
@@ -275,7 +301,7 @@ var IAT = (function() {
         var $rightSpan = $('<span>').addClass('floatRight');
         var $centerDiv = $('<span>').addClass('center');
         var $clear = $('<div>').addClass('clear');
-        
+
         var $cat1 = $('<div>').addClass('stimulusDatum').addClass('leftCategory').addClass('topCategory');
         $cat1.text(this.categoryNameFromId(stimulus.category1));
         var $cat2 = $('<div>').addClass('stimulusDatum').addClass('rightCategory').addClass('topCategory');
@@ -286,18 +312,23 @@ var IAT = (function() {
         $subcat2.text(this.categoryNameFromId(stimulus.subcategory2));
         var $word = $('<div>').addClass('stimulusDatum').addClass('stimulusWord');
         $word.text(stimulus.word);
-        
+
         $leftSpan.append($cat1).append($subcat1);
         $rightSpan.append($cat2).append($subcat2);
         $categoryDiv.append($leftSpan).append($rightSpan).append($clear);
         $centerDiv.append($word);
         $table.append($categoryDiv).append($centerDiv);
         return $table;
+      },
+      saveChanged : function () {
+        $('#stimuliGroupDiv changed="true"').addClass('.changed');
       }
       //dynamic actions
-  };
+    };
+  }
+  ExperimentManager = ExperimentManager();
   
-  const DISCLOSURE_HEADER_STRING = '<span class="disclosure"><img src="disclosureTriangle.png"></span>';
+  var DISCLOSURE_HEADER_STRING = '<span class="disclosure"><img src="disclosureTriangle.png"></span>';
   function requestExperimentWithAuthentication(experimentNumber,callback,authentication) {
     var experimentPromise = $.Deferred().done(callback);
     var experiment = Object.create(Experiment);
