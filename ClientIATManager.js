@@ -60,10 +60,13 @@ var IAT = (function() {
             $('#authenticationErrorSpan').text(parsedData.errorString);
           }
           $('#authenticationErrorSpan').append(parsedData.authenticationMessage);
-          authentication.data = parsedData;
           authentication.valid = parsedData.valid;
-          authentication.promise.resolve();
-          if (authentication.valid === true) $form.trigger('close');
+          if (authentication.valid === true) {
+            authentication.data = parsedData;
+            authentication.valid = parsedData.valid;
+            authentication.promise.resolve();
+            $form.trigger('close');
+          }
         });
       });
       $authenticationDiv.append($form);
