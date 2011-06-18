@@ -52,6 +52,9 @@ class IATManager {
     $authenticationResult['valid'] = true;
     return json_encode($authenticationResult);
   }
+  function verifyAuthentication() {
+    return json_encode($_SESSION['authenticated']);
+  }
   function requestExperimentList() {
     if (isset($_SESSION['authenticated'])) {
       if ($_SESSION['authenticated'] == false) return $FAILED_AUTHENTICATION_RETURN_VALUE;
