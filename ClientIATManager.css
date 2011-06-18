@@ -9,6 +9,9 @@
 root { 
   display: block;
 }
+* {
+  font-family: helvetica;
+}
 div.authenticationBox {
   height: 400px;
   width: 500px;
@@ -20,7 +23,6 @@ div.innerAuthentication {
   margin:50px;
   line-height: 80px;
   font-size:x-large;
-  font-family: helvetica;
 }
 .innerAuthenticationInput {
   height: 40px;
@@ -177,7 +179,6 @@ div.stimuliGroup {
   border-radius:10px;
   -moz-border-radius:10px;
   height: 30px;
-  font-family: helvetica;
   font-size: medium;
   cursor: pointer;
 }
