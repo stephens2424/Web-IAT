@@ -23,7 +23,7 @@ var IAT = (function() {
   var IATManager = {
     appendExperimentSelectorTo : function ($domObj) {
       return generateExperimentSelector(function (selector) {
-        var $list = selector.generateExperimentList();
+        var $list = selector.generateExperimentList($domObj);
         $domObj.append($list);
       },IATManager.authenticate());
     },
@@ -110,10 +110,11 @@ var IAT = (function() {
     experimentNumber : null,
     experimentName : null,
     experimentHash : null,
-    generateExperimentListItem : function () {
+    generateExperimentListItem : function (chooserCallback) {
       var $listItemDiv = $('<div class="experimentListItem">');
       $listItemDiv.append($('<span class="experimentNumber floatLeft">').text(this.experimentNumber));
       $listItemDiv.append($('<span class="experimentName floatLeft">').text(this.experimentName));
+      $listItemDiv.append($('<span class="experimentActions floatRight">').text("Modify ").click(chooserCallback).append('<span class="experimentModifyArrow">\u27A1</span>'));
       return $listItemDiv;
     }
   }
@@ -121,10 +122,28 @@ var IAT = (function() {
   var ExperimentList = {
     array : [],
     authentication : null,
-    generateExperimentList : function () {
+    generateExperimentList : function ($contentDiv) {
       var $list = $('<div class="stimuliGroup">');
       for (var experiment in this.array) {
-        $list.append(this.array[experiment].generateExperimentListItem());
+        $list.append(this.array[experiment].generateExperimentListItem(function (authentication,experimentListItem) {
+          return function () {
+            $(this).find('.experimentModifyArrow').replaceWith('<img src="ajaxLoader.gif" />');
+            var $stimulusTable;
+            var experiment = requestExperimentWithAuthentication(experimentListItem.experimentNumber,function () {
+              $stimulusTable = experiment.generateStimuliTable();
+            },authentication);
+            experiment.experimentPromise.done(function () {
+              $contentDiv.hide("slide",{direction: "left", mode: "hide"},400,function () {
+                $list.remove();
+              });
+              var $newContentDiv = $('<div class="contentDiv">');
+              $('body').append($newContentDiv);
+              $newContentDiv.append($stimulusTable);
+              $newContentDiv.show("slide",{direction: "right"},400);
+            });
+          };
+        }(this.authentication,this.array[experiment])
+      ));
       }
       $list.sortable();
       return $list;
@@ -380,6 +399,7 @@ var IAT = (function() {
             experiment.experimentNumber = data[dataExp].stimuli_set;
             experiment.experimentHash = data[dataExp].hash;
             experiment.experimentName = data[dataExp].name;
+            experiment.authentication = authentication;
             experiments.array[dataExp] = experiment;
           }
           experimentListPromise.resolve();
