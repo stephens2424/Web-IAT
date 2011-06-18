@@ -145,7 +145,7 @@ var IAT = (function() {
         }(this.authentication,this.array[experiment])
       ));
       }
-      $list.sortable();
+      $list.sortable({ axis: 'y' });
       return $list;
     }
   }
@@ -283,7 +283,8 @@ var IAT = (function() {
         $table.sortable({
           update : function (event, ui) {
             myExp.changedItems.push("group order");
-          }
+          },
+          axis: 'y'
         });
         return $table;
       },
@@ -325,7 +326,8 @@ var IAT = (function() {
               $stimuliGroup.attr('changed',"true")
               myExp.changedItems.push(myExp.stimuliGroups[$stimuliGroup.index()]);
             }
-          }
+          },
+          axis: 'y'
         });
         $stimuli.attr('id','stimuliGroupDiv_' + group.id);
         $groupDiv.append($stimuli);
