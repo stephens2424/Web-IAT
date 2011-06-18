@@ -197,3 +197,12 @@ div.stimuliGroup {
   margin-left: 5px;
   padding: 5px;
 }
+
+.experimentManagerTitle {
+  font-weight: bold;
+  text-align: center;
+}
+
+.experimentReturnLink {
+  position: absolute;
+}

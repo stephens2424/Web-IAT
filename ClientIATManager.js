@@ -158,6 +158,7 @@ var IAT = (function() {
   //experiment constructors
   var Experiment = {
     //data
+    name : null,
     experimentNumber : null,
     stimuliGroups :  null,
     stimulusCategories : null,
@@ -287,7 +288,8 @@ var IAT = (function() {
       },
       generateOptionsHeader : function () {
         var $div = $('<div class="experimentManagerOptionsHeader">');
-        $div.append("return link");
+        $div.append($('<span class="experimentReturnLink">').append('return link'));
+        $div.append($('<div class="experimentManagerTitle">').append(this.name));
         $div.append("other options");
         return $div;
       },
