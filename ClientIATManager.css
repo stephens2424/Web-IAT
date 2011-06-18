@@ -187,3 +187,12 @@ div.stimuliGroup {
   left: 5px;
   right: 5px;
 }
+
+.experimentManagerOptionsHeader {
+  background-color: lightsalmon;
+  border-radius:10px;
+  -moz-border-radius:10px;
+  margin-bottom: 5px;
+  margin-left: 5px;
+  padding: 5px;
+}

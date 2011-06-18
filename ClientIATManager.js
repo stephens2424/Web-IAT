@@ -130,7 +130,7 @@ var IAT = (function() {
             $(this).find('.experimentModifyArrow').replaceWith('<img src="ajaxLoader.gif" />');
             var $stimulusTable;
             var experiment = requestExperimentWithAuthentication(experimentListItem.experimentNumber,function () {
-              $stimulusTable = experiment.generateStimuliTable();
+              $stimulusTable = experiment.experimentManager();
             },authentication);
             experiment.experimentPromise.done(function () {
               $contentDiv.hide("slide",{direction: "left", mode: "hide"},400,function () {
@@ -145,7 +145,7 @@ var IAT = (function() {
         }(this.authentication,this.array[experiment])
       ));
       }
-      $list.sortable({ axis: 'y' });
+      $list.sortable({axis: 'y'});
       return $list;
     }
   }
@@ -273,6 +273,18 @@ var IAT = (function() {
             "index" : index
           }
         }));
+      },
+      experimentManager : function () {
+        var $div = $('<div>');
+        $div.append(this.generateOptionsHeader());
+        $div.append(this.generateStimuliTable());
+        return $div;
+      },
+      generateOptionsHeader : function () {
+        var $div = $('<div class="experimentManagerOptionsHeader">');
+        $div.append("return link");
+        $div.append("other options");
+        return $div;
       },
       generateStimuliTable : function() {
         var $table = $('<div>').attr('id','stimuliGroupDiv').addClass('stimuliGroupDiv');
