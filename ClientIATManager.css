@@ -205,6 +205,8 @@ div.stimuliGroup {
 .experimentManagerTitle {
   font-weight: bold;
   text-align: center;
+  margin-left: 35%;
+  margin-right: 35%;
 }
 
 .experimentReturnLink {
