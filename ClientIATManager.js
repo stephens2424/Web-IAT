@@ -162,7 +162,7 @@ var IAT = (function() {
     experimentNumber : null,
     stimuliGroups :  null,
     stimulusCategories : null,
-    authenticated: null,
+    authentication: null,
     //translations
     groupIdFromIndex : function(index) {
       return this.stimuliGroups[index].id;
@@ -173,11 +173,13 @@ var IAT = (function() {
     }
   }
   var ExperimentManager = function () {
+    var stimuliTableDomObj;
     var changedItems = [];
       return {
       //data
       changedItems : [],
       //manipulation functions
+      stimuliTableDomObj : null,
       removeExperiment : function(experimentNumber) {
         return sendRequest(bundleIATManagerRequestData("removeExperiment",{
           'experimentNumber' : experimentNumber,
@@ -282,13 +284,30 @@ var IAT = (function() {
       },
       experimentManager : function () {
         var $div = $('<div>');
-        $div.append(this.generateOptionsHeader());
         $div.append(this.generateStimuliTable());
+        $div.prepend(this.generateOptionsHeader());
         return $div;
       },
       generateOptionsHeader : function () {
         var $div = $('<div class="experimentManagerOptionsHeader">');
-        $div.append($('<span class="experimentReturnLink">').append('return link'));
+        var $modify = $('<span class="experimentReturnLink actionLink">').append('<span class="experimentModifyArrow">\u2B05</span> Return');
+        $modify.click(function (authentication) {
+          return function () {
+            $(this).find('.experimentModifyArrow').replaceWith('<img src="ajaxLoader.gif" />');
+            var selector = generateExperimentSelector(function() {
+              var $content = $('.contentDiv');
+              $content.hide("slide",{direction: "right", mode: "hide"},400,function () {
+                $content.remove();
+              });
+              var $newContentDiv = $('<div class="contentDiv">');
+              $('body').append($newContentDiv);
+              var $list = selector.generateExperimentList($newContentDiv);
+              $newContentDiv.append($list);
+              $newContentDiv.show("slide",{direction: "left"},400);
+            },authentication);
+          };
+        }(this.authentication));
+        $div.append($modify);
         $div.append($('<div class="experimentManagerTitle">').append(this.name));
         $div.append("other options");
         return $div;
@@ -305,6 +324,7 @@ var IAT = (function() {
           },
           axis: 'y'
         });
+        this.stimuliTableDomObj = $table;
         return $table;
       },
       groupFromObject : function(group) {
