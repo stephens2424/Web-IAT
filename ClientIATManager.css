@@ -12,6 +12,10 @@ root {
 * {
   font-family: helvetica;
 }
+input {
+  height: 20px;
+  font-size: medium;
+}
 div.authenticationBox {
   height: 400px;
   width: 500px;

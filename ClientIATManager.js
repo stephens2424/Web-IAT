@@ -103,6 +103,44 @@ var IAT = (function() {
     return $.post('IATManager.php',requestObject);
   }
   
+  //key event handling
+  $(document).keydown($.noop());
+  $(document).keypress(function onKeyDown(event) {
+    switch (event.keyCode) {
+      case 13:
+        $(document.activeElement).filter("input").each(function () {
+          $(this).submit();
+        });
+        break;
+      case 27:
+        $(document.activeElement).filter("input[type=text]").each(function () {
+          var $elem = $(this);
+          $elem.val($elem.attr("original"));
+          toggleTextInput($elem);
+        });
+    }
+  });
+  
+  function toggleTextInput($elem) {
+    var $matches = $elem.find('input');
+    if ($elem.is('input')) {
+      $matches = $matches.add($elem);
+    }
+    if ($matches.size() > 1) return;
+    else if ($matches.size() < 1) {
+      var currentText = $elem.text();
+      $elem.attr("title","enter to submit, esc to cancel");
+      $elem.text("");
+      $elem.append($('<input type="text" class="nameInput">').val(currentText).attr("original",currentText));
+    } else {
+      if ($elem.children(':not(input)').size() > 0) return;
+      else {
+        $elem.parent().append($elem.val()).attr("title","double-click to change");
+        $elem.remove();
+      }
+    }
+  }
+  
   //IAT Static functions
   IAT.addExperiment = function() {
     return sendRequest(bundleIATManagerRequestData("addExperiment",null));
@@ -308,7 +346,19 @@ var IAT = (function() {
           };
         }(this.authentication));
         $div.append($modify);
-        $div.append($('<div class="experimentManagerTitle">').append(this.name));
+        var $name = $('<div class="experimentManagerTitle" title="double-click to change">').append(this.name).dblclick(function () {
+          toggleTextInput($name);
+          $name.find('input').submit(function (event) {
+            event.preventDefault();
+            var $elem = $(this);
+            toggleTextInput($elem);
+            if ($elem.val() !== $elem.attr("original")) {
+              $.jnotify('Name updated to "' + $elem.val() + '". Saving not yet implemented.');
+            }
+            $elem.removeAttr("original");
+          });
+        });
+        $div.append($name);
         $div.append("other options");
         return $div;
       },
