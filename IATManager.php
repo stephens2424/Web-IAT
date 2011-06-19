@@ -158,13 +158,13 @@ class IATManager {
 
 function objectFromResult($result,$rowOffset = 0) {
   if ($result == null) return array();
-  mysql_data_seek($result, $rowOffset);
+  @mysql_data_seek($result, $rowOffset);
   return mysql_fetch_assoc($result);
 }
 function arrayFromResult($result,$rowOffset = 0) {
   if ($result == null) return array();
   $array = array();
-  mysql_data_seek($result, $rowOffset);
+  @mysql_data_seek($result, $rowOffset);
   while ($row = mysql_fetch_assoc($result)) {
     $array[] = $row;
   }
@@ -173,7 +173,7 @@ function arrayFromResult($result,$rowOffset = 0) {
 function assocArrayFromResult($result,$keyField,$valueField,$rowOffset = 0) {
   if ($result == null) return array();
   $array = array();
-  mysql_data_seek($result, $rowOffset);
+  @mysql_data_seek($result, $rowOffset);
   while ($row = mysql_fetch_assoc($result)) {
     $array[$row[$keyField]] = $row[$valueField];
   }
