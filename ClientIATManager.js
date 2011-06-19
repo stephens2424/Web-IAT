@@ -121,9 +121,25 @@ var IAT = (function() {
     }
   });
   
-  function toggleTextInput($elem) {
+  function makeElementEditableUponDoubleClick($elem,elementName,inputClass,shouldBeTextArea) {
+    $elem.dblclick(function () {
+      toggleTextInput($elem,inputClass,shouldBeTextArea);
+      $elem.find('input').submit(function (event) {
+        event.preventDefault();
+        var $elem = $(this);
+        toggleTextInput($elem,inputClass,shouldBeTextArea);
+        if ($elem.val() !== $elem.attr("original")) {
+          $.jnotify(elementName + ' updated to "' + $elem.val() + '". Saving not yet implemented.');
+        }
+        $elem.removeAttr("original");
+      });
+    });
+  }
+  
+  function toggleTextInput($elem,inputClass,shouldBeTextArea) {
     var $matches = $elem.find('input');
-    if ($elem.is('input')) {
+    $matches = $matches.add($elem.find('textarea'));
+    if ($elem.is('input') || $elem.is('textarea')) {
       $matches = $matches.add($elem);
     }
     if ($matches.size() > 1) return;
@@ -131,13 +147,27 @@ var IAT = (function() {
       var currentText = $elem.text();
       $elem.attr("title","enter to submit, esc to cancel");
       $elem.text("");
-      $elem.append($('<input type="text" class="nameInput">').val(currentText).attr("original",currentText));
-    } else {
-      if ($elem.children(':not(input)').size() > 0) return;
-      else {
-        $elem.parent().append($elem.val()).attr("title","double-click to change");
-        $elem.remove();
+      if (shouldBeTextArea === true) {
+        $elem.append($('<textarea class="'+ inputClass +'">' + currentText +'</textarea>').attr("original",currentText));
+        $elem.append($('<button>save</button>').click(function () {
+          $(this).parent().find('input,textarea').each(function() {
+            $(this).submit()
+          })
+        }));
+        $elem.append($('<button>cancel</button>').click(function () {
+          $elem.val($elem.attr("original"));
+          toggleTextInput($elem);
+        }));
+      } else {
+        $elem.append($('<input type="text" class="'+ inputClass +'">').val(currentText).attr("original",currentText));
       }
+    } else {
+      $matches.each(function () {
+        var $thisElem = $(this);
+        $thisElem.parent().append($thisElem.val()).attr("title","double-click to change");
+        $thisElem.remove()
+      });
+      $elem.find('button').remove();
     }
   }
   
@@ -346,18 +376,8 @@ var IAT = (function() {
           };
         }(this.authentication));
         $div.append($modify);
-        var $name = $('<div class="experimentManagerTitle" title="double-click to change">').append(this.name).dblclick(function () {
-          toggleTextInput($name);
-          $name.find('input').submit(function (event) {
-            event.preventDefault();
-            var $elem = $(this);
-            toggleTextInput($elem);
-            if ($elem.val() !== $elem.attr("original")) {
-              $.jnotify('Name updated to "' + $elem.val() + '". Saving not yet implemented.');
-            }
-            $elem.removeAttr("original");
-          });
-        });
+        var $name = $('<div class="experimentManagerTitle" title="double-click to change">').append(this.name);
+        makeElementEditableUponDoubleClick($name,"Name");
         $div.append($name);
         $div.append("other options");
         return $div;
@@ -459,6 +479,7 @@ var IAT = (function() {
         $subcat2.text(this.categoryNameFromId(stimulus.subcategory2));
         var $word = $('<div>').addClass('stimulusDatum').addClass('stimulusWord');
         $word.text(stimulus.word);
+        makeElementEditableUponDoubleClick($word,"Stimulus word","stimulusWord",true);
 
         $leftSpan.append($cat1).append($subcat1);
         $rightSpan.append($cat2).append($subcat2);
