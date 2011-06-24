@@ -190,6 +190,23 @@ var IAT = (function() {
       else return this.stimulusCategories[id];
     }
   }
+  var ExperimentBuildAssistant = function () {
+    generateSimpleExperimentManager : function() {
+      function generateCategoryList(name,stimuli) {
+        var $listDiv = $('<div>');
+        $listDiv.append($('<span>').append(name).addClass('EBACategoryListHeader'));
+        var $list = $('<ul>').addClass('EBACategoryList');
+        for (var i in stimuli) {
+          $list.append($('<li>').append(stimuli[i]).addClass('EBACategoryListItem'));
+        }
+        $listDiv.append($list);
+      }
+      
+      var $div = $('<div>');
+      
+      return $div;
+    }
+  }
   var ExperimentManager = function () {
     var stimuliTableDomObj;
     var changedItems = [];
@@ -215,244 +232,6 @@ var IAT = (function() {
           'experimentNumber' : experimentNumber,
           'data' : dataObject
         }));
-      },
-      addStimulus : function(experimentNumber) {
-        return sendRequest(bundleIATManagerRequestData("addStimulus",{
-          'experimentNumber' : experimentNumber,
-          'data' : null
-        }));
-      },
-      removeStimulus : function(experimentNumber,dataObject) {
-        return sendRequest(bundleIATManagerRequestData("removeStimulus",{
-          'experimentNumber' : experimentNumber,
-          'data' : null
-        }));
-      },
-      insertStimulus : function(experimentNumber,index) {
-        return sendRequest(bundleIATManagerRequestData("insertStimuli",{
-          'experimentNumber' : experimentNumber,
-          'data' : {
-            "insertIndex":index
-          }
-        }));
-      },
-      moveStimulus : function(experimentNumber,dataObject) {
-        return sendRequest(bundleIATManagerRequestData("moveStimulus",{
-          'experimentNumber' : experimentNumber,
-          'data' : dataObject
-        }));
-      },
-      setStimulusProperties : function(experimentNumber,dataObject) {
-        return sendRequest(bundleIATManagerRequestData("setStimulusProperties",{
-          'experimentNumber' : experimentNumber,
-          'data' : dataObject
-        }));
-      },
-      addStimulusGroup : function(experimentNumber) {
-        return sendRequest(bundleIATManagerRequestData("addStimulusGroup",{
-          'experimentNumber' : experimentNumber,
-          'data' : null
-        }));
-      },
-      removeStimulusGroup : function(experimentNumber,dataObject) {
-        return sendRequest(bundleIATManagerRequestData("removeStimulusGroup",{
-          'experimentNumber' : experimentNumber,
-          'data' : dataObject
-        }));
-      },
-      insertStimulusGroup : function(experimentNumber,dataObject) {
-        return sendRequest(bundleIATManagerRequestData("insertStimulusGroup",{
-          'experimentNumber' : experimentNumber,
-          'data' : dataObject
-        }));
-      },
-      moveStimulusGroup : function(experimentNumber,dataObject) {
-        return sendRequest(bundleIATManagerRequestData("moveStimulusGroup",{
-          'experimentNumber' : experimentNumber,
-          'data' : dataObject
-        }));
-      },
-      copyStimulusGroup : function(experimentNumber,dataObject) {
-        return sendRequest(bundleIATManagerRequestData("copyStimulusGroup",{
-          'experimentNumber' : experimentNumber,
-          'data' : dataObject
-        }));
-      },
-      setStimulusGroupProperties : function(experimentNumber,dataObject) {
-        return sendRequest(bundleIATManagerRequestData("setStimulusGroupProperties",{
-          'experimentNumber' : experimentNumber,
-          'data' : dataObject
-        }));
-      },
-      addStimulusCategory : function(experimentNumber,name) {
-        return sendRequest(bundleIATManagerRequestData("addStimulusCategory",{
-          'experimentNumber' : experimentNumber,
-          'data' : {
-            "name" : name
-          }
-        }));
-      },
-      removeStimulusCategory : function(experimentNumber,index) {
-        return sendRequest(bundleIATManagerRequestData("removeStimulusCategory",{
-          'experimentNumber' : experimentNumber,
-          'data' : {
-            "index" : index
-          }
-        }));
-      },
-      experimentManager : function () {
-        var $div = $('<div>');
-        $div.append(this.generateStimuliTable());
-        $div.prepend(this.generateOptionsHeader());
-        return $div;
-      },
-      generateOptionsHeader : function () {
-        var $div = $('<div class="experimentManagerOptionsHeader">');
-        var $modify = $('<span class="experimentReturnLink actionLink">').append('<span class="experimentModifyArrow">\u2B05</span> Return');
-        $modify.click(function (authentication) {
-          return function () {
-            $(this).find('.experimentModifyArrow').replaceWith('<img src="ajaxLoader.gif" />');
-            var selector = generateExperimentSelector(function() {
-              var $content = $('.contentDiv');
-              $content.hide("slide",{direction: "right", mode: "hide"},400,function () {
-                $content.remove();
-              });
-              var $newContentDiv = $('<div class="contentDiv">');
-              $('body').append($newContentDiv);
-              var $list = selector.generateExperimentList($newContentDiv);
-              $newContentDiv.append($list);
-              $newContentDiv.show("slide",{direction: "left"},400);
-            },authentication);
-          };
-        }(this.authentication));
-        $div.append($modify);
-        var $name = $('<div class="experimentManagerTitle edit" title="double-click to change">').append(this.name).editable(function (value,settings) {
-          $.jnotify("New value is '"+ value + "'. Saving not yet implemented.");
-          return(value);
-        });
-        $div.append($name);
-        $div.append("other options");
-        return $div;
-      },
-      generateStimuliTable : function() {
-        var $table = $('<div>').attr('id','stimuliGroupDiv').addClass('stimuliGroupDiv');
-        for (var group in this.stimuliGroups) {
-          $table.append(this.groupFromObject(this.stimuliGroups[group]));
-        }
-        var myExp = this;
-        $table.sortable({
-          update : function (event, ui) {
-            myExp.changedItems.push("group order");
-          },
-          axis: 'y'
-        });
-        this.stimuliTableDomObj = $table;
-        return $table;
-      },
-      groupFromObject : function(group) {
-        var $groupDiv = $('<div>').addClass('stimuliGroup').corner();
-        var $groupHeader = $('<div>').addClass('stimuliGroupHeader');
-        var $stimuli = $('<div>').addClass('stimuliDiv');
-        var $groupFooter = $('<div>').addClass('stimuliGroupFooter');
-        var $disclosureSpan = $(DISCLOSURE_HEADER_STRING).addClass('groupHeader');
-        $disclosureSpan.children('img').first().click(function() {
-          if (group.disclosed === undefined | group.disclosed === null) {
-            group.disclosed = false;
-          }
-          group.disclosed = !group.disclosed;
-          if (group.disclosed === true) $groupFooter.find('.actionLink').fadeTo(400,0);
-          else $groupFooter.find('.actionLink').fadeTo(400,1);
-          $stimuli.slideToggle();
-          if (group.disclosed) $groupDiv.find('img').first().animate({rotate : '-90deg'});
-          else $groupDiv.find('img').first().animate({rotate : '0deg'});
-        });
-        $groupHeader.append($disclosureSpan);
-        var $stimuliHeader = $('<span>').addClass('groupHeader').addClass('stimuliHeader');
-        $stimuliHeader.text(group.name);
-        $groupHeader.append($stimuliHeader);
-        $groupHeader.append($('<span>').addClass('groupHeader').addClass('greenwaldHeader').text('greenwald selector'));
-        $groupHeader.append($('<span>').addClass('groupHeader').addClass('groupActionHeader').text('action selector'));
-        $groupHeader.append($('<span>').addClass('groupHeader').addClass('randomization').text('randomization box'));
-        $groupDiv.append($groupHeader);
-        var myExp = this;
-        for (var stimulus in group.stimuli) {
-          $stimuli.append(this.stimulusDivFromObject(group.stimuli[stimulus]));
-        }
-        $stimuli.sortable({
-          update: function(event,ui) {
-            var $stimuliGroup = $(this);
-            if ($stimuliGroup.attr('changed') === "true") {
-              return;
-            } else {
-              $stimuliGroup.attr('changed',"true")
-              myExp.changedItems.push(myExp.stimuliGroups[$stimuliGroup.index()]);
-            }
-          },
-          axis: 'y'
-        });
-        $stimuli.attr('id','stimuliGroupDiv_' + group.id);
-        $groupDiv.append($stimuli);
-        $groupFooter.append($('<span>').addClass('groupFooter').addClass('copyGroup').append($('<a>copy</a>').addClass('actionLink').click(function () {alert('Implement: copy.')})));
-        $groupFooter.append($('<span>').addClass('groupFooter').addClass('deleteGroup').append($('<a>delete</a>').addClass('actionLink').click(function () {alert('Implement: delete.')})));
-        $groupDiv.append($groupFooter);
-        $groupDiv.attr('id','group_' + group.id);
-        $groupDiv[0].groupModel = group;
-        return $groupDiv;
-      },
-      stimulusDivFromObject : function(stimulus) {
-        var $stimulus = $('<div>').addClass('stimulus');
-        var $stimulusData = this.stimulusDataFromObject(stimulus).addClass('floatLeft');
-        var $stimulusOptions = $('<span>').addClass('floatRight').addClass('stimulusOptions');
-        var $stimulusEditButton = $('<div>').append($('<button>edit</button>').click(function () {
-          var $button = $(this);
-          $button.closest('.stimulus').find('.stimulusWord').click();
-          if ($button.text() === "edit") {
-            $button.text("cancel");
-          } else {
-            $button.text("edit");
-          }
-        }));
-        var $stimulusActions = $('<div>').append('TODO - stimulus actions');
-        var $clear = $('<div>').addClass('clear');
-        $stimulusOptions.append($stimulusEditButton).append($stimulusActions);
-        $stimulus.append($stimulusOptions).append($stimulusData).append($clear);
-        $stimulus[0].stimulusModel = stimulus;
-        stimulus.stimulusView = $stimulus[0];
-        $stimulus.attr('id','stimulus_' + stimulus.stimulus_id);
-        return $stimulus;
-      },
-      stimulusDataFromObject : function(stimulus) {
-        var $table = $('<span>').addClass('stimulusData');
-        var $categoryDiv = $('<div>');
-        var $leftSpan = $('<span>').addClass('floatLeft');
-        var $rightSpan = $('<span>').addClass('floatRight');
-        var $centerDiv = $('<span>').addClass('center');
-        var $clear = $('<div>').addClass('clear');
-
-        var $cat1 = $('<div>').addClass('stimulusDatum').addClass('leftCategory').addClass('topCategory');
-        $cat1.text(this.categoryNameFromId(stimulus.category1));
-        var $cat2 = $('<div>').addClass('stimulusDatum').addClass('rightCategory').addClass('topCategory');
-        $cat2.text(this.categoryNameFromId(stimulus.category2));
-        var $subcat1 = $('<div>').addClass('stimulusDatum').addClass('leftCategory').addClass('bottomCategory');
-        $subcat1.text(this.categoryNameFromId(stimulus.subcategory1));
-        var $subcat2 = $('<div>').addClass('stimulusDatum').addClass('rightCategory').addClass('bottomCategory');
-        $subcat2.text(this.categoryNameFromId(stimulus.subcategory2));
-        var $word = $('<div>').addClass('stimulusDatum').addClass('stimulusWord').addClass('edit_area').editable(function (value,settings) {
-          $.jnotify("New value is '"+ value + "'. Saving not yet implemented.");
-          return(value);
-        },{
-          type:"textarea",
-          submit:"Save",
-          cancel:"Cancel"
-        });
-        $word.text(stimulus.word);
-
-        $leftSpan.append($cat1).append($subcat1);
-        $rightSpan.append($cat2).append($subcat2);
-        $categoryDiv.append($leftSpan).append($rightSpan).append($clear);
-        $centerDiv.append($word);
-        $table.append($categoryDiv).append($centerDiv);
-        return $table;
       },
       saveChanged : function () {
         $('#stimuliGroupDiv changed="true"').addClass('.changed');
