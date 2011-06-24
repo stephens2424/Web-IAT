@@ -1,5 +1,5 @@
 <?php
-
+session_set_cookie_params(1800);
 session_start();
 include 'connect.php';
 $hash = $_POST['stim_set_hash'];

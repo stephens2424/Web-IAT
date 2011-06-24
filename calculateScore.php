@@ -1,4 +1,5 @@
 <?php
+session_set_cookie_params(1800);
 session_start();
 require_once 'GreenwaldIATProcessor.php';
 require_once 'hashGenerator.php';

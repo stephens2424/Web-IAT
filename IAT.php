@@ -1,4 +1,7 @@
-<?php session_start(); ?>
+<?php
+session_set_cookie_params(1800);
+session_start();
+?>
 <html>
   <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript"></script>
