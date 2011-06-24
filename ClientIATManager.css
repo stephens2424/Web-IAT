@@ -43,91 +43,11 @@ div.innerAuthentication {
   color: red;
   line-height: 20px;
 }
-div.stimuliGroup {
-  width:99%;
-  min-width:700px;
-  background-color: #e8e8e8;
-  border-radius:10px;
-  -moz-border-radius:10px;
-  padding-top:5px;
-  padding-bottom:10px;
-  padding-left:10px;
-  margin-bottom:10px;
-}
-.groupHeader {
-  position: relative;
-  font-size: large;
-}
-.stimuliHeader {
-  left: 10%;
-  font-weight: bold;
-}
-.greenwaldHeader {
-  left: 20%;
-}
-.groupActionHeader {
-  left: 30%
-}
-.randomization {
-  left: 40%;
-}
-.stimuliDiv {
-  position:relative;
-  left:30px;
-  width:95%;
-  padding-right:10px;
-}
-.stimuliGroupFooter {
-  padding-top: 5px;
-  font-size: large;
-}
-.copyGroup {
-  position:relative;
-  left: 90%;
-}
-.deleteGroup {
-  position:relative;
-  left: 75%;
-}
+
 .actionLink {
   color:blue;
   text-decoration: underline;
   cursor: pointer;
-}
-.groupUpArrow {
-  float: right;
-  position:relative;
-  right: 5px;
-  color: #999999;
-  cursor: pointer;
-}
-.groupDownArrow {
-  float: right;
-  position: relative;
-  right: 5px;
-  color: #999999;
-  cursor: pointer;
-}
-.stimulus {
-  width:auto;
-  padding: 5px;
-  margin-bottom:5px;
-  background-color: lightblue;
-  border-radius:10px;
-  -moz-border-radius:10px;
-}
-.stimulusData {
-  width:68%;
-}
-.stimulusOptions {
-  width:20%;
-}
-.stimulusDatum {
-}
-.stimulusWord {
-  margin-left:auto;
-  margin-right:auto;
-  width:87%;
 }
 .center {
   text-align: center;
@@ -157,10 +77,6 @@ div.stimuliGroup {
 }
 .disclosure {
   cursor: pointer;
-}
-.stimuliPlaceholder {
-  height: 1.5em;
-  line-height: 1.2em;
 }
 .changed {
   background-color: lightcoral;
@@ -212,3 +128,20 @@ div.stimuliGroup {
 .experimentReturnLink {
   position: absolute;
 }
+.CategoryListContainer {
+  width: 200px;
+  float: left;
+}
+.CategoryList {
+  width: 200px;
+}
+.CategoryListItem {
+  width: 200px;
+}
+.ExperimentManager {
+  width: 95%;
+}
+.ExperimentManagerHeader {
+  height: 50px;
+}
+

@@ -178,7 +178,6 @@ var IAT = (function() {
     //data
     name : null,
     experimentNumber : null,
-    stimuliGroups :  null,
     stimulusCategories : null,
     authentication: null,
     //translations
@@ -188,23 +187,6 @@ var IAT = (function() {
     categoryNameFromId : function(id) {
       if (id === "0" | id === null | id === undefined) return "\u2013";
       else return this.stimulusCategories[id];
-    }
-  }
-  var ExperimentBuildAssistant = function () {
-    generateSimpleExperimentManager : function() {
-      function generateCategoryList(name,stimuli) {
-        var $listDiv = $('<div>');
-        $listDiv.append($('<span>').append(name).addClass('EBACategoryListHeader'));
-        var $list = $('<ul>').addClass('EBACategoryList');
-        for (var i in stimuli) {
-          $list.append($('<li>').append(stimuli[i]).addClass('EBACategoryListItem'));
-        }
-        $listDiv.append($list);
-      }
-      
-      var $div = $('<div>');
-      
-      return $div;
     }
   }
   var ExperimentManager = function () {
@@ -232,6 +214,40 @@ var IAT = (function() {
           'experimentNumber' : experimentNumber,
           'data' : dataObject
         }));
+      },
+      experimentManager : function() {
+        function generateCategoryList(stimulusCategory) {
+          var $listFooter = $('<span>');
+          var $listTopDiv = $('<div>').addClass('CategoryListContainer');
+          var $listDiv = $('<span>');
+          $listDiv.append($('<span>').append(stimulusCategory.name).addClass('CategoryListHeader'));
+          var $list = $('<ul>').addClass('CategoryList');
+          for (var i in stimulusCategory.stimuli) {
+            $list.append($('<li>').append(stimulusCategory.stimuli[i]).addClass('CategoryListItem'));
+          }
+          var $listWrapper = $('<div>').append($list);
+          $listDiv.append($listWrapper);
+          $listFooter.append($('<button>+</button>').click(function () {
+            $list.append($('<li>').append({}));
+            $.jnotify("Stimulus added to " + stimulusCategory.name + ". Saving to database not yet implemented.");
+          }));
+          $listTopDiv.append($listDiv);
+          $listTopDiv.append($listFooter);
+          return $listTopDiv;
+        }
+        var $topDiv = $('<div>').addClass('ExperimentManager');
+        var $contentDiv = $('<div>').addClass('ExperimentManagerContent');
+        var $headerDiv = $('<div>').addClass('ExperimentManagerHeader');
+        for (var i in this.stimulusCategories) {
+          $contentDiv.append(generateCategoryList(this.stimulusCategories[i]));
+        }
+        $headerDiv.append($('<button>Add Category</button>').click(function () {
+          $contentDiv.append(generateCategoryList({"name" : "new category","stimuli" : []}));
+          $.jnotify("Stimulus category added. Saving to database not yet implemented.");
+        }));
+        $topDiv.append($headerDiv);
+        $topDiv.append($contentDiv);
+        return $topDiv;
       },
       saveChanged : function () {
         $('#stimuliGroupDiv changed="true"').addClass('.changed');
