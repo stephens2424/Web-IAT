@@ -12,4 +12,4 @@
 	url = https://github.com/zachstronaut/jquery-animate-css-rotate-scale.git
 [submodule "Lightbox_me"]
 	path = Lightbox_me
-	url = https://github.com/buckwilson/Lightbox_me.git
+	url = git@github.com:stephens2424/Lightbox_me.git
