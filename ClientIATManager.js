@@ -220,15 +220,16 @@ var IAT = (function() {
           var $listFooter = $('<span>');
           var $listTopDiv = $('<div>').addClass('CategoryListContainer');
           var $listDiv = $('<span>');
-          $listDiv.append($('<span>').append(stimulusCategory.name).addClass('CategoryListHeader'));
+          $listDiv.append($('<span>').append(stimulusCategory.name).addClass('CategoryListHeader').editable());
           var $list = $('<ul>').addClass('CategoryList');
           for (var i in stimulusCategory.stimuli) {
-            $list.append($('<li>').append(stimulusCategory.stimuli[i]).addClass('CategoryListItem'));
+            $list.append($('<li>').append($('<span>').append(stimulusCategory.stimuli[i]).addClass('CategoryListItem').editable()));
           }
+          $list.sortable();
           var $listWrapper = $('<div>').append($list);
           $listDiv.append($listWrapper);
           $listFooter.append($('<button>+</button>').click(function () {
-            $list.append($('<li>').append({}));
+            $list.append($('<li>').append({"word":"new word"}).editable());
             $.jnotify("Stimulus added to " + stimulusCategory.name + ". Saving to database not yet implemented.");
           }));
           $listTopDiv.append($listDiv);

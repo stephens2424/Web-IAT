@@ -129,14 +129,17 @@ div.innerAuthentication {
   position: absolute;
 }
 .CategoryListContainer {
-  width: 200px;
+  width: 20%;
+  min-width: 100px;
   float: left;
 }
 .CategoryList {
-  width: 200px;
+  width: 20%;
+  min-width: 100px;
 }
 .CategoryListItem {
-  width: 200px;
+  width: 20%;
+  min-width: 100px;
 }
 .ExperimentManager {
   width: 95%;
