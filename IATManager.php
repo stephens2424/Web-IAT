@@ -68,7 +68,6 @@ class IATManager {
   }
   function requestExperiment($experimentNumber) {
     $experiment = $this->getExperiment($experimentNumber);
-    $experiment['stimuliGroups'] = $this->getStimuliGroups($experimentNumber);
     $experiment['stimulusCategories'] = $this->getStimulusCategories($experimentNumber);
     return json_encode($experiment);
   }
@@ -78,27 +77,19 @@ class IATManager {
     $experiment = objectFromResult($result);
     return objectFromResult($result);
   }
-  function getStimuliGroups($experimentNumber) {
-    $query = "SELECT * FROM stimuliGroups WHERE stimuliSet=$experimentNumber ORDER BY `order`";
-    $result = mysql_query($query,  $this->databaseConnection);
-    $tempGroups = arrayFromResult($result);
-    $finalGroups = array();
-    foreach ($tempGroups as $group) {
-      $tempGroup = $group;
-      $tempGroup['stimuli'] = $this->getStimuliInGroup($group['id']);
-      $finalGroups[] = $tempGroup;
-    }
-    return $finalGroups;
-  }
-  function getStimuliInGroup($groupNumber) {
-    $query = "SELECT * FROM stimuli WHERE `group`=$groupNumber ORDER BY `order`";
+  function getStimuliForCategory($categoryNumber) {
+    $query = "SELECT * FROM stimuli WHERE `stimulusCategory`=$categoryNumber ORDER BY `stimulus_id`";
     $result = mysql_query($query, $this->databaseConnection);
     return arrayFromResult($result);
   }
   function getStimulusCategories($experimentNumber) {
     $query = "SELECT * FROM stimulusCategories WHERE `experiment`=$experimentNumber";
     $result = mysql_query($query);
-    return assocArrayFromResult($result, "id", "name");
+    $categories = assocArrayFromResult($result, "id", "name");
+    foreach ($categories as $key => $value) {
+      $finalCategories[$key] = array("name" => $value, "stimuli" => $this->getStimuliForCategory($key));
+    }
+    return $finalCategories;
   }
   function addExperiment() {
     

@@ -217,9 +217,9 @@ var IAT = (function() {
       },
       experimentManager : function() {
         function generateCategoryList(stimulusCategory) {
-          function appendStimulusEntry($list,word) {
-            $list.append($('<li>').append(word).addClass('CategoryListItem').editable(function (value) {
-              $.jnotify("Stimulus word changed to " + value + ".");
+          function appendStimulusEntry($list,wordObject) {
+            $list.append($('<li>').append(wordObject.word).addClass('CategoryListItem').editable(function (value) {
+              $.jnotify("Stimulus word changed to " + value + ". Saving not yet implemented.");
               return value;
             }));
           }
@@ -237,8 +237,7 @@ var IAT = (function() {
           $list.sortable();
           $listDiv.append($list);
           $listFooter.append($('<button>+</button>').click(function () {
-            var newWord = {"word":"new word"};
-            appendStimulusEntry($list,newWord.word);
+            appendStimulusEntry($list,{"word":"new word"});
             $.jnotify("Stimulus added to " + stimulusCategory.name + ". Saving to database not yet implemented.");
           }));
           $listTopDiv.append($listDiv);
@@ -248,9 +247,15 @@ var IAT = (function() {
         var $topDiv = $('<div>').addClass('ExperimentManager');
         var $contentDiv = $('<div>').addClass('ExperimentManagerContent');
         var $headerDiv = $('<div>').addClass('ExperimentManagerHeader');
-        for (var i in this.stimulusCategories) {
-          $contentDiv.append(generateCategoryList(this.stimulusCategories[i]));
-        }
+        var $button = $(this);
+        $button.after('<img src="ajaxloader.gif">');
+        sendRequest(bundleIATManagerRequestData("requestExperiment",this.experimentNumber)).success(function (receivedData) {
+          var data = JSON.parse(receivedData);
+          for (var i in data.stimulusCategories) {
+            $contentDiv.append(generateCategoryList(data.stimulusCategories[i]));
+          }
+          $button.find('img').remove();
+        });
         $headerDiv.append($('<button>Add Category</button>').click(function () {
           $contentDiv.append(generateCategoryList({"name" : "new category","stimuli" : []}));
           $.jnotify("Stimulus category added. Saving to database not yet implemented.");
