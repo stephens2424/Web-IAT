@@ -25,7 +25,7 @@ DROP TABLE IF EXISTS `experiments`;
 CREATE TABLE `experiments` (
   `stimuli_set` int(11) NOT NULL AUTO_INCREMENT,
   `active` bit(1) NOT NULL DEFAULT b'0',
-  `name` tinytext,
+  `name` text,
   `endUrl` text,
   `hash` text,
   `secondEndUrl` text NOT NULL,
@@ -181,4 +181,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2011-07-03 19:33:13
+-- Dump completed on 2011-07-03 19:53:14
