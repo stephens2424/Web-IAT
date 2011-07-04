@@ -219,7 +219,13 @@ var IAT = (function() {
         function generateCategoryList(stimulusCategory) {
           function appendStimulusEntry($list,wordObject) {
             $list.append($('<li>').append(wordObject.word).addClass('CategoryListItem').editable(function (value) {
-              $.jnotify("Stimulus word changed to " + value + ". Saving not yet implemented.");
+              sendRequest(bundleIATManagerRequestData("changeStimulusWord",{
+                "stimulus_id" : wordObject.stimulus_id,
+                "newWord" : value
+              })).success(function (receivedData) {
+                var data = JSON.parse(receivedData);
+                $.jnotify("Response to updating word was: " + data);
+              });
               return value;
             }));
           }

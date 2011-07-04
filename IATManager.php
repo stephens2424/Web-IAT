@@ -91,6 +91,17 @@ class IATManager {
     }
     return $finalCategories;
   }
+  function changeStimulusWord($requestObject) {
+    $stimulus_id = $requestObject[stimulus_id];
+    $newWord = $requestObject[newWord];
+    $query = "UPDATE stimuli SET `word`='$newWord' WHERE `stimulus_id`=$stimulus_id";
+    $result = mysql_query($query);
+    if ($result) {
+      return json_encode(true);
+    } else {
+      return json_encode(false);
+    }
+  }
   function addExperiment() {
     
   }
