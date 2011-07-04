@@ -13,3 +13,6 @@
 [submodule "Lightbox_me"]
 	path = Lightbox_me
 	url = git@github.com:stephens2424/Lightbox_me.git
+[submodule "jsundoable"]
+	path = jsundoable
+	url = https://github.com/jscott1989/jsundoable.git
