@@ -217,19 +217,28 @@ var IAT = (function() {
       },
       experimentManager : function() {
         function generateCategoryList(stimulusCategory) {
+          function appendStimulusEntry($list,word) {
+            $list.append($('<li>').append(word).addClass('CategoryListItem').editable(function (value) {
+              $.jnotify("Stimulus word changed to " + value + ".");
+              return value;
+            }));
+          }
           var $listFooter = $('<span>');
           var $listTopDiv = $('<div>').addClass('CategoryListContainer');
           var $listDiv = $('<span>');
-          $listDiv.append($('<span>').append(stimulusCategory.name).addClass('CategoryListHeader').editable());
+          $listDiv.append($('<span>').append(stimulusCategory.name).addClass('CategoryListHeader').editable(function(value,settings) {
+            $.jnotify("Category title changed to '" + value + "'. Saving not yet implemented.");
+            return value;
+          }));
           var $list = $('<ul>').addClass('CategoryList');
           for (var i in stimulusCategory.stimuli) {
-            $list.append($('<li>').append($('<span>').append(stimulusCategory.stimuli[i]).addClass('CategoryListItem').editable()));
+            appendStimulusEntry($list,stimulusCategory.stimuli[i]);
           }
           $list.sortable();
-          var $listWrapper = $('<div>').append($list);
-          $listDiv.append($listWrapper);
+          $listDiv.append($list);
           $listFooter.append($('<button>+</button>').click(function () {
-            $list.append($('<li>').append({"word":"new word"}).editable());
+            var newWord = {"word":"new word"};
+            appendStimulusEntry($list,newWord.word);
             $.jnotify("Stimulus added to " + stimulusCategory.name + ". Saving to database not yet implemented.");
           }));
           $listTopDiv.append($listDiv);
