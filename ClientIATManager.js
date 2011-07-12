@@ -215,20 +215,21 @@ var IAT = (function() {
           'data' : dataObject
         }));
       },
+      appendStimulusEntry : function($list,wordObject) {
+        $list.append($('<li>').append(wordObject.word).addClass('CategoryListItem').editable(function (value) {
+          sendRequest(bundleIATManagerRequestData("changeStimulusWord",{
+            "stimulus_id" : wordObject.stimulus_id,
+            "newWord" : value
+          })).success(function (receivedData) {
+            var data = JSON.parse(receivedData);
+            $.jnotify("Response to updating word was: " + data);
+          });
+          return value;
+        }));
+      },
       experimentManager : function() {
+        var experimentManager = this;
         function generateCategoryList(stimulusCategory) {
-          function appendStimulusEntry($list,wordObject) {
-            $list.append($('<li>').append(wordObject.word).addClass('CategoryListItem').editable(function (value) {
-              sendRequest(bundleIATManagerRequestData("changeStimulusWord",{
-                "stimulus_id" : wordObject.stimulus_id,
-                "newWord" : value
-              })).success(function (receivedData) {
-                var data = JSON.parse(receivedData);
-                $.jnotify("Response to updating word was: " + data);
-              });
-              return value;
-            }));
-          }
           var $listFooter = $('<span>');
           var $listTopDiv = $('<div>').addClass('CategoryListContainer');
           var $listDiv = $('<span>');
@@ -238,12 +239,12 @@ var IAT = (function() {
           }));
           var $list = $('<ul>').addClass('CategoryList');
           for (var i in stimulusCategory.stimuli) {
-            appendStimulusEntry($list,stimulusCategory.stimuli[i]);
+            experimentManager.appendStimulusEntry($list,stimulusCategory.stimuli[i]);
           }
           $list.sortable();
           $listDiv.append($list);
           $listFooter.append($('<button>+</button>').click(function () {
-            appendStimulusEntry($list,{"word":"new word"});
+            experimentManager.appendStimulusEntry($list,{"word":"new word"});
             $.jnotify("Stimulus added to " + stimulusCategory.name + ". Saving to database not yet implemented.");
           }));
           $listTopDiv.append($listDiv);
