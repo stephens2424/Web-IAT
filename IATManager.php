@@ -78,7 +78,7 @@ class IATManager {
     return objectFromResult($result);
   }
   function getStimuliForCategory($categoryNumber) {
-    $query = "SELECT * FROM stimuli WHERE `stimulusCategory`=$categoryNumber ORDER BY `stimulus_id`";
+    $query = "SELECT * FROM stimuli WHERE `stimulusCategory`=$categoryNumber ORDER BY `id`";
     $result = mysql_query($query, $this->databaseConnection);
     return arrayFromResult($result);
   }
@@ -93,12 +93,12 @@ class IATManager {
     return $categories;
   }
   function setStimulusProperties($requestObject) {
-    $stimulus_id = $requestObject[stimulus_id];
+    $stimulus_id = $requestObject['id'];
     $query = "UPDATE `stimuli` SET ";
     if ($requestObject[word]) {
       $query .= "`word`='" . $requestObject['word'] . "'";
     }
-    $query .= " WHERE `stimulus_id`=" . $requestObject['id'];
+    $query .= " WHERE `id`=" . $requestObject['id'];
     $result = mysql_query($query);
     if ($result) {
       return json_encode(array('success' => true,'message' => "Updating stimulus succeeded."));

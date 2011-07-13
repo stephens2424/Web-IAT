@@ -218,7 +218,7 @@ var IAT = (function() {
       appendStimulusEntry : function($list,wordObject) {
         $list.append($('<li>').append(wordObject.word).addClass('CategoryListItem').editable(function (value) {
           sendRequest(bundleIATManagerRequestData("setStimulusProperties",{
-            "id" : wordObject.stimulus_id,
+            "id" : wordObject.id,
             "word" : value
           })).success(function (receivedData) {
             var data = JSON.parse(receivedData);
