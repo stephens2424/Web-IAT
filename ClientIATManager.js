@@ -217,21 +217,27 @@ var IAT = (function() {
       },
       experimentManager : function() {
         var experimentManager = this;
-        function makeStimulusEntry(wordObject) {
-          var $liSpan = $('<span>').addClass('Stimulus').append(wordObject.word).editable(function (value) {
-            sendRequest(bundleIATManagerRequestData("setStimulusProperties",{
-              "id" : wordObject.id,
-              "word" : value
-            })).success(function (receivedData) {
-              var data = JSON.parse(receivedData);
-              $.jnotify("Stimulus changed to '" + value + "'. " + data.message);
+        function makeStimulusEntry(wordObject,temporary) {
+          var $liSpan = $('<span>').addClass('Stimulus').append(wordObject.word);
+          if (temporary) {
+            var $li = $('<li>').addClass('CategoryListItem').append($liSpan);
+          }
+          else {
+            $liSpan.editable(function (value) {
+              sendRequest(bundleIATManagerRequestData("setStimulusProperties",{
+                "id" : wordObject.id,
+                "word" : value
+              })).success(function (receivedData) {
+                var data = JSON.parse(receivedData);
+                $.jnotify("Stimulus changed to '" + value + "'. " + data.message);
+              });
+              return value;
             });
-            return value;
-          });
-          var $delete = $('<span class="StimulusDeleteSpan">X</span>').click(function () {
-            $.jnotify("Delete stimulus. Not yet implemented.");
-          });
-          var $li = $('<li>').addClass('CategoryListItem').append($liSpan).append($delete);
+            var $delete = $('<span class="StimulusDeleteSpan">X</span>').click(function () {
+              $.jnotify("Delete stimulus. Not yet implemented.");
+            });
+            var $li = $('<li>').addClass('CategoryListItem').append($liSpan).append($delete);
+          }
           return $li;
         }
         function generateCategoryList(stimulusCategory) {
@@ -247,17 +253,17 @@ var IAT = (function() {
           }));
           var $list = $('<ul>').addClass('CategoryList');
           for (var i in stimulusCategory.stimuli) {
-            $list.append(makeStimulusEntry(stimulusCategory.stimuli[i]));
+            $list.append(makeStimulusEntry(stimulusCategory.stimuli[i],false));
           }
           $list.sortable();
           $listDiv.append($list);
           $listFooter.append($('<button>+</button>').click(function () {
             var word = {"word":"new word","stimulusCategory":stimulusCategory.id,"experiment":stimulusCategory.experiment};
-            var $li = makeStimulusEntry(word);
+            var $li = makeStimulusEntry(word,true);
             sendRequest(bundleIATManagerRequestData("addStimulus",word)).success(function (receivedData) {
               var data = JSON.parse(receivedData);
               if (data.success) {
-                $li.replaceWith(makeStimulusEntry(data.stimulus));
+                $li.replaceWith(makeStimulusEntry(data.stimulus,false));
                 $.jnotify("Stimulus added to " + stimulusCategory.name + ".");
               } else {
                 $.jnotify(data.message);
