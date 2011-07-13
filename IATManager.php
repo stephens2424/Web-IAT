@@ -155,8 +155,17 @@ class IATManager {
       return json_encode(array('success' => false,'message'=>"Error: adding new stimulus failed."));
     }
   }
-  function removeStimulus() {
-    
+  function deleteStimulus($requestObject) {
+    if (!$requestObject['id']) {
+      return json_encode(array('success' => false,'message'=>"Error: no stimulus id for deletion."));
+    }
+    $query = "DELETE FROM `stimuli` WHERE `id`=" . $requestObject['id'];
+    $result = mysql_query($query,$this->databaseConnection);
+    if ($result) {
+      return json_encode(array('success' => true,'message'=>"Stimulus deleted."));
+    } else {
+      return json_encode(array('success' => false,'message'=>"Error: deleting stimulus failed."));
+    }
   }
   function insertStimulus() {
     

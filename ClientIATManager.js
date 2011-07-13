@@ -218,6 +218,7 @@ var IAT = (function() {
       experimentManager : function() {
         var experimentManager = this;
         function makeStimulusEntry(wordObject,temporary) {
+          var $li = $('<li>').addClass('CategoryListItem');
           var $liSpan = $('<span>').addClass('Stimulus').append(wordObject.word);
           if (temporary) {
             var $li = $('<li>').addClass('CategoryListItem').append($liSpan);
@@ -234,9 +235,15 @@ var IAT = (function() {
               return value;
             });
             var $delete = $('<span class="StimulusDeleteSpan">X</span>').click(function () {
-              $.jnotify("Delete stimulus. Not yet implemented.");
+              $li.find('.Stimulus').editable('disable');
+              $li.find('.StimulusDeleteSpan').unbind('click').text('');
+              sendRequest(bundleIATManagerRequestData('deleteStimulus',wordObject)).success(function (receivedData) {
+                var data = JSON.parse(receivedData);
+                $li.remove();
+                $.jnotify(data.message);
+              });
             });
-            var $li = $('<li>').addClass('CategoryListItem').append($liSpan).append($delete);
+            $li.append($liSpan).append($delete);
           }
           return $li;
         }
