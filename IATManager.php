@@ -77,6 +77,15 @@ class IATManager {
     $experiment = objectFromResult($result);
     return objectFromResult($result);
   }
+  function getStimulus($id) {
+    $query = "SELECT * FROM stimuli WHERE `id`=$id";
+    $result = mysql_query($query,$this->databaseConnection);
+    if ($result) {
+      return array("success"=>true,"stimulus"=>objectFromResult($result));
+    } else {
+      return array("success"=>false,"message"=>"Error accessing stimulus.");
+    }
+  }
   function getStimuliForCategory($categoryNumber) {
     $query = "SELECT * FROM stimuli WHERE `stimulusCategory`=$categoryNumber ORDER BY `id`";
     $result = mysql_query($query, $this->databaseConnection);
@@ -119,8 +128,32 @@ class IATManager {
     
   }
 
-  function addStimulus() {
-    
+  function addStimulus($requestObject) {
+    $query = "INSERT INTO `stimuli` SET ";
+    $set = "";
+    if ($requestObject['experiment'] && $requestObject['stimulusCategory']) {
+      $set .= "`experiment`=" . $requestObject['experiment'] . ",`stimulusCategory`=" . $requestObject['stimulusCategory'];
+    } else {
+      return json_encode(array('success' => false,'message'=>"Error: new stimulus is missing experiment number or category."));
+    }
+    if ($requestObject['word']) {
+      $set .= ",`word`='" . $requestObject['word'] . "'";
+    }
+    if ($requestObject['correct_response']) {
+      $set .= ",`correct_response`=" . $requestObject['correct_response'];
+    }
+    $query .= $set;
+    $result = mysql_query($query);
+    if ($result) {
+      $stimulusResponse = $this->getStimulus(mysql_insert_id());
+      if ($stimulusResponse['success']) {
+        return json_encode(array('success'=>true,'stimulus'=>$stimulusResponse['stimulus'],'message'=>"Stimulus added."));
+      } else {
+        return json_encode(array('success'=>false,'message'=>"Error returning new stimulus."));
+      }
+    } else {
+      return json_encode(array('success' => false,'message'=>"Error: adding new stimulus failed."));
+    }
   }
   function removeStimulus() {
     

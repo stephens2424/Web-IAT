@@ -248,9 +248,18 @@ var IAT = (function() {
           $list.sortable();
           $listDiv.append($list);
           $listFooter.append($('<button>+</button>').click(function () {
-            var word = {"word":"new word"};
-            $list.append(makeStimulusEntry(word));
-            $.jnotify("Stimulus added to " + stimulusCategory.name + ". Saving to database not yet implemented.");
+            var word = {"word":"new word","stimulusCategory":stimulusCategory.id,"experiment":stimulusCategory.experiment};
+            var $li = makeStimulusEntry(word);
+            sendRequest(bundleIATManagerRequestData("addStimulus",word)).success(function (receivedData) {
+              var data = JSON.parse(receivedData);
+              if (data.success) {
+                $li.replaceWith(makeStimulusEntry(data.stimulus));
+                $.jnotify("Stimulus added to " + stimulusCategory.name + ".");
+              } else {
+                $.jnotify(data.message);
+              }
+            });
+            $list.append($li);
           }));
           $listTopDiv.append($listDiv);
           $listTopDiv.append($listFooter);
