@@ -84,7 +84,7 @@ CREATE TABLE `stimuli` (
   `correct_response` int(11) DEFAULT NULL,
   `stimulusCategory` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=411 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=417 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -93,7 +93,7 @@ CREATE TABLE `stimuli` (
 
 LOCK TABLES `stimuli` WRITE;
 /*!40000 ALTER TABLE `stimuli` DISABLE KEYS */;
-INSERT INTO `stimuli` VALUES (406,14,'Rainbow test',NULL,16),(408,14,'new word',NULL,16),(409,14,'new word',NULL,16),(410,14,'new word',NULL,16);
+INSERT INTO `stimuli` VALUES (406,14,'Rainbow test',NULL,16),(408,14,'new word',NULL,16),(409,14,'new word',NULL,16),(410,14,'new word',NULL,16),(411,14,'new word',NULL,16),(412,14,'new word',NULL,16),(413,14,'new word',NULL,16),(414,14,'new word',NULL,16),(415,14,'new word',NULL,16),(416,14,'new word',NULL,16);
 /*!40000 ALTER TABLE `stimuli` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -183,4 +183,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2011-07-12 21:28:46
+-- Dump completed on 2011-07-12 22:49:26
