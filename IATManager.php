@@ -92,15 +92,18 @@ class IATManager {
     unset($category);
     return $categories;
   }
-  function changeStimulusWord($requestObject) {
+  function setStimulusProperties($requestObject) {
     $stimulus_id = $requestObject[stimulus_id];
-    $newWord = $requestObject[newWord];
-    $query = "UPDATE stimuli SET `word`='$newWord' WHERE `stimulus_id`=$stimulus_id";
+    $query = "UPDATE `stimuli` SET ";
+    if ($requestObject[word]) {
+      $query .= "`word`='" . $requestObject['word'] . "'";
+    }
+    $query .= " WHERE `stimulus_id`=" . $requestObject['id'];
     $result = mysql_query($query);
     if ($result) {
-      return json_encode(true);
+      return json_encode(array('success' => true,'message' => "Updating stimulus succeeded."));
     } else {
-      return json_encode(false);
+      return json_encode(array('success' => false,'message' => "Updating stimulus failed."));
     }
   }
   function addExperiment() {
@@ -126,9 +129,6 @@ class IATManager {
     
   }
   function moveStimulus() {
-    
-  }
-  function setStimulusProperties() {
     
   }
   
