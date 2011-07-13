@@ -234,7 +234,10 @@ var IAT = (function() {
           var $listTopDiv = $('<div>').addClass('CategoryListContainer');
           var $listDiv = $('<span>');
           $listDiv.append($('<span>').append(stimulusCategory.name).addClass('CategoryListHeader').editable(function(value,settings) {
-            $.jnotify("Category title changed to '" + value + "'. Saving not yet implemented.");
+            sendRequest(bundleIATManagerRequestData("setStimulusCategoryProperties",{"id":stimulusCategory.id,"name":value})).success(function (receivedData) {
+              var data = JSON.parse(receivedData);
+              $.jnotify("Category title changed to '" + value + "'. " + data.message);
+            });
             return value;
           }));
           var $list = $('<ul>').addClass('CategoryList');

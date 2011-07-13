@@ -85,11 +85,12 @@ class IATManager {
   function getStimulusCategories($experimentNumber) {
     $query = "SELECT * FROM stimulusCategories WHERE `experiment`=$experimentNumber";
     $result = mysql_query($query);
-    $categories = assocArrayFromResult($result, "id", "name");
-    foreach ($categories as $key => $value) {
-      $finalCategories[$key] = array("name" => $value, "stimuli" => $this->getStimuliForCategory($key));
+    $categories = arrayFromResult($result, "id", "name");
+    foreach ($categories as &$category) {
+      $category['stimuli'] = $this->getStimuliForCategory($category['id']);
     }
-    return $finalCategories;
+    unset($category);
+    return $categories;
   }
   function changeStimulusWord($requestObject) {
     $stimulus_id = $requestObject[stimulus_id];
@@ -155,6 +156,19 @@ class IATManager {
   }
   function removeStimulusCategory($name) {
     
+  }
+  function setStimulusCategoryProperties($data) {
+    $query = "UPDATE `stimulusCategories` SET ";
+    if ($data.name) {
+      $query .= "`name`='" . $data['name'] . "'";
+    }
+    $query .= " WHERE `id`=" . $data['id'];
+    $result = mysql_query($query,$this->databaseConnection);
+    if ($result === false) {
+      return json_encode(array('success' => false,'message' => "Updating category failed."));
+    } else {
+      return json_encode(array('success' => true,'message' => "Updating category succeeded."));
+    }
   }
   
 }
