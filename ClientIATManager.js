@@ -219,11 +219,10 @@ var IAT = (function() {
         var experimentManager = this;
         function makeStimulusEntry(wordObject,temporary) {
           var $li = $('<li>').addClass('CategoryListItem');
+          var $wrapper = $('<span class="listItemInnerWrapper">');
           var $liSpan = $('<span>').addClass('Stimulus').append(wordObject.word);
-          if (temporary) {
-            var $li = $('<li>').addClass('CategoryListItem').append($liSpan);
-          }
-          else {
+          $wrapper.append($liSpan);
+          if (!temporary) {
             $liSpan.editable(function (value) {
               sendRequest(bundleIATManagerRequestData("setStimulusProperties",{
                 "id" : wordObject.id,
@@ -235,16 +234,17 @@ var IAT = (function() {
               return value;
             });
             var $delete = $('<span class="StimulusDeleteSpan">X</span>').click(function () {
-              $li.find('.Stimulus').editable('disable');
-              $li.find('.StimulusDeleteSpan').unbind('click').text('');
+              $wrapper.find('.Stimulus').editable('disable');
+              $wrapper.find('.StimulusDeleteSpan').unbind('click').text('');
               sendRequest(bundleIATManagerRequestData('deleteStimulus',wordObject)).success(function (receivedData) {
                 var data = JSON.parse(receivedData);
                 $li.remove();
                 $.jnotify(data.message);
               });
             });
-            $li.append($liSpan).append($delete);
+            $wrapper.append($delete);
           }
+          $li.append($wrapper);
           return $li;
         }
         function generateCategoryList(stimulusCategory) {

@@ -129,25 +129,34 @@ div.innerAuthentication {
   position: absolute;
 }
 .CategoryListContainer {
-  width: 20%;
-  min-width: 100px;
   float: left;
+  margin-right: 60px;
 }
 .CategoryList {
-  width: 20%;
-  min-width: 300px;
+  min-width: 200px;
+  width:100%;
+}
+.ListItemInnerWrapper {
+  margin: 5px;
 }
 .CategoryListItem {
-  width: 100%;
-  height: 15px;
-  padding: 5px;
-  margin-bottom: 2px;
   border-radius:10px;
+  height: 40px;
+  margin-bottom:2px;
   -moz-border-radius:10px;
   background-color: skyblue;
+  line-height: 30px;
+}
+.Stimulus {
+  float: left;
+  margin: 5px;
+  height: 20px;
+  width: auto;
 }
 .StimulusDeleteSpan {
   float: right;
+  margin: 5px;
+  height: 20px;
   cursor: pointer;
 }
 .ExperimentManager {
