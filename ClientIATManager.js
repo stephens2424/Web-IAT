@@ -247,24 +247,26 @@ var IAT = (function() {
           $li.append($wrapper);
           return $li;
         }
-        function generateCategoryList(stimulusCategory) {
+        function generateCategoryList(stimulusCategory,temporary) {
           var $listFooter = $('<span>');
           var $listTopDiv = $('<div>').addClass('CategoryListContainer');
           var $listDiv = $('<span>');
-          $listDiv.append($('<span>').append(stimulusCategory.name).addClass('CategoryListHeader').editable(function(value,settings) {
-            sendRequest(bundleIATManagerRequestData("setStimulusCategoryProperties",{"id":stimulusCategory.id,"name":value})).success(function (receivedData) {
-              var data = JSON.parse(receivedData);
-              $.jnotify("Category title changed to '" + value + "'. " + data.message);
-            });
-            return value;
-          }));
+          if (!temporary) {
+            $listDiv.append($('<span>').append(stimulusCategory.name).addClass('CategoryListHeader').editable(function(value,settings) {
+              sendRequest(bundleIATManagerRequestData("setStimulusCategoryProperties",{"id":stimulusCategory.id,"name":value})).success(function (receivedData) {
+                var data = JSON.parse(receivedData);
+                $.jnotify("Category title changed to '" + value + "'. " + data.message);
+              });
+              return value;
+            }));
+          }
           var $list = $('<ul>').addClass('CategoryList');
           for (var i in stimulusCategory.stimuli) {
             $list.append(makeStimulusEntry(stimulusCategory.stimuli[i],false));
           }
           $list.sortable();
           $listDiv.append($list);
-          $listFooter.append($('<button>+</button>').click(function () {
+          var $button = $('<button>+</button>').click(function () {
             var word = {"word":"new word","stimulusCategory":stimulusCategory.id,"experiment":stimulusCategory.experiment};
             var $li = makeStimulusEntry(word,true);
             sendRequest(bundleIATManagerRequestData("addStimulus",word)).success(function (receivedData) {
@@ -277,7 +279,11 @@ var IAT = (function() {
               }
             });
             $list.append($li);
-          }));
+          });
+          if (temporary) {
+            $button.prop('disabled',true);
+          }
+          $listFooter.append($button);
           $listTopDiv.append($listDiv);
           $listTopDiv.append($listFooter);
           return $listTopDiv;
@@ -295,8 +301,18 @@ var IAT = (function() {
           $button.find('img').remove();
         });
         $headerDiv.append($('<button>Add Category</button>').click(function () {
-          $contentDiv.append(generateCategoryList({"name" : "new category","stimuli" : []}));
-          $.jnotify("Stimulus category added. Saving to database not yet implemented.");
+          var category = {"name" : "new category","experiment":experimentManager.experimentNumber,"stimuli" : []};
+          var $list = generateCategoryList(category,true);
+          sendRequest(bundleIATManagerRequestData("addStimulusCategory",category)).success(function (receivedData) {
+            var data = JSON.parse(receivedData);
+            if (data.success) {
+              $list.replaceWith(generateCategoryList(category,false));
+              $.jnotify(data.message);
+            } else {
+              $.jnotify(data.message);
+            }
+          });
+          $contentDiv.append($list);
         }));
         $topDiv.append($headerDiv);
         $topDiv.append($contentDiv);

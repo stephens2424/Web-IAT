@@ -193,8 +193,29 @@ class IATManager {
     
   }
   
-  function addStimulusCategory($name) {
-    
+  function addStimulusCategory($requestObject) {
+    $query = "INSERT INTO `stimulusCategories` SET ";
+    $set = "";
+    if ($requestObject['experiment']) {
+      $set .= "`experiment`=" . $requestObject['experiment'];
+    } else {
+      return json_encode(array('success' => false,'message'=>"Error: new category is missing experiment number."));
+    }
+    if ($requestObject['name']) {
+      $set .= ",`name`='" . $requestObject['name'] . "'";
+    }
+    $query .= $set;
+    $result = mysql_query($query);
+    if ($result) {
+      $stimulusResponse = $this->getStimulus(mysql_insert_id());
+      if ($stimulusResponse['success']) {
+        return json_encode(array('success'=>true,'stimulus'=>$stimulusResponse['stimulus'],'message'=>"Category added."));
+      } else {
+        return json_encode(array('success'=>false,'message'=>"Error returning new category."));
+      }
+    } else {
+      return json_encode(array('success' => false,'message'=>"Error: adding new category failed."));
+    }
   }
   function removeStimulusCategory($name) {
     
