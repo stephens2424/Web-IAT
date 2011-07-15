@@ -295,8 +295,26 @@ var IAT = (function() {
         $button.after('<img src="ajaxloader.gif">');
         sendRequest(bundleIATManagerRequestData("requestExperiment",this.experimentNumber)).success(function (receivedData) {
           var data = JSON.parse(receivedData);
+          var unpairedCategories = [];
           for (var i in data.stimulusCategories) {
-            $contentDiv.append(generateCategoryList(data.stimulusCategories[i]));
+            var pair;
+            for (var ii in unpairedCategories) {
+              if (unpairedCategories[ii].id === data.stimulusCategories[i].pairedCategory) {
+                pair = unpairedCategories[ii];
+                unpairedCategories.splice(ii,1);
+                break;
+              }
+            }
+            if (pair) {
+              $contentDiv.append(generateCategoryList(data.stimulusCategories[i]));
+              $contentDiv.append(generateCategoryList(pair));
+              pair = undefined;
+            } else {
+              unpairedCategories.push(data.stimulusCategories[i]);
+            }
+          }
+          for (var iii in unpairedCategories) {
+            $contentDiv.append(generateCategoryList(unpairedCategories[iii]))
           }
           $button.find('img').remove();
         });
