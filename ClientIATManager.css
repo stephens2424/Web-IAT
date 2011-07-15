@@ -129,11 +129,11 @@ div.innerAuthentication {
   position: absolute;
 }
 .CategoryListContainer {
-  float: left;
-  margin-right: 60px;
+  float:left;
+  margin: 10px 50px 10px 10px;
 }
 .CategoryList {
-  min-width: 200px;
+  min-width: 175px;
   width:100%;
 }
 .ListItemInnerWrapper {
@@ -144,7 +144,7 @@ div.innerAuthentication {
   height: 40px;
   margin-bottom:2px;
   -moz-border-radius:10px;
-  background-color: skyblue;
+  background-color: #639185;
   line-height: 30px;
 }
 .Stimulus {
@@ -160,9 +160,18 @@ div.innerAuthentication {
   cursor: pointer;
 }
 .ExperimentManager {
-  width: 95%;
+  width: auto;
+  min-width: 1100px;
 }
 .ExperimentManagerHeader {
   height: 50px;
 }
-
+.pairDiv {
+  float: left;
+  border-radius:10px;
+  -moz-border-radius:10px;
+}
+#categoryPair0 {background-color: #FCFCCE}
+#categoryPair1 { background-color: #CCB584}
+#categoryPair2 { background-color: #A57D5B}
+#categoryPair3 { background-color: #898EA5}

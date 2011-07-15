@@ -69,6 +69,7 @@ class IATManager {
   function requestExperiment($experimentNumber) {
     $experiment = $this->getExperiment($experimentNumber);
     $experiment['stimulusCategories'] = $this->getStimulusCategories($experimentNumber);
+    $experiment['categoryPairs'] = $this->getCategoryPairs($experimentNumber);
     return json_encode($experiment);
   }
   function getExperiment($experimentNumber) {
@@ -94,12 +95,18 @@ class IATManager {
   function getStimulusCategories($experimentNumber) {
     $query = "SELECT * FROM stimulusCategories WHERE `experiment`=$experimentNumber";
     $result = mysql_query($query);
-    $categories = arrayFromResult($result, "id", "name");
+    $categories = arrayFromResult($result);
     foreach ($categories as &$category) {
       $category['stimuli'] = $this->getStimuliForCategory($category['id']);
     }
     unset($category);
     return $categories;
+  }
+  function getCategoryPairs($experimentNumber) {
+    $query = "SELECT * FROM categoryPairs WHERE `experiment`=$experimentNumber";
+    $result = mysql_query($query,$this->databaseConnection);
+    $pairs = arrayFromResult($result);
+    return $pairs;
   }
   function setStimulusProperties($requestObject) {
     $stimulus_id = $requestObject['id'];

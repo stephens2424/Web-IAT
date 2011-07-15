@@ -296,26 +296,27 @@ var IAT = (function() {
         sendRequest(bundleIATManagerRequestData("requestExperiment",this.experimentNumber)).success(function (receivedData) {
           var data = JSON.parse(receivedData);
           var unpairedCategories = [];
-          for (var i in data.stimulusCategories) {
-            var pair;
-            for (var ii in unpairedCategories) {
-              if (unpairedCategories[ii].id === data.stimulusCategories[i].pairedCategory) {
-                pair = unpairedCategories[ii];
-                unpairedCategories.splice(ii,1);
-                break;
+          var remainingCategories = data.stimulusCategories.slice();
+          for (var i in data.categoryPairs) {
+            var positiveCategory;
+            var negativeCategory;
+            var unusedCategories = [];
+            for (var ii in remainingCategories) {
+              if (remainingCategories[ii].id === data.categoryPairs[i].positiveCategory) {
+                positiveCategory = remainingCategories[ii];
+              } else if (remainingCategories[ii].id === data.categoryPairs[i].negativeCategory) {
+                negativeCategory = remainingCategories[ii];
+              } else {
+                unusedCategories.push(remainingCategories[ii]);
               }
             }
-            if (pair) {
-              $contentDiv.append(generateCategoryList(data.stimulusCategories[i]));
-              $contentDiv.append(generateCategoryList(pair));
-              pair = undefined;
-            } else {
-              unpairedCategories.push(data.stimulusCategories[i]);
-            }
+            remainingCategories = unusedCategories.slice(0);
+            var $pairDiv = $('<div class="pairDiv" id="categoryPair' + i + '">').append(generateCategoryList(positiveCategory));
+            $pairDiv.append(generateCategoryList(negativeCategory));
+            $contentDiv.append($pairDiv);
           }
-          for (var iii in unpairedCategories) {
-            $contentDiv.append(generateCategoryList(unpairedCategories[iii]))
-          }
+          if (remainingCategories.length > 0)
+            console.log(remainingCategories.length + " unpaired categories ignored.");
           $button.find('img').remove();
         });
         $headerDiv.append($('<button>Add Category</button>').click(function () {
