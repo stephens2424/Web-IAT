@@ -319,20 +319,6 @@ var IAT = (function() {
             console.log(remainingCategories.length + " unpaired categories ignored.");
           $button.find('img').remove();
         });
-        $headerDiv.append($('<button>Add Category</button>').click(function () {
-          var category = {"name" : "new category","experiment":experimentManager.experimentNumber,"stimuli" : []};
-          var $list = generateCategoryList(category,true);
-          sendRequest(bundleIATManagerRequestData("addStimulusCategory",category)).success(function (receivedData) {
-            var data = JSON.parse(receivedData);
-            if (data.success) {
-              $list.replaceWith(generateCategoryList(category,false));
-              $.jnotify(data.message);
-            } else {
-              $.jnotify(data.message);
-            }
-          });
-          $contentDiv.append($list);
-        }));
         $topDiv.append($headerDiv);
         $topDiv.append($contentDiv);
         return $topDiv;
