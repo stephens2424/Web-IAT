@@ -288,7 +288,44 @@ var IAT = (function() {
           $listTopDiv.append($listFooter);
           return $listTopDiv;
         }
-        var $topDiv = $('<div>').addClass('ExperimentManager');
+        function generateFlowList(stimulusCategories,categoryPairs) {
+          var $flowList = $('<ul class="flowList">');
+          var blockDefinitions = [
+            {block:"1",blockFunction:"practice",left:[categoryPairs[0].positiveCategory],right:[categoryPairs[0].negativeCategory]},
+            {block:"2",blockFunction:"practice",left:[categoryPairs[1].positiveCategory],right:[categoryPairs[1].negativeCategory]},
+            {block:"3",blockFunction:"practice",left:[categoryPairs[1].positiveCategory,categoryPairs[0].positiveCategory],right:[categoryPairs[1].negativeCategory,categoryPairs[0].negativeCategory]},
+            {block:"4",blockFunction:"test",left:[categoryPairs[1].positiveCategory,categoryPairs[0].positiveCategory],right:[categoryPairs[1].negativeCategory,categoryPairs[0].negativeCategory]},
+            {block:"5",blockFunction:"practice",left:[categoryPairs[0].negativeCategory],right:[categoryPairs[0].positiveCategory]},
+            {block:"6",blockFunction:"practice",left:[categoryPairs[1].positiveCategory,categoryPairs[0].negativeCategory],right:[categoryPairs[1].negativeCategory,categoryPairs[0].positiveCategory]},
+            {block:"7",blockFunction:"test",left:[categoryPairs[1].positiveCategory,categoryPairs[0].negativeCategory],right:[categoryPairs[1].negativeCategory,categoryPairs[0].positiveCategory]}
+          ];
+          var blocks = [];
+          for (var i in blockDefinitions) {
+            var $block = $('<li class="flowListItem">');
+            var $left = $('<div class="flowCategoryLeft">');
+            var $right = $('<div class="flowCategoryRight">');
+            for (var ii in blockDefinitions[i].left) {
+              var currentId = blockDefinitions[i].left[ii];
+              var currentStimulus = $.grep(stimulusCategories,function (item,index) {
+                return item.id === currentId;
+              });
+              $left.append($('<div>').append(currentStimulus[0].name));
+            }
+            for (var iii in blockDefinitions[i].right) {
+              currentId = blockDefinitions[i].right[iii];
+              currentStimulus = $.grep(stimulusCategories,function (item,index) {
+                return item.id === currentId;
+              });
+              $right.append($('<div>').append(currentStimulus[0].name))
+            }
+            var blockString = "Block " + blockDefinitions[i].block + ", " + blockDefinitions[i].blockFunction;
+            $block.append($left).append($right).append($('<div class="flowCategoryText">').append(blockString));
+            $flowList.append($block);
+          }
+          return $flowList;
+        }
+        var $tabDiv = $('<div id="tabDiv"><ul><li><a href="#tabs-1">Stimuli</a></li><li><a href="#tabs-2">Flow</a></li><li><a href="#tabs-3">Settings</a></li></ul></div>');
+        var $stimuliDiv = $('<div id="tabs-1">').addClass('ExperimentManager');
         var $contentDiv = $('<div>').addClass('ExperimentManagerContent');
         var $headerDiv = $('<div>').addClass('ExperimentManagerHeader');
         var $button = $(this);
@@ -296,7 +333,7 @@ var IAT = (function() {
         sendRequest(bundleIATManagerRequestData("requestExperiment",this.experimentNumber)).success(function (receivedData) {
           var data = JSON.parse(receivedData);
           var unpairedCategories = [];
-          var remainingCategories = data.stimulusCategories.slice();
+          var remainingCategories = data.stimulusCategories.slice(0);
           for (var i in data.categoryPairs) {
             var positiveCategory;
             var negativeCategory;
@@ -311,17 +348,25 @@ var IAT = (function() {
               }
             }
             remainingCategories = unusedCategories.slice(0);
+            unusedCategories = undefined;
             var $pairDiv = $('<div class="pairDiv" id="categoryPair' + i + '">').append(generateCategoryList(positiveCategory));
             $pairDiv.append(generateCategoryList(negativeCategory));
             $contentDiv.append($pairDiv);
           }
           if (remainingCategories.length > 0)
             console.log(remainingCategories.length + " unpaired categories ignored.");
+          $flowDiv.append(generateFlowList(data.stimulusCategories,data.categoryPairs));
           $button.find('img').remove();
         });
-        $topDiv.append($headerDiv);
-        $topDiv.append($contentDiv);
-        return $topDiv;
+        $stimuliDiv.append($headerDiv);
+        $stimuliDiv.append($contentDiv);
+        var $flowDiv = $('<div id="tabs-2">');
+        var $settingsDiv = $('<div id="tabs-3">');
+        $tabDiv.append($stimuliDiv);
+        $tabDiv.append($flowDiv);
+        $tabDiv.append($settingsDiv);
+        $tabDiv.tabs();
+        return $tabDiv;
       },
       saveChanged : function () {
         $('#stimuliGroupDiv changed="true"').addClass('.changed');
