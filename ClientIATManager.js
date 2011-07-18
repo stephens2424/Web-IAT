@@ -319,7 +319,12 @@ var IAT = (function() {
               $right.append($('<div>').append(currentStimulus[0].name))
             }
             var blockString = "Block " + blockDefinitions[i].block + ", " + blockDefinitions[i].blockFunction;
-            $block.append($left).append($right).append($('<div class="flowCategoryText">').append(blockString));
+            var $blockCenter = $('<div class="flowCategoryText">').append('<div>'+blockString+'</div>');
+            $blockCenter.append('Trials: ').append($('<span>20</span>').editable(function (value) {
+              $.jnotify("Trials not yet implemented.");
+              return value;
+            }));
+            $block.append($left).append($right).append($blockCenter);
             $flowList.append($block);
           }
           return $flowList;
