@@ -324,6 +324,14 @@ var IAT = (function() {
           }
           return $flowList;
         }
+        function generateFlowSidePanel() {
+          var $sidePanel = $('<div class="flowSidePanel">');
+          var $balance = $('<div>').append($('<label><input type="checkbox" />Auto-balance</label>').change(function() {
+            $.jnotify('Auto-balance has not yet been implemented.');
+          }));
+          $sidePanel.append($balance);
+          return $sidePanel;
+        }
         var $tabDiv = $('<div id="tabDiv"><ul><li><a href="#tabs-1">Stimuli</a></li><li><a href="#tabs-2">Flow</a></li><li><a href="#tabs-3">Settings</a></li></ul></div>');
         var $stimuliDiv = $('<div id="tabs-1">').addClass('ExperimentManager');
         var $contentDiv = $('<div>').addClass('ExperimentManagerContent');
@@ -355,7 +363,7 @@ var IAT = (function() {
           }
           if (remainingCategories.length > 0)
             console.log(remainingCategories.length + " unpaired categories ignored.");
-          $flowDiv.append(generateFlowList(data.stimulusCategories,data.categoryPairs));
+          $flowDiv.append(generateFlowList(data.stimulusCategories,data.categoryPairs)).append(generateFlowSidePanel());
           $button.find('img').remove();
         });
         $stimuliDiv.append($headerDiv);

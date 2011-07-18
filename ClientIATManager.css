@@ -209,3 +209,15 @@ div.innerAuthentication {
   width: 100%;
   text-align: center;
 }
+
+.flowSidePanel {
+  position: absolute;
+  right: 100px;
+  top: 100px;
+  border-radius:10px;
+  -moz-border-radius:10px;
+  background-color: skyblue;
+  height: 400px;
+  width: 200px;
+  padding: 5px;
+}
