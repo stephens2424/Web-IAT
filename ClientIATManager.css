@@ -138,7 +138,7 @@ div.innerAuthentication {
   margin: 10px 50px 10px 10px;
 }
 .CategoryList {
-  min-width: 175px;
+  min-width: 125px;
   width:100%;
 }
 .ListItemInnerWrapper {
@@ -166,7 +166,7 @@ div.innerAuthentication {
 }
 .ExperimentManager {
   width: auto;
-  min-width: 1100px;
+  min-width: 900px;
   height: 100%
 }
 .ExperimentManagerHeader {
@@ -184,10 +184,11 @@ div.innerAuthentication {
 
 
 .flowList {
-  width: 500px;
+  min-width: 400px;
+  width: 70%
 }
 .flowListItem {
-  width: 500px;
+  width: auto;
   height: 50px;
   padding: 5px;
   margin-bottom: 2px;
@@ -198,11 +199,15 @@ div.innerAuthentication {
 .flowCategoryLeft {
   float: left;
   margin: 5px 5px 10px 5px;
+  text-align: left;
+  width: 150px;
 }
 
 .flowCategoryRight {
   float: right;
   margin: 5px 5px 10px 5px;
+  text-align: right;
+  width: 150px;
 }
 
 .flowCategoryText {
@@ -212,12 +217,13 @@ div.innerAuthentication {
 
 .flowSidePanel {
   position: absolute;
-  right: 100px;
+  right: 20px;
   top: 100px;
   border-radius:10px;
   -moz-border-radius:10px;
   background-color: skyblue;
   height: 400px;
-  width: 200px;
+  width: 15%;
+  min-width: 150px;
   padding: 5px;
 }
