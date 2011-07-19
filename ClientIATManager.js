@@ -323,6 +323,8 @@ var IAT = (function() {
             $blockCenter.append('Trials: ').append($('<span>20</span>').editable(function (value) {
               $.jnotify("Trials not yet implemented.");
               return value;
+            },{
+              style:"display:inline"
             }));
             $block.append($left).append($right).append($blockCenter);
             $flowList.append($block);
