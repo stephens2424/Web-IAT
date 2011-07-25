@@ -16,6 +16,56 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `blockComponents`
+--
+
+DROP TABLE IF EXISTS `blockComponents`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `blockComponents` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `block` int(11) DEFAULT NULL,
+  `category` int(11) DEFAULT NULL,
+  `position` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `blockComponents`
+--
+
+LOCK TABLES `blockComponents` WRITE;
+/*!40000 ALTER TABLE `blockComponents` DISABLE KEYS */;
+/*!40000 ALTER TABLE `blockComponents` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `blocks`
+--
+
+DROP TABLE IF EXISTS `blocks`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `blocks` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `trials` int(11) DEFAULT NULL,
+  `description` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `blocks`
+--
+
+LOCK TABLES `blocks` WRITE;
+/*!40000 ALTER TABLE `blocks` DISABLE KEYS */;
+INSERT INTO `blocks` VALUES (1,20,'Block 1, Practice'),(2,20,'Block 2, Practice'),(3,20,'Block 3, Practice'),(4,20,'Block 4, Test'),(5,20,'Block 5, Practice'),(6,20,'Block 6, Practice'),(7,20,'Block 7, Test');
+/*!40000 ALTER TABLE `blocks` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `categoryPairs`
 --
 
@@ -53,14 +103,14 @@ DROP TABLE IF EXISTS `experiments`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `experiments` (
-  `stimuli_set` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `active` bit(1) NOT NULL DEFAULT b'0',
   `name` text,
   `endUrl` text,
   `hash` text,
   `secondEndUrl` text NOT NULL,
-  PRIMARY KEY (`stimuli_set`)
-) ENGINE=MyISAM AUTO_INCREMENT=23 DEFAULT CHARSET=latin1;
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=25 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -114,7 +164,7 @@ CREATE TABLE `stimuli` (
   `correct_response` int(11) DEFAULT NULL,
   `stimulusCategory` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=426 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=429 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -123,7 +173,7 @@ CREATE TABLE `stimuli` (
 
 LOCK TABLES `stimuli` WRITE;
 /*!40000 ALTER TABLE `stimuli` DISABLE KEYS */;
-INSERT INTO `stimuli` VALUES (406,14,'Rainbow test',NULL,16),(425,14,'Second test',NULL,17),(424,14,'new word',NULL,16),(423,14,'new word',NULL,16);
+INSERT INTO `stimuli` VALUES (406,14,'Rainbow test',NULL,16),(425,14,'Second test',NULL,17),(424,14,'new word',NULL,16),(423,14,'new word',NULL,16),(426,14,'new word',NULL,19),(427,14,'new word',NULL,18),(428,14,'new word',NULL,18);
 /*!40000 ALTER TABLE `stimuli` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -149,7 +199,7 @@ CREATE TABLE `stimulusCategories` (
 
 LOCK TABLES `stimulusCategories` WRITE;
 /*!40000 ALTER TABLE `stimulusCategories` DISABLE KEYS */;
-INSERT INTO `stimulusCategories` VALUES (16,'Good',14,1),(17,'Other',14,3),(18,'Bad',14,1),(19,'new category',14,3),(20,'new category',14,NULL);
+INSERT INTO `stimulusCategories` VALUES (16,'Good',14,1),(17,'Other',14,3),(18,'Bad',14,1),(19,'new category',14,3);
 /*!40000 ALTER TABLE `stimulusCategories` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -212,4 +262,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2011-07-19 15:52:55
+-- Dump completed on 2011-07-25 16:05:14

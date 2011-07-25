@@ -62,7 +62,7 @@ class IATManager {
     } else {
       return $FAILED_AUTHENTICATION_RETURN_VALUE;
     }
-    $query = "SELECT stimuli_set,name,hash FROM experiments";
+    $query = "SELECT id,name,hash FROM experiments";
     $result = mysql_query($query,  $this->databaseConnection);
     return json_encode(arrayFromResult($result));
   }
@@ -73,7 +73,7 @@ class IATManager {
     return json_encode($experiment);
   }
   function getExperiment($experimentNumber) {
-    $query = "SELECT * FROM experiments WHERE stimuli_set=$experimentNumber";
+    $query = "SELECT * FROM experiments WHERE id=$experimentNumber";
     $result = mysql_query($query, $this->databaseConnection);
     $experiment = objectFromResult($result);
     return objectFromResult($result);
