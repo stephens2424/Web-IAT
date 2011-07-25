@@ -110,7 +110,7 @@ CREATE TABLE `experiments` (
   `hash` text,
   `secondEndUrl` text NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=25 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=26 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -119,7 +119,7 @@ CREATE TABLE `experiments` (
 
 LOCK TABLES `experiments` WRITE;
 /*!40000 ALTER TABLE `experiments` DISABLE KEYS */;
-INSERT INTO `experiments` VALUES (14,'\0','Greenwald Test','thankyou.php','nhn1q','thankyou.php');
+INSERT INTO `experiments` VALUES (14,'\0','Greenwald Test','thankyou.php','nhn1q','thankyou.php'),(25,'\0','New Experiment',NULL,'g8cvd','');
 /*!40000 ALTER TABLE `experiments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -262,4 +262,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2011-07-25 16:05:14
+-- Dump completed on 2011-07-25 16:10:46

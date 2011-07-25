@@ -420,7 +420,7 @@ var IAT = (function() {
           var data = JSON.parse(receivedData);
           for (var dataExp in data) {
             var experiment = Object.create(ExperimentListItem);
-            experiment.experimentNumber = data[dataExp].stimuli_set;
+            experiment.experimentNumber = data[dataExp].id;
             experiment.experimentHash = data[dataExp].hash;
             experiment.experimentName = data[dataExp].name;
             experiment.authentication = authentication;
