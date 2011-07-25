@@ -146,30 +146,47 @@ var IAT = (function() {
     array : [],
     authentication : null,
     generateExperimentList : function ($contentDiv) {
+      var $topDiv = $('<div>');
       var $list = $('<div class="stimuliGroup">');
+      function listItemCallback(authentication,experimentListItem) {
+        return function () {
+          $(this).find('.experimentModifyArrow').replaceWith('<img src="ajaxLoader.gif" />');
+          var $stimulusTable;
+          var experiment = requestExperimentWithAuthentication(experimentListItem.experimentNumber,function () {
+            $stimulusTable = experiment.experimentManager();
+          },authentication);
+          experiment.experimentPromise.done(function () {
+            $contentDiv.hide("slide",{direction: "left", mode: "hide"},400,function () {
+              $list.remove();
+            });
+            var $newContentDiv = $('<div class="contentDiv">');
+            $('body').append($newContentDiv);
+            $newContentDiv.append($stimulusTable);
+            $newContentDiv.show("slide",{direction: "right"},400);
+          });
+        };
+      }
+      var $header = $('<div>').append($('<button>+</button>').click(function () {
+        var experimentListItem = Object.create(ExperimentListItem);
+        sendRequest(bundleIATManagerRequestData("addExperiment")).success(function (receivedData) {
+          var data = JSON.parse(receivedData);
+          experimentListItem.experimentNumber = data.experiment.id;
+          experimentListItem.experimentName = data.experiment.name;
+          experimentListItem.experimentHash = data.experiment.hash;
+          $list.append(experimentListItem.generateExperimentListItem(function (authentication,experimentListItem) {
+            return listItemCallback(authentication,experimentListItem);
+          }(this.authentication,experimentListItem)));
+        });
+      }));
       for (var experiment in this.array) {
         $list.append(this.array[experiment].generateExperimentListItem(function (authentication,experimentListItem) {
-          return function () {
-            $(this).find('.experimentModifyArrow').replaceWith('<img src="ajaxLoader.gif" />');
-            var $stimulusTable;
-            var experiment = requestExperimentWithAuthentication(experimentListItem.experimentNumber,function () {
-              $stimulusTable = experiment.experimentManager();
-            },authentication);
-            experiment.experimentPromise.done(function () {
-              $contentDiv.hide("slide",{direction: "left", mode: "hide"},400,function () {
-                $list.remove();
-              });
-              var $newContentDiv = $('<div class="contentDiv">');
-              $('body').append($newContentDiv);
-              $newContentDiv.append($stimulusTable);
-              $newContentDiv.show("slide",{direction: "right"},400);
-            });
-          };
+          return listItemCallback(authentication,experimentListItem);
         }(this.authentication,this.array[experiment])
       ));
       }
       $list.sortable({axis: 'y'});
-      return $list;
+      $topDiv.append($header).append($list);
+      return $topDiv;
     }
   }
   

@@ -122,8 +122,21 @@ class IATManager {
       return json_encode(array('success' => false,'message' => "Updating stimulus failed."));
     }
   }
-  function addExperiment() {
-    
+  function addExperiment($requestObject) {
+    require_once 'hashGenerator.php';
+    if ($requestObject["name"]) {
+      $name = $requestObject["name"];
+    } else {
+      $name = "New Experiment";
+    }
+    $query = "INSERT INTO `experiments` SET `name`='$name'";
+    $result = mysql_query($query);
+    $id = mysql_insert_id();
+    $hash = HashGenerator::udiHash($id);
+    $query = "UPDATE `experiments` SET `hash`='$hash' WHERE `id`=$id";
+    $result = mysql_query($query);
+    $experiment = array('name' => $name, 'hash' => $hash, 'id' => $id);
+    return json_encode(array('success' => true, 'experiment' => $experiment));
   }
   function removeExperiment($experimentNumber) {
     
