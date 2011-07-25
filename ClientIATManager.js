@@ -216,7 +216,6 @@ var IAT = (function() {
         }));
       },
       experimentManager : function() {
-        var experimentManager = this;
         function makeStimulusEntry(wordObject,temporary) {
           var $li = $('<li>').addClass('CategoryListItem');
           var $wrapper = $('<span class="listItemInnerWrapper">');
@@ -339,7 +338,8 @@ var IAT = (function() {
           $sidePanel.append($balance);
           return $sidePanel;
         }
-        var $tabDiv = $('<div id="tabDiv"><ul><li><a href="#tabs-1">Stimuli</a></li><li><a href="#tabs-2">Flow</a></li><li><a href="#tabs-3">Settings</a></li></ul></div>');
+        var experimentManager = this;
+        var $tabDiv = $('<div id="tabDiv"><ul><li><a href="#tabs-1">Stimuli</a></li><li><a href="#tabs-2">Flow</a></li><li><a href="#tabs-3">Settings</a></li><li><a href="#tabs-4">Save and Close</a></ul></div>');
         var $stimuliDiv = $('<div id="tabs-1">').addClass('ExperimentManager');
         var $contentDiv = $('<div>').addClass('ExperimentManagerContent');
         var $headerDiv = $('<div>').addClass('ExperimentManagerHeader');
@@ -377,10 +377,27 @@ var IAT = (function() {
         $stimuliDiv.append($contentDiv);
         var $flowDiv = $('<div id="tabs-2">');
         var $settingsDiv = $('<div id="tabs-3">');
+        var $closeDiv = $('<div id="tabs-4">').append("Closing...");
         $tabDiv.append($stimuliDiv);
         $tabDiv.append($flowDiv);
         $tabDiv.append($settingsDiv);
-        $tabDiv.tabs();
+        $tabDiv.append($closeDiv);
+        $tabDiv.tabs({
+          select: function (event,ui) {
+            if (ui.index === 3) {
+              var experimentList = Object.create(ExperimentList);
+              var $contentDiv = $tabDiv.parent();
+              experimentList.authentication = experimentManager.authentication;
+              var $list = experimentList.generateExperimentList($contentDiv);
+              $tabDiv.hide("slide",{direction: "right", mode: "hide"},400,function () {
+                $tabDiv.remove();
+              });
+              $list.show("slide",{direction: "right", mode: "show"},400,function() {
+                $contentDiv.append($list);
+              });
+            }
+          }
+        });
         return $tabDiv;
       },
       saveChanged : function () {
