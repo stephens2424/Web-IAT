@@ -92,6 +92,11 @@ class IATManager {
     $result = mysql_query($query, $this->databaseConnection);
     return arrayFromResult($result);
   }
+  function getStimulusCategory($categoryNumber) {
+    $query = "SELECT * FROM stimulusCategories WHERE `id`=$categoryNumber";
+    $result = mysql_query($query);
+    return objectFromResult($result);
+  }
   function getStimulusCategories($experimentNumber) {
     $query = "SELECT * FROM stimulusCategories WHERE `experiment`=$experimentNumber";
     $result = mysql_query($query);
@@ -212,29 +217,28 @@ class IATManager {
   function setStimulusGroupProperties() {
     
   }
-  
-  function addStimulusCategory($requestObject) {
+  private function _addStimulusCategory($experiment,$name = null) {
     $query = "INSERT INTO `stimulusCategories` SET ";
     $set = "";
-    if ($requestObject['experiment']) {
-      $set .= "`experiment`=" . $requestObject['experiment'];
+    if ($experiment) {
+      $set .= "`experiment`=" . $experiment;
     } else {
-      return json_encode(array('success' => false,'message'=>"Error: new category is missing experiment number."));
+      return array('success' => false,'message'=>"Error: new category is missing experiment number.");
     }
-    if ($requestObject['name']) {
-      $set .= ",`name`='" . $requestObject['name'] . "'";
+    if ($name) {
+      $set .= ",`name`='" . $name . "'";
     }
     $query .= $set;
     $result = mysql_query($query);
     if ($result) {
-      $stimulusResponse = $this->getStimulus(mysql_insert_id());
-      if ($stimulusResponse['success']) {
-        return json_encode(array('success'=>true,'stimulus'=>$stimulusResponse['stimulus'],'message'=>"Category added."));
+      $stimulusCategory = $this->getStimulusCategory(mysql_insert_id());
+      if ($stimulusCategory) {
+        return array('success'=>true,'stimulusCategory'=>$stimulusCategory,'message'=>"Category added.");
       } else {
-        return json_encode(array('success'=>false,'message'=>"Error returning new category."));
+        return array('success'=>false,'message'=>"Error returning new category.");
       }
     } else {
-      return json_encode(array('success' => false,'message'=>"Error: adding new category failed."));
+      return array('success' => false,'message'=>"Error: adding new category failed.");
     }
   }
   function removeStimulusCategory($name) {
