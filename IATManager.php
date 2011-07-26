@@ -202,7 +202,7 @@ class IATManager {
     return array('success' => true,'blockComponentId' => mysql_insert_id()); //TODO add code to handle failure
   }
   private function _addBlock($experiment,$trials = 20,$description = "New Block") {
-    $query = "INSERT INTO `blocks` SET `trials`=$trials,`description`='$description'";
+    $query = "INSERT INTO `blocks` SET `trials`=$trials,`description`='$description',`experiment`=$experiment";
     $result = mysql_query($query,$this->databaseConnection);
     return array('success' => true, 'blockId' => mysql_insert_id()); //TODO add code to handle failure
   }

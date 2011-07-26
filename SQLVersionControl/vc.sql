@@ -28,7 +28,7 @@ CREATE TABLE `blockComponents` (
   `category` int(11) DEFAULT NULL,
   `position` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -37,7 +37,7 @@ CREATE TABLE `blockComponents` (
 
 LOCK TABLES `blockComponents` WRITE;
 /*!40000 ALTER TABLE `blockComponents` DISABLE KEYS */;
-INSERT INTO `blockComponents` VALUES (1,1,1,1),(2,1,2,2),(3,2,4,2),(4,3,1,1),(5,3,2,2),(6,3,3,3),(7,3,4,4),(8,4,1,1),(9,4,2,2),(10,4,3,3),(11,4,4,4),(12,5,2,1),(13,5,1,2),(14,6,2,1),(15,6,1,2),(16,6,3,3),(17,6,4,4),(18,7,2,1),(19,7,1,2),(20,7,3,3),(21,7,4,4);
+INSERT INTO `blockComponents` VALUES (1,1,9,1),(2,1,10,2),(3,2,12,2),(4,3,9,1),(5,3,10,2),(6,3,11,3),(7,3,12,4),(8,4,9,1),(9,4,10,2),(10,4,11,3),(11,4,12,4),(12,5,10,1),(13,5,9,2),(14,6,10,1),(15,6,9,2),(16,6,11,3),(17,6,12,4),(18,7,10,1),(19,7,9,2),(20,7,11,3),(21,7,12,4),(22,8,13,1),(23,8,14,2),(24,9,16,2),(25,10,13,1),(26,10,14,2),(27,10,15,3),(28,10,16,4),(29,11,13,1),(30,11,14,2),(31,11,15,3),(32,11,16,4),(33,12,14,1),(34,12,13,2),(35,13,14,1),(36,13,13,2),(37,13,15,3),(38,13,16,4),(39,14,14,1),(40,14,13,2),(41,14,15,3),(42,14,16,4);
 /*!40000 ALTER TABLE `blockComponents` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -54,7 +54,7 @@ CREATE TABLE `blocks` (
   `description` text,
   `experiment` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -63,7 +63,7 @@ CREATE TABLE `blocks` (
 
 LOCK TABLES `blocks` WRITE;
 /*!40000 ALTER TABLE `blocks` DISABLE KEYS */;
-INSERT INTO `blocks` VALUES (1,20,'Block 1, Practice',0),(2,20,'Block 2, Practice',0),(3,20,'Block 3, Practice',0),(4,20,'Block 4, Test',0),(5,20,'Block 5, Practice',0),(6,20,'Block 6, Practice',0),(7,20,'Block 7, Test',0);
+INSERT INTO `blocks` VALUES (1,20,'Block 1, Practice',0),(2,20,'Block 2, Practice',0),(3,20,'Block 3, Practice',0),(4,20,'Block 4, Test',0),(5,20,'Block 5, Practice',0),(6,20,'Block 6, Practice',0),(7,20,'Block 7, Test',0),(8,20,'Block 1, Practice',0),(9,20,'Block 2, Practice',0),(10,20,'Block 3, Practice',0),(11,20,'Block 4, Test',0),(12,20,'Block 5, Practice',0),(13,20,'Block 6, Practice',0),(14,20,'Block 7, Test',0);
 /*!40000 ALTER TABLE `blocks` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -84,7 +84,7 @@ CREATE TABLE `categoryPairs` (
   UNIQUE KEY `positiveCategory` (`positiveCategory`),
   UNIQUE KEY `negativeCateogry` (`negativeCategory`),
   UNIQUE KEY `associatedPair` (`associatedPair`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -93,7 +93,6 @@ CREATE TABLE `categoryPairs` (
 
 LOCK TABLES `categoryPairs` WRITE;
 /*!40000 ALTER TABLE `categoryPairs` DISABLE KEYS */;
-INSERT INTO `categoryPairs` VALUES (1,1,2,2,1),(2,3,4,1,1);
 /*!40000 ALTER TABLE `categoryPairs` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -112,7 +111,7 @@ CREATE TABLE `experiments` (
   `hash` text,
   `secondEndUrl` text NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -121,7 +120,6 @@ CREATE TABLE `experiments` (
 
 LOCK TABLES `experiments` WRITE;
 /*!40000 ALTER TABLE `experiments` DISABLE KEYS */;
-INSERT INTO `experiments` VALUES (1,'\0','New Experiment',NULL,'m8z2p','');
 /*!40000 ALTER TABLE `experiments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -191,7 +189,7 @@ CREATE TABLE `stimulusCategories` (
   `experiment` int(11) DEFAULT NULL,
   `inPair` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -200,7 +198,6 @@ CREATE TABLE `stimulusCategories` (
 
 LOCK TABLES `stimulusCategories` WRITE;
 /*!40000 ALTER TABLE `stimulusCategories` DISABLE KEYS */;
-INSERT INTO `stimulusCategories` VALUES (1,'New Category',1,2),(2,'New Category',1,2),(3,'New Category',1,2),(4,'New Category',1,2);
 /*!40000 ALTER TABLE `stimulusCategories` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -216,6 +213,7 @@ CREATE TABLE `subjects` (
   `beginTime` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `qualtrics_id` text,
   `score` double DEFAULT NULL,
+  `experiment` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=329 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -263,4 +261,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2011-07-26 10:35:09
+-- Dump completed on 2011-07-26 11:19:19
