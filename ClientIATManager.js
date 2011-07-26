@@ -403,16 +403,16 @@ var IAT = (function() {
         $tabDiv.tabs({
           select: function (event,ui) {
             if (ui.index === 3) {
-              var experimentList = Object.create(ExperimentList);
               var $contentDiv = $tabDiv.parent();
-              experimentList.authentication = experimentManager.authentication;
-              var $list = experimentList.generateExperimentList($contentDiv);
-              $tabDiv.hide("slide",{direction: "right", mode: "hide"},400,function () {
-                $tabDiv.remove();
-              });
-              $list.show("slide",{direction: "right", mode: "show"},400,function() {
-                $contentDiv.append($list);
-              });
+              var experiments = generateExperimentSelector(function () {
+                var $list = experiments.generateExperimentList($contentDiv);
+                $tabDiv.hide("slide",{direction: "right", mode: "hide"},400,function () {
+                  $tabDiv.remove();
+                });
+                $list.show("slide",{direction: "right", mode: "show"},400,function() {
+                  $contentDiv.append($list);
+                });
+              },experimentManager.authentication);
             }
           }
         });
