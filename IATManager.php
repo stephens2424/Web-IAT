@@ -141,6 +141,9 @@ class IATManager {
     $query = "UPDATE `experiments` SET `hash`='$hash' WHERE `id`=$id";
     $result = mysql_query($query);
     $experiment = array('name' => $name, 'hash' => $hash, 'id' => $id);
+    if (!$requestObject['type']) {
+      $this->applyDefaultGreenwaldBlocks($id);
+    }
     return json_encode(array('success' => true, 'experiment' => $experiment));
   }
   function removeExperiment($experimentNumber) {
@@ -152,7 +155,63 @@ class IATManager {
   function setExperimentProperties() {
     
   }
-
+  function applyDefaultGreenwaldBlocks($experiment) {
+    $firstCategory = $this->_addStimulusCategory($experiment);
+    $secondCategory = $this->_addStimulusCategory($experiment);
+    $thirdCategory = $this->_addStimulusCategory($experiment);
+    $fourthCategory = $this->_addStimulusCategory($experiment);
+    $firstCategoryPair = $this->_pairCategories($firstCategory['stimulusCategory']['id'],$secondCategory['stimulusCategory']['id'],$experiment);
+    $firstCategoryPair = $firstCategoryPair['pair'];
+    $secondCategoryPair = $this->_pairCategories($thirdCategory['stimulusCategory']['id'],$fourthCategory['stimulusCategory']['id'],$experiment);
+    $secondCategoryPair = $secondCategoryPair['pair'];
+    $this->_associatePairs($firstCategoryPair['id'],$secondCategoryPair['id']);
+    $block = $this->_addBlock(20,"Block 1, Practice");
+    $this->_addBlockComponent($block['blockId'],$firstCategoryPair[positiveCategory],1);
+    $this->_addBlockComponent($block['blockId'],$firstCategoryPair[negativeCategory],2);
+    $blocks = $this->_addBlock(20,"Block 2, Practice");
+    $this->_addBlockComponent($block['blockId'],$secondCateogyrPair[positiveCategory],1);
+    $this->_addBlockComponent($block['blockId'],$secondCategoryPair[negativeCategory],2);
+    $blocks = $this->_addBlock(20,"Block 3, Practice");
+    $this->_addBlockComponent($block['blockId'],$firstCategoryPair[positiveCategory],1);
+    $this->_addBlockComponent($block['blockId'],$firstCategoryPair[negativeCategory],2);
+    $this->_addBlockComponent($block['blockId'],$secondCategoryPair[positiveCategory],3);
+    $this->_addBlockComponent($block['blockId'],$secondCategoryPair[negativeCategory],4);
+    $blocks = $this->_addBlock(20,"Block 4, Test");
+    $this->_addBlockComponent($block['blockId'],$firstCategoryPair[positiveCategory],1);
+    $this->_addBlockComponent($block['blockId'],$firstCategoryPair[negativeCategory],2);
+    $this->_addBlockComponent($block['blockId'],$secondCategoryPair[positiveCategory],3);
+    $this->_addBlockComponent($block['blockId'],$secondCategoryPair[negativeCategory],4);
+    $blocks = $this->_addBlock(20,"Block 5, Practice");
+    $this->_addBlockComponent($block['blockId'],$firstCategoryPair[negativeCategory],1);
+    $this->_addBlockComponent($block['blockId'],$firstCategoryPair[positiveCategory],2);
+    $blocks = $this->_addBlock(20,"Block 6, Practice");
+    $this->_addBlockComponent($block['blockId'],$firstCategoryPair[negativeCategory],1);
+    $this->_addBlockComponent($block['blockId'],$firstCategoryPair[positiveCategory],2);
+    $this->_addBlockComponent($block['blockId'],$secondCategoryPair[positiveCategory],3);
+    $this->_addBlockComponent($block['blockId'],$secondCategoryPair[negativeCategory],4);
+    $blocks = $this->_addBlock(20,"Block 7, Test");
+    $this->_addBlockComponent($block['blockId'],$firstCategoryPair[negativeCategory],1);
+    $this->_addBlockComponent($block['blockId'],$firstCategoryPair[positiveCategory],2);
+    $this->_addBlockComponent($block['blockId'],$secondCategoryPair[positiveCategory],3);
+    $this->_addBlockComponent($block['blockId'],$secondCategoryPair[negativeCategory],4);
+    return json_encode(array('success' => true));
+  }
+  private function _addBlockComponent($block,$category,$position) {
+    $query = "INSERT INTO `blcokComponents` SET `block`=$block,`category`=$category,`position`=$position";
+    $result = mysql_query($query,  $this->databaseConnection);
+    return array('success' => true,'blockComponentId' => mysql_insert_id()); //TODO add code to handle failure
+  }
+  private function _addBlock($trials = 20,$description = "New Block") {
+    $query = "INSERT INTO `blocks` SET `trials`=$trials,`description`=$description";
+    $result = mysql_query($query,$this->databaseConnection);
+    return array('success' => true, 'blockId' => mysql_insert_id()); //TODO add code to handle failure
+  }
+  function addBlockComponent($block,$category,$position) {
+    return json_encode(_addBlockComponent($block,$category,$position));
+  }
+  function addBlock($trials = 20,$description = "New Block") {
+    return json_encode(_addBlock($trials,$description));
+  }
   function addStimulus($requestObject) {
     $query = "INSERT INTO `stimuli` SET ";
     $set = "";
@@ -227,6 +286,8 @@ class IATManager {
     }
     if ($name) {
       $set .= ",`name`='" . $name . "'";
+    } else {
+      $set .= ",`name`='New Category'";
     }
     $query .= $set;
     $result = mysql_query($query);
@@ -240,6 +301,35 @@ class IATManager {
     } else {
       return array('success' => false,'message'=>"Error: adding new category failed.");
     }
+  }
+  private function _pairCategories($positiveCategory,$negativeCategory,$experiment) {
+    $query = "INSERT INTO `categoryPairs` SET `positiveCategory`=$positiveCategory,`negativeCategory`=$negativeCategory,`experiment`=$experiment";
+    $result = mysql_query($query);
+    if ($result) {
+      $id = mysql_insert_id();
+      $pair = array('id' => $id,'positiveCategory'=>$positiveCategory,'negativeCategory'=>$negativeCategory,'experiment'=>$experiment);
+      $query = "UPDATE `stimulusCategories` SET `inPair`=$id WHERE `id`=$positiveCategory OR $negativeCategory";
+      $result = mysql_query($query);
+      return array('success' => true, 'pair'=>$pair);
+    } else {
+      return array('success' => false, 'message' => 'Unable to pair categories.');
+    }
+  }
+  function pairCategories($requestObject) {
+    return json_encode(_pairCategories($requestObject['positiveCategory'],$requestObject['negativeCategory'],$requestObject['experiment']));
+  }
+  private function _associatePairs($firstPair,$secondPair) {
+    $query = "UPDATE `categoryPairs` SET `associatedPair`=$secondPair WHERE `id`=$firstPair";
+    $result = mysql_query($query);
+    $query = "UPDATE `categoryPairs` SET `associatedPair`=$firstPair WHERE `id`=$secondPair";
+    $result = mysql_query($query);
+    return array('success' => true);
+  }
+  function associatePairs($requestObject) {
+    return json_encode(_associatePairs($requestObject['firstPair'],$requestObject['secondpair']));
+  }
+  function addStimulusCategory($requestObject) {
+    return json_encode(_addStimulusCategory($requestObject['experiment'],$requestObject['name']));
   }
   function removeStimulusCategory($name) {
     
