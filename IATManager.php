@@ -168,28 +168,28 @@ class IATManager {
     $block = $this->_addBlock(20,"Block 1, Practice");
     $this->_addBlockComponent($block['blockId'],$firstCategoryPair[positiveCategory],1);
     $this->_addBlockComponent($block['blockId'],$firstCategoryPair[negativeCategory],2);
-    $blocks = $this->_addBlock(20,"Block 2, Practice");
+    $block = $this->_addBlock(20,"Block 2, Practice");
     $this->_addBlockComponent($block['blockId'],$secondCateogyrPair[positiveCategory],1);
     $this->_addBlockComponent($block['blockId'],$secondCategoryPair[negativeCategory],2);
-    $blocks = $this->_addBlock(20,"Block 3, Practice");
+    $block = $this->_addBlock(20,"Block 3, Practice");
     $this->_addBlockComponent($block['blockId'],$firstCategoryPair[positiveCategory],1);
     $this->_addBlockComponent($block['blockId'],$firstCategoryPair[negativeCategory],2);
     $this->_addBlockComponent($block['blockId'],$secondCategoryPair[positiveCategory],3);
     $this->_addBlockComponent($block['blockId'],$secondCategoryPair[negativeCategory],4);
-    $blocks = $this->_addBlock(20,"Block 4, Test");
+    $block = $this->_addBlock(20,"Block 4, Test");
     $this->_addBlockComponent($block['blockId'],$firstCategoryPair[positiveCategory],1);
     $this->_addBlockComponent($block['blockId'],$firstCategoryPair[negativeCategory],2);
     $this->_addBlockComponent($block['blockId'],$secondCategoryPair[positiveCategory],3);
     $this->_addBlockComponent($block['blockId'],$secondCategoryPair[negativeCategory],4);
-    $blocks = $this->_addBlock(20,"Block 5, Practice");
+    $block = $this->_addBlock(20,"Block 5, Practice");
     $this->_addBlockComponent($block['blockId'],$firstCategoryPair[negativeCategory],1);
     $this->_addBlockComponent($block['blockId'],$firstCategoryPair[positiveCategory],2);
-    $blocks = $this->_addBlock(20,"Block 6, Practice");
+    $block = $this->_addBlock(20,"Block 6, Practice");
     $this->_addBlockComponent($block['blockId'],$firstCategoryPair[negativeCategory],1);
     $this->_addBlockComponent($block['blockId'],$firstCategoryPair[positiveCategory],2);
     $this->_addBlockComponent($block['blockId'],$secondCategoryPair[positiveCategory],3);
     $this->_addBlockComponent($block['blockId'],$secondCategoryPair[negativeCategory],4);
-    $blocks = $this->_addBlock(20,"Block 7, Test");
+    $block = $this->_addBlock(20,"Block 7, Test");
     $this->_addBlockComponent($block['blockId'],$firstCategoryPair[negativeCategory],1);
     $this->_addBlockComponent($block['blockId'],$firstCategoryPair[positiveCategory],2);
     $this->_addBlockComponent($block['blockId'],$secondCategoryPair[positiveCategory],3);
@@ -197,12 +197,12 @@ class IATManager {
     return json_encode(array('success' => true));
   }
   private function _addBlockComponent($block,$category,$position) {
-    $query = "INSERT INTO `blcokComponents` SET `block`=$block,`category`=$category,`position`=$position";
+    $query = "INSERT INTO `blockComponents` SET `block`=$block,`category`=$category,`position`=$position";
     $result = mysql_query($query,  $this->databaseConnection);
     return array('success' => true,'blockComponentId' => mysql_insert_id()); //TODO add code to handle failure
   }
   private function _addBlock($trials = 20,$description = "New Block") {
-    $query = "INSERT INTO `blocks` SET `trials`=$trials,`description`=$description";
+    $query = "INSERT INTO `blocks` SET `trials`=$trials,`description`='$description'";
     $result = mysql_query($query,$this->databaseConnection);
     return array('success' => true, 'blockId' => mysql_insert_id()); //TODO add code to handle failure
   }
