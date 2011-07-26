@@ -52,6 +52,7 @@ CREATE TABLE `blocks` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `trials` int(11) DEFAULT NULL,
   `description` text,
+  `experiment` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -62,7 +63,7 @@ CREATE TABLE `blocks` (
 
 LOCK TABLES `blocks` WRITE;
 /*!40000 ALTER TABLE `blocks` DISABLE KEYS */;
-INSERT INTO `blocks` VALUES (1,20,'Block 1, Practice'),(2,20,'Block 2, Practice'),(3,20,'Block 3, Practice'),(4,20,'Block 4, Test'),(5,20,'Block 5, Practice'),(6,20,'Block 6, Practice'),(7,20,'Block 7, Test');
+INSERT INTO `blocks` VALUES (1,20,'Block 1, Practice',0),(2,20,'Block 2, Practice',0),(3,20,'Block 3, Practice',0),(4,20,'Block 4, Test',0),(5,20,'Block 5, Practice',0),(6,20,'Block 6, Practice',0),(7,20,'Block 7, Test',0);
 /*!40000 ALTER TABLE `blocks` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -262,4 +263,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2011-07-26 10:13:08
+-- Dump completed on 2011-07-26 10:29:27

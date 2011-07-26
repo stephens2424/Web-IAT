@@ -165,31 +165,31 @@ class IATManager {
     $secondCategoryPair = $this->_pairCategories($thirdCategory['stimulusCategory']['id'],$fourthCategory['stimulusCategory']['id'],$experiment);
     $secondCategoryPair = $secondCategoryPair['pair'];
     $this->_associatePairs($firstCategoryPair['id'],$secondCategoryPair['id']);
-    $block = $this->_addBlock(20,"Block 1, Practice");
+    $block = $this->_addBlock($experiment,20,"Block 1, Practice");
     $this->_addBlockComponent($block['blockId'],$firstCategoryPair[positiveCategory],1);
     $this->_addBlockComponent($block['blockId'],$firstCategoryPair[negativeCategory],2);
-    $block = $this->_addBlock(20,"Block 2, Practice");
+    $block = $this->_addBlock($experiment,20,"Block 2, Practice");
     $this->_addBlockComponent($block['blockId'],$secondCateogyrPair[positiveCategory],1);
     $this->_addBlockComponent($block['blockId'],$secondCategoryPair[negativeCategory],2);
-    $block = $this->_addBlock(20,"Block 3, Practice");
+    $block = $this->_addBlock($experiment,20,"Block 3, Practice");
     $this->_addBlockComponent($block['blockId'],$firstCategoryPair[positiveCategory],1);
     $this->_addBlockComponent($block['blockId'],$firstCategoryPair[negativeCategory],2);
     $this->_addBlockComponent($block['blockId'],$secondCategoryPair[positiveCategory],3);
     $this->_addBlockComponent($block['blockId'],$secondCategoryPair[negativeCategory],4);
-    $block = $this->_addBlock(20,"Block 4, Test");
+    $block = $this->_addBlock($experiment,20,"Block 4, Test");
     $this->_addBlockComponent($block['blockId'],$firstCategoryPair[positiveCategory],1);
     $this->_addBlockComponent($block['blockId'],$firstCategoryPair[negativeCategory],2);
     $this->_addBlockComponent($block['blockId'],$secondCategoryPair[positiveCategory],3);
     $this->_addBlockComponent($block['blockId'],$secondCategoryPair[negativeCategory],4);
-    $block = $this->_addBlock(20,"Block 5, Practice");
+    $block = $this->_addBlock($experiment,20,"Block 5, Practice");
     $this->_addBlockComponent($block['blockId'],$firstCategoryPair[negativeCategory],1);
     $this->_addBlockComponent($block['blockId'],$firstCategoryPair[positiveCategory],2);
-    $block = $this->_addBlock(20,"Block 6, Practice");
+    $block = $this->_addBlock($experiment,20,"Block 6, Practice");
     $this->_addBlockComponent($block['blockId'],$firstCategoryPair[negativeCategory],1);
     $this->_addBlockComponent($block['blockId'],$firstCategoryPair[positiveCategory],2);
     $this->_addBlockComponent($block['blockId'],$secondCategoryPair[positiveCategory],3);
     $this->_addBlockComponent($block['blockId'],$secondCategoryPair[negativeCategory],4);
-    $block = $this->_addBlock(20,"Block 7, Test");
+    $block = $this->_addBlock($experiment,20,"Block 7, Test");
     $this->_addBlockComponent($block['blockId'],$firstCategoryPair[negativeCategory],1);
     $this->_addBlockComponent($block['blockId'],$firstCategoryPair[positiveCategory],2);
     $this->_addBlockComponent($block['blockId'],$secondCategoryPair[positiveCategory],3);
@@ -201,7 +201,7 @@ class IATManager {
     $result = mysql_query($query,  $this->databaseConnection);
     return array('success' => true,'blockComponentId' => mysql_insert_id()); //TODO add code to handle failure
   }
-  private function _addBlock($trials = 20,$description = "New Block") {
+  private function _addBlock($experiment,$trials = 20,$description = "New Block") {
     $query = "INSERT INTO `blocks` SET `trials`=$trials,`description`='$description'";
     $result = mysql_query($query,$this->databaseConnection);
     return array('success' => true, 'blockId' => mysql_insert_id()); //TODO add code to handle failure
@@ -209,8 +209,8 @@ class IATManager {
   function addBlockComponent($block,$category,$position) {
     return json_encode(_addBlockComponent($block,$category,$position));
   }
-  function addBlock($trials = 20,$description = "New Block") {
-    return json_encode(_addBlock($trials,$description));
+  function addBlock($experiment,$trials = 20,$description = "New Block") {
+    return json_encode(_addBlock($experiment,$trials,$description));
   }
   function addStimulus($requestObject) {
     $query = "INSERT INTO `stimuli` SET ";
