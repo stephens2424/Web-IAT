@@ -138,6 +138,21 @@ var IAT = (function() {
       $listItemDiv.append($('<span class="experimentNumber floatLeft">').text(this.experimentNumber));
       $listItemDiv.append($('<span class="experimentName floatLeft">').text(this.experimentName));
       $listItemDiv.append($('<span class="experimentActions floatRight">').text("Modify ").click(modifyCallback).append('<span class="experimentModifyArrow">\u27A1</span>'));
+      $listItemDiv.append($('<span class="experimentActions floatRight">').text("Delete ").click(function ($self,experimentNumber) {
+        return function() {
+          if (confirm('Are you sure you want to delete this experiment and all of its data? This action cannot be undone.')) {
+            sendRequest(bundleIATManagerRequestData('deleteExperiment',experimentNumber)).success(function (receivedData) {
+              var data = JSON.parse(receivedData);
+              if (data.success) {
+                $self.remove();
+                $.jnotify("Successfully Deleted");
+              } else {
+                $.jnotify(data.message);
+              }
+            });
+          }
+        }
+      }($listItemDiv,this.experimentNumber)).append('<span class="experimentDeleteCross">X</span>'));
       return $listItemDiv;
     }
   }

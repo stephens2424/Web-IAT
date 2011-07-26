@@ -146,8 +146,51 @@ class IATManager {
     }
     return json_encode(array('success' => true, 'experiment' => $experiment));
   }
-  function removeExperiment($experimentNumber) {
-    
+  function deleteExperiment($experimentNumber) {
+    if ($this->verifyAuthentication()) {
+      $query = "START TRANSACTION";
+      $result = mysql_query($query);
+
+      $query = "SELECT `id` FROM `blocks` WHERE `experiment`=$experimentNumber";
+      $result = mysql_query($query);
+      while ($row = mysql_fetch_assoc($result)) {
+        $blockId = $row['id'];
+        $query = "DELETE FROM `blockComponents` WHERE `block`=$blockId";
+        $intResult = mysql_query($query);
+        if (!$intResult) $success = false;
+      }
+      $query = "DELETE FROM `blocks` WHERE `experiment`=$experimentNumber";
+      $result = mysql_query($query);
+
+      $query = "DELETE FROM `categoryPairs` WHERE `experiment`=$experimentNumber";
+      $result = mysql_query($query);
+
+      $query = "SELECT `id` FROM `stimuli` WHERE `experiment`=$experimentNumber";
+      $result = mysql_query($query);
+      while ($row = mysql_fetch_assoc($result)) {
+        $stimulus = $row['id'];
+        $query = "DELETE FROM `responses` WHERE `stimulus`=$stimulus";
+        $result = mysql_query($query);
+      }
+
+      $query = "DELETE FROM `stimuli` WHERE `experiment`=$experimentNumber";
+      $result = mysql_query($query);
+
+      $query = "DELETE FROM `stimulusCategories` WHERE `experiment`=$experimentNumber";
+      $result = mysql_query($query);
+
+      $query = "DELETE FROM `subjects` WHERE `experiment`=$experimentNumber";
+      $result = mysql_query($query);
+
+      $query = "DELETE FROM `experiments` WHERE `id`=$experimentNumber";
+      $result = mysql_query($query);
+
+      $query = "COMMIT";
+      $result = mysql_query($query);
+      return json_encode(array('success' => true));
+    } else {
+      return json_encode(array('success' => false,'message'=>'Authentication failed.'));
+    }
   }
   function copyExperiment() {
     
