@@ -5,7 +5,7 @@ session_start();
 require_once 'connectDatabase.php';
 require_once 'GlobalKLogger.php';
 
-$FAILED_AUTHENTICATION_RETURN_VALUE = json_encode(array());
+$FAILED_AUTHENTICATION_RETURN_VALUE = json_encode(array('success'=>false,'message'=>'Authentication failed.'));
 
 
 $iatManager = new IATManager;
@@ -170,7 +170,7 @@ class IATManager {
       while ($row = mysql_fetch_assoc($result)) {
         $stimulus = $row['id'];
         $query = "DELETE FROM `responses` WHERE `stimulus`=$stimulus";
-        $result = mysql_query($query);
+        $intResult = mysql_query($query);
       }
 
       $query = "DELETE FROM `stimuli` WHERE `experiment`=$experimentNumber";
