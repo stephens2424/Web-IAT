@@ -133,11 +133,11 @@ var IAT = (function() {
     experimentNumber : null,
     experimentName : null,
     experimentHash : null,
-    generateExperimentListItem : function (chooserCallback) {
+    generateExperimentListItem : function (modifyCallback) {
       var $listItemDiv = $('<div class="experimentListItem">');
       $listItemDiv.append($('<span class="experimentNumber floatLeft">').text(this.experimentNumber));
       $listItemDiv.append($('<span class="experimentName floatLeft">').text(this.experimentName));
-      $listItemDiv.append($('<span class="experimentActions floatRight">').text("Modify ").click(chooserCallback).append('<span class="experimentModifyArrow">\u27A1</span>'));
+      $listItemDiv.append($('<span class="experimentActions floatRight">').text("Modify ").click(modifyCallback).append('<span class="experimentModifyArrow">\u27A1</span>'));
       return $listItemDiv;
     }
   }
