@@ -146,9 +146,10 @@ var IAT = (function() {
     array : [],
     authentication : null,
     generateExperimentList : function ($contentDiv) {
+      var self = this;
       var $topDiv = $('<div>');
       var $list = $('<div class="stimuliGroup">');
-      function listItemCallback(authentication,experimentListItem) {
+      var listItemCallback = function(authentication,experimentListItem) {
         return function () {
           $(this).find('.experimentModifyArrow').replaceWith('<img src="ajaxLoader.gif" />');
           var $stimulusTable;
@@ -174,14 +175,14 @@ var IAT = (function() {
           experimentListItem.experimentName = data.experiment.name;
           experimentListItem.experimentHash = data.experiment.hash;
           $list.append(experimentListItem.generateExperimentListItem(function (authentication,experimentListItem) {
-            return listItemCallback(authentication,experimentListItem);
-          }(this.authentication,experimentListItem)));
+            return listItemCallback.apply(self,[authentication,experimentListItem]);
+          }(self.authentication,experimentListItem)));
         });
       }));
       for (var experiment in this.array) {
         $list.append(this.array[experiment].generateExperimentListItem(function (authentication,experimentListItem) {
-          return listItemCallback(authentication,experimentListItem);
-        }(this.authentication,this.array[experiment])
+          return listItemCallback.apply(this,[authentication,experimentListItem]);
+        }(self.authentication,this.array[experiment])
       ));
       }
       $list.sortable({axis: 'y'});
