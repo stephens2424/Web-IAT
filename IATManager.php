@@ -69,6 +69,7 @@ class IATManager {
   function requestExperiment($experimentNumber) {
     $experiment = $this->getExperiment($experimentNumber);
     $experiment['stimulusCategories'] = $this->getStimulusCategories($experimentNumber);
+    $experiment['blocks'] = $this->getBlocks($experimentNumber);
     $experiment['categoryPairs'] = $this->getCategoryPairs($experimentNumber);
     return json_encode($experiment);
   }
@@ -86,6 +87,18 @@ class IATManager {
     } else {
       return array("success"=>false,"message"=>"Error accessing stimulus.");
     }
+  }
+  function getBlocks($experimentNumber) {
+    $query = "SELECT * FROM `blocks` WHERE `experiment`=$experimentNumber";
+    $result = mysql_query($query,  $this->databaseConnection);
+    $blocks = arrayFromResult($result);
+    foreach ($blocks as &$block) {
+      $id = $block['id'];
+      $query = "SELECT * FROM `blockComponents` WHERE `block`=$id";
+      $result = mysql_query($query,  $this->databaseConnection);
+      $block['components'] = assocArrayFromResult($result,'position');
+    }
+    return $blocks;
   }
   function getStimuliForCategory($categoryNumber) {
     $query = "SELECT * FROM stimuli WHERE `stimulusCategory`=$categoryNumber ORDER BY `id`";

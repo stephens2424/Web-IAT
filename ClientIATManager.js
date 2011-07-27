@@ -320,40 +320,36 @@ var IAT = (function() {
           $listTopDiv.append($listFooter);
           return $listTopDiv;
         }
-        function generateFlowList(stimulusCategories,categoryPairs) {
+        function generateFlowList(stimulusCategories,blocks) {
+          function findCategory(categoryId) {
+            return $.grep(stimulusCategories,function (item,index) {
+              return item.id === categoryId;
+            })[0];
+          }
           var $flowList = $('<ul class="flowList">');
-          var blockDefinitions = [
-            {block:"1",blockFunction:"practice",left:[categoryPairs[0].positiveCategory],right:[categoryPairs[0].negativeCategory]},
-            {block:"2",blockFunction:"practice",left:[categoryPairs[1].positiveCategory],right:[categoryPairs[1].negativeCategory]},
-            {block:"3",blockFunction:"practice",left:[categoryPairs[1].positiveCategory,categoryPairs[0].positiveCategory],right:[categoryPairs[1].negativeCategory,categoryPairs[0].negativeCategory]},
-            {block:"4",blockFunction:"test",left:[categoryPairs[1].positiveCategory,categoryPairs[0].positiveCategory],right:[categoryPairs[1].negativeCategory,categoryPairs[0].negativeCategory]},
-            {block:"5",blockFunction:"practice",left:[categoryPairs[0].negativeCategory],right:[categoryPairs[0].positiveCategory]},
-            {block:"6",blockFunction:"practice",left:[categoryPairs[1].positiveCategory,categoryPairs[0].negativeCategory],right:[categoryPairs[1].negativeCategory,categoryPairs[0].positiveCategory]},
-            {block:"7",blockFunction:"test",left:[categoryPairs[1].positiveCategory,categoryPairs[0].negativeCategory],right:[categoryPairs[1].negativeCategory,categoryPairs[0].positiveCategory]}
-          ];
-          var blocks = [];
-          for (var i in blockDefinitions) {
+          for (var i in blocks) {
             var $block = $('<li class="flowListItem">');
             var $left = $('<div class="flowCategoryLeft">');
             var $right = $('<div class="flowCategoryRight">');
-            for (var ii in blockDefinitions[i].left) {
-              var currentId = blockDefinitions[i].left[ii];
-              var currentStimulus = $.grep(stimulusCategories,function (item,index) {
-                return item.id === currentId;
-              });
-              $left.append($('<div>').append(currentStimulus[0].name));
+            if (blocks[i].components[1]) {
+              $left.append($('<div>').append(findCategory(blocks[i].components[1].category).name));
             }
-            for (var iii in blockDefinitions[i].right) {
-              currentId = blockDefinitions[i].right[iii];
-              currentStimulus = $.grep(stimulusCategories,function (item,index) {
-                return item.id === currentId;
-              });
-              $right.append($('<div>').append(currentStimulus[0].name))
+            if (blocks[i].components[2]) {
+              $right.append($('<div>').append(findCategory(blocks[i].components[2].category).name));
             }
-            var blockString = "Block " + blockDefinitions[i].block + ", " + blockDefinitions[i].blockFunction;
-            var $blockCenter = $('<div class="flowCategoryText">').append('<div>'+blockString+'</div>');
-            $blockCenter.append('Trials: ').append($('<span>20</span>').editable(function (value) {
-              $.jnotify("Trials not yet implemented.");
+            if (blocks[i].components[3]) {
+              $left.append($('<div>').append(findCategory(blocks[i].components[3].category).name));
+            }
+            if (blocks[i].components[4]) {
+              $right.append($('<div>').append(findCategory(blocks[i].components[4].category).name));
+            }
+            var $blockCenter = $('<div class="flowCategoryText">');
+            $blockCenter.append('<div>'+blocks[i].description+'</div>');
+            $blockCenter.append('Trials: ').append($('<span>'+blocks[i].trials+'</span>').editable(function (value) {
+              sendRequest(bundleIATManagerRequestData('setBlockProperties',{
+                'block':blocks[i].id,
+                'trials':value
+              }));
               return value;
             },{
               style:"display:inline"
@@ -406,7 +402,7 @@ var IAT = (function() {
           }
           if (remainingCategories.length > 0)
             console.log(remainingCategories.length + " unpaired categories ignored.");
-          $flowDiv.append(generateFlowList(data.stimulusCategories,data.categoryPairs)).append(generateFlowSidePanel());
+          $flowDiv.append(generateFlowList(data.stimulusCategories,data.blocks)).append(generateFlowSidePanel());
           $button.find('img').remove();
         });
         $stimuliDiv.append($headerDiv);
