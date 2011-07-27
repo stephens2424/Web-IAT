@@ -372,10 +372,16 @@ var IAT = (function() {
         function generateFlowSidePanel() {
           var $sidePanel = $('<div class="flowSidePanel">');
           var $balance = $('<div>').append($('<label><input type="checkbox" />Auto-balance</label>').change(function() {
-            $.jnotify('Auto-balance has not yet been implemented.');
+            sendRequest(bundleIATManagerRequestData('setExperimentProperties',{
+              'autoBalance':$(this).find('input').prop('checked'),
+              'id':experimentManager.experimentNumber
+            }));
           }).attr('title','If selected, the IAT will automatically randomize test takers into seeing blocks in the normal order and switching blocks 1,3,and 4 with blocks 5, 6, and 7, respectively.'));
           var $answerChecking = $('<div>').append($('<label><input type="checkbox" />Check errors</label>').change(function () {
-            $.jnotify('Error-checking has not yet been implemented.');
+            sendRequest(bundleIATManagerRequestData('setExperimentProperties',{
+              'checkAnswers':$(this).find('input').prop('checked'),
+              'id':experimentManager.experimentNumber
+            }));
           }).attr('title','If selected, the IAT will inform test takers of incorrect responses and not allow them to proceed without a correct response. Scoring is not affected.'));
           $sidePanel.append($balance).append($answerChecking);
           return $sidePanel;

@@ -208,8 +208,27 @@ class IATManager {
   function copyExperiment() {
     
   }
-  function setExperimentProperties() {
-    
+  function setExperimentProperties($requestObject) {
+    if (!$requestObject['id']) {
+      return json_encode(array('success'=>false,'message'=>'No experiment ID provided.'));
+    }
+    $set = "";
+    if ($requestObject['checkAnswers']) {
+      $checkAnswers = $requestObject['checkAnswers'] === "true" ? 1 : 0;
+      $set .= " `checkAnswers`=$checkAnswers";
+    }
+    if ($requestObject['autoBalance']) {
+      $autoBalance = $requestObject['autoBalance'] === "true" ? 1 : 0;
+      $set .= " `autoBalance`=$autoBalance";
+    }
+    if ($set === "") {
+      return json_encode(array('success'=>false,'message'=>'Nothing to change.'));
+    } else {
+      $id = $requestObject['id'];
+      $query = "UPDATE `experiments` SET " . $set . " WHERE `id`=$id";
+      $result = mysql_query($query);
+      return json_encode(array('success' => true));
+    }
   }
   function applyDefaultGreenwaldBlocks($experiment) {
     $firstCategory = $this->_addStimulusCategory($experiment);
