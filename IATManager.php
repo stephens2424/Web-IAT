@@ -268,6 +268,25 @@ class IATManager {
   function addBlock($experiment,$trials = 20,$description = "New Block") {
     return json_encode(_addBlock($experiment,$trials,$description));
   }
+  private function _setBlockProperties($block,$trials = null,$description = null) {
+    $set = "";
+    if ($trials) {
+        $set .= " `trials`=$trials";
+    }
+    if ($description) {
+      $set .= " `description`='$description'";
+    }
+    if ($set == "") {
+      return array('success'=>false,'message'=>'Nothing to change');
+    } else {
+      $query = "UPDATE `blocks` SET ". $set ." WHERE `id`=$block";
+      $result = mysql_query($query);
+      return array('success'=>true);
+    }
+  }
+  function setBlockProperties($requestObject) {
+    return $this->_setBlockProperties($requestObject['block'], $requestObject['trials'], $requestObject['description']);
+  }
   function addStimulus($requestObject) {
     $query = "INSERT INTO `stimuli` SET ";
     $set = "";

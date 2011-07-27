@@ -344,7 +344,17 @@ var IAT = (function() {
               $right.append($('<div>').append(findCategory(blocks[i].components[4].category).name));
             }
             var $blockCenter = $('<div class="flowCategoryText">');
-            $blockCenter.append('<div>'+blocks[i].description+'</div>');
+            $blockCenter.append($('<div>').append($('<span>'+blocks[i].description+'</span>').editable(function (blockId) {
+              return function (value) {
+                sendRequest(bundleIATManagerRequestData('setBlockProperties',{
+                  'block':blockId,
+                  'description':value
+                }));
+                return value;
+              }
+            }(blocks[i].id),{
+              style:"display:inline"
+            })));
             $blockCenter.append('Trials: ').append($('<span>'+blocks[i].trials+'</span>').editable(function (value) {
               sendRequest(bundleIATManagerRequestData('setBlockProperties',{
                 'block':blocks[i].id,
