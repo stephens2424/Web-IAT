@@ -212,7 +212,7 @@ class IATManager {
     $this->_addBlockComponent($block['blockId'],$firstCategoryPair[positiveCategory],1);
     $this->_addBlockComponent($block['blockId'],$firstCategoryPair[negativeCategory],2);
     $block = $this->_addBlock($experiment,20,"Block 2, Practice");
-    $this->_addBlockComponent($block['blockId'],$secondCateogyrPair[positiveCategory],1);
+    $this->_addBlockComponent($block['blockId'],$secondCategoryPair[positiveCategory],1);
     $this->_addBlockComponent($block['blockId'],$secondCategoryPair[negativeCategory],2);
     $block = $this->_addBlock($experiment,20,"Block 3, Practice");
     $this->_addBlockComponent($block['blockId'],$firstCategoryPair[positiveCategory],1);
