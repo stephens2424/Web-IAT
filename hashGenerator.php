@@ -1,4 +1,7 @@
 <?php
+
+//This code comes from Kevin Burns: http://blog.kevburnsjr.com/php-unique-hash
+
 class HashGenerator {
  
   private static $golden_primes = array(
