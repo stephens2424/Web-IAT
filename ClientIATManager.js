@@ -386,6 +386,22 @@ var IAT = (function() {
           $sidePanel.append($balance).append($answerChecking);
           return $sidePanel;
         }
+        function generateSettingsDiv(experiment) {
+          var $topDiv = $("<div>");
+          var $settingsList = $('<ul>');
+          var $endURL = $('<li>').append('Experiment end URL: ').append($('<span>' + (experiment.endUrl === null ? 'none' : experiment.endUrl) + '</span>').editable(function (value) {
+            sendRequest(bundleIATManagerRequestData('setExperimentProperties',{
+              'endUrl':value,
+              'id':experiment.id
+            }));
+            return value;
+          },{
+              style:"display:inline;"
+            }));
+          $settingsList.append($endURL);
+          $topDiv.append($settingsList);
+          return $topDiv;
+        }
         var experimentManager = this;
         var $tabDiv = $('<div id="tabDiv"><ul><li><a href="#tabs-1">Stimuli</a></li><li><a href="#tabs-2">Flow</a></li><li><a href="#tabs-3">Settings</a></li><li><a href="#tabs-4">Save and Close</a></ul></div>');
         var $stimuliDiv = $('<div id="tabs-1">').addClass('ExperimentManager');
@@ -424,7 +440,7 @@ var IAT = (function() {
         $stimuliDiv.append($headerDiv);
         $stimuliDiv.append($contentDiv);
         var $flowDiv = $('<div id="tabs-2">');
-        var $settingsDiv = $('<div id="tabs-3">');
+        var $settingsDiv = $('<div id="tabs-3">').append(generateSettingsDiv(this));
         var $closeDiv = $('<div id="tabs-4">').append("Closing...");
         $tabDiv.append($stimuliDiv);
         $tabDiv.append($flowDiv);
