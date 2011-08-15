@@ -390,12 +390,12 @@ var IAT = (function() {
           var $topDiv = $("<div>");
           var $settingsList = $('<ul>');
           var defaultOptions = {
-            "def":"Default"
+            "http://google.com":"Google"
           };
           var $endURL = $('<li>').append('Experiment end URL: ').append($('<span>' + (experiment.endUrl ? 'none' : experiment.endUrl) + '</span>').editable(function (value) {
             sendRequest(bundleIATManagerRequestData('setExperimentProperties',{
               'endUrl':value,
-              'id':experiment.id
+              'id':experiment.experimentNumber
             }));
             if (defaultOptions[value]) return defaultOptions[value];
             return value;
