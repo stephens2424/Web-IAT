@@ -202,7 +202,7 @@ CREATE TABLE `stimulusCategories` (
 
 LOCK TABLES `stimulusCategories` WRITE;
 /*!40000 ALTER TABLE `stimulusCategories` DISABLE KEYS */;
-INSERT INTO `stimulusCategories` VALUES (81,'New Category',21,42),(82,'New Category',21,42),(83,'New Category',21,42),(84,'New Category',21,42);
+INSERT INTO `stimulusCategories` VALUES (81,'Category1',21,42),(82,'Category2',21,42),(83,'Category3',21,42),(84,'Category4',21,42);
 /*!40000 ALTER TABLE `stimulusCategories` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -266,4 +266,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2011-08-08  9:20:30
+-- Dump completed on 2011-08-15 16:01:19

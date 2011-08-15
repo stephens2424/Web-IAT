@@ -16,3 +16,6 @@
 [submodule "jsundoable"]
 	path = jsundoable
 	url = https://github.com/jscott1989/jsundoable.git
+[submodule "selectWithOther.jeditable"]
+	path = selectWithOther.jeditable
+	url = git@github.com:stephens2424/selectWithOther.jeditable.git

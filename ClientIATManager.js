@@ -389,13 +389,20 @@ var IAT = (function() {
         function generateSettingsDiv(experiment) {
           var $topDiv = $("<div>");
           var $settingsList = $('<ul>');
-          var $endURL = $('<li>').append('Experiment end URL: ').append($('<span>' + (experiment.endUrl === null ? 'none' : experiment.endUrl) + '</span>').editable(function (value) {
+          var defaultOptions = {
+            "def":"Default"
+          };
+          var $endURL = $('<li>').append('Experiment end URL: ').append($('<span>' + (experiment.endUrl ? 'none' : experiment.endUrl) + '</span>').editable(function (value) {
             sendRequest(bundleIATManagerRequestData('setExperimentProperties',{
               'endUrl':value,
               'id':experiment.id
             }));
+            if (defaultOptions[value]) return defaultOptions[value];
             return value;
           },{
+              type:'selectWithOther',
+              data:defaultOptions,
+              submit:'save',
               style:"display:inline;"
             }));
           $settingsList.append($endURL);
