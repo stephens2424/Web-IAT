@@ -409,25 +409,17 @@ var IAT = (function() {
           $topDiv.append($settingsList);
           return $topDiv;
         }
-        var experimentManager = this;
-        var $tabDiv = $('<div id="tabDiv"><ul><li><a href="#tabs-1">Stimuli</a></li><li><a href="#tabs-2">Flow</a></li><li><a href="#tabs-3">Settings</a></li><li><a href="#tabs-4">Save and Close</a></ul></div>');
-        var $stimuliDiv = $('<div id="tabs-1">').addClass('ExperimentManager');
-        var $contentDiv = $('<div>').addClass('ExperimentManagerContent');
-        var $headerDiv = $('<div>').addClass('ExperimentManagerHeader');
-        var $button = $(this);
-        $button.after('<img src="ajaxloader.gif">');
-        sendRequest(bundleIATManagerRequestData("requestExperiment",this.experimentNumber)).success(function (receivedData) {
-          var data = JSON.parse(receivedData);
-          var unpairedCategories = [];
-          var remainingCategories = data.stimulusCategories.slice(0);
-          for (var i in data.categoryPairs) {
+        function generatePairedCategoryDivs(stimulusCategories,categoryPairs) {
+          var divArray = [];
+          var remainingCategories = stimulusCategories.slice(0);
+          for (var i in categoryPairs) {
             var positiveCategory;
             var negativeCategory;
             var unusedCategories = [];
             for (var ii in remainingCategories) {
-              if (remainingCategories[ii].id === data.categoryPairs[i].positiveCategory) {
+              if (remainingCategories[ii].id === categoryPairs[i].positiveCategory) {
                 positiveCategory = remainingCategories[ii];
-              } else if (remainingCategories[ii].id === data.categoryPairs[i].negativeCategory) {
+              } else if (remainingCategories[ii].id === categoryPairs[i].negativeCategory) {
                 negativeCategory = remainingCategories[ii];
               } else {
                 unusedCategories.push(remainingCategories[ii]);
@@ -437,18 +429,24 @@ var IAT = (function() {
             unusedCategories = undefined;
             var $pairDiv = $('<div class="pairDiv" id="categoryPair' + i + '">').append(generateCategoryList(positiveCategory));
             $pairDiv.append(generateCategoryList(negativeCategory));
-            $contentDiv.append($pairDiv);
+            divArray.push($pairDiv.get(0));
           }
           if (remainingCategories.length > 0)
             console.log(remainingCategories.length + " unpaired categories ignored.");
-          $flowDiv.append(generateFlowList(data.stimulusCategories,data.blocks)).append(generateFlowSidePanel());
-          $button.find('img').remove();
-        });
-        $stimuliDiv.append($headerDiv);
-        $stimuliDiv.append($contentDiv);
+          return divArray;
+        }
+        var experimentManager = this;
+        var $tabDiv = $('<div id="tabDiv"><ul><li><a href="#tabs-1">Stimuli</a></li><li><a href="#tabs-2">Flow</a></li><li><a href="#tabs-3">Settings</a></li><li><a href="#tabs-4">Save and Close</a></ul></div>');
+        var $stimuliDiv = $('<div id="tabs-1">').addClass('ExperimentManager');
+        var $contentDiv = $('<div>').addClass('ExperimentManagerContent');
+        var $headerDiv = $('<div>').addClass('ExperimentManagerHeader');
         var $flowDiv = $('<div id="tabs-2">');
         var $settingsDiv = $('<div id="tabs-3">').append(generateSettingsDiv(this));
         var $closeDiv = $('<div id="tabs-4">').append("Closing...");
+        $contentDiv.append(generatePairedCategoryDivs(this.stimulusCategories,this.categoryPairs));
+        $flowDiv.append(generateFlowList(this.stimulusCategories,this.blocks)).append(generateFlowSidePanel());
+        $stimuliDiv.append($headerDiv);
+        $stimuliDiv.append($contentDiv);
         $tabDiv.append($stimuliDiv);
         $tabDiv.append($flowDiv);
         $tabDiv.append($settingsDiv);
@@ -516,13 +514,7 @@ var IAT = (function() {
         }
         sendRequest(bundleIATManagerRequestData('requestExperiment',experimentNumber,null)).success(function (receivedData) {
           var data = JSON.parse(receivedData);
-          experiment.hash = data.hash;
-          experiment.name = data.name;
-          experiment.active = data.active;
-          experiment.endUrl = data.endUrl;
-          experiment.secondEndUrl = data.secondEndUrl;
-          experiment.stimuliGroups = data.stimuliGroups;
-          experiment.stimulusCategories = data.stimulusCategories;
+          $.extend(experiment,data);
           experimentPromise.resolve();
         });
       }
@@ -537,13 +529,7 @@ var IAT = (function() {
     experiment.authentication = null;
     sendRequest(bundleIATManagerRequestData('requestExperiment',experimentNumber,null)).success(function (receivedData) {
       var data = JSON.parse(receivedData);
-      experiment.hash = data.hash;
-      experiment.name = data.name;
-      experiment.active = data.active;
-      experiment.endUrl = data.endUrl;
-      experiment.secondEndUrl = data.secondEndUrl;
-      experiment.stimuliGroups = data.stimuliGroups;
-      experiment.stimulusCategories = data.stimulusCategories;
+      $.extend(experiment,data);
       experimentPromise.resolve();
     });
     return experiment;
