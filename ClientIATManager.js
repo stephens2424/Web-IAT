@@ -390,9 +390,11 @@ var IAT = (function() {
           var $topDiv = $("<div>");
           var $settingsList = $('<ul>');
           var defaultOptions = {
+            "about:blank":"Blank",
             "http://google.com":"Google"
           };
-          var $endURL = $('<li>').append('Experiment end URL: ').append($('<span>' + (experiment.endUrl ? 'none' : experiment.endUrl) + '</span>').editable(function (value) {
+          var endUrl = defaultOptions[experiment.endUrl];
+          var $endURL = $('<li>').append('Experiment end URL: ').append($('<span>' + (endUrl ? endUrl : 'Blank') + '</span>').editable(function (value) {
             sendRequest(bundleIATManagerRequestData('setExperimentProperties',{
               'endUrl':value,
               'id':experiment.experimentNumber

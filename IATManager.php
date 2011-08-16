@@ -221,13 +221,24 @@ class IATManager {
       $autoBalance = $requestObject['autoBalance'] === "true" ? 1 : 0;
       $set .= " `autoBalance`=$autoBalance";
     }
+    if ($requestObject['endUrl']) {
+      $endUrl = $requestObject['endUrl'];
+      $set .= " `endUrl`='$endUrl'";
+    }
+    if ($requestObject['secondEndUrl']) {
+      $secondEndUrl = $requestObject['secondEndUrl'];
+      $set .= " `endUrl`='$secondEndUrl'";
+    }
     if ($set === "") {
       return json_encode(array('success'=>false,'message'=>'Nothing to change.'));
     } else {
       $id = $requestObject['id'];
       $query = "UPDATE `experiments` SET " . $set . " WHERE `id`=$id";
       $result = mysql_query($query);
-      return json_encode(array('success' => true));
+      if ($result)
+        return json_encode(array('success' => true));
+      else
+        return json_encode(array('success' => false,'message'=>'Update failed.'));
     }
   }
   function applyDefaultGreenwaldBlocks($experiment) {
