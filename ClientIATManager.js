@@ -406,7 +406,19 @@ var IAT = (function() {
               submit:'save',
               style:"display:inline;"
             }));
+          var $download = $('<li>');
+          var $downloadSelect = $('<select>')
+            .append('<option value="greenwaldScores">Greenwald D-Scores</option>')
+            .append('<option value="rawScores">Raw Scores</option>')
+            .append('<option value="log">Log</option>');
+          var $downloadButton = $('<button>Download</button>').click(function () {
+            $.jnotify("Downloads not yet implemented.");
+          });
+          $download.append('Download: ')
+                   .append($downloadSelect)
+                   .append($downloadButton);
           $settingsList.append($endURL);
+          $settingsList.append($download);
           $topDiv.append($settingsList);
           return $topDiv;
         }
