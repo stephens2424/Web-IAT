@@ -1,8 +1,7 @@
 /*!
  * WebIAT
- * shihlabs.xtreemhost.com
- * Lab of Margaret Shih, UCLA Anderson School of Management
- * Copyright 2011, All Rights Reserved
+ * This project was originally developed for Margaret Shih and Geoff Ho at the UCLA Anderson School of Management by Stephen Searles.
+ * This code is licensed under the Eclipse Public License (EPL) version 1.0, which is available here: http://www.eclipse.org/legal/epl-v10.html.
  * 
  * Author: Stephen Searles
  * Date: May 10, 2011
