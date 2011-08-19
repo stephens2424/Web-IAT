@@ -237,6 +237,10 @@ class IATManager {
       $secondEndUrl = $requestObject['secondEndUrl'];
       $set .= " `endUrl`='$secondEndUrl'";
     }
+    if ($requestObject['active']) {
+      $active = $requestObject['active'];
+      $set .= " `active`=$active";
+    }
     if ($set === "") {
       return json_encode(array('success'=>false,'message'=>'Nothing to change.'));
     } else {

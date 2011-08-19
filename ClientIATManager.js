@@ -19,6 +19,7 @@ var IAT = (function() {
   var IAT = function (experimentNumber,callback) {
     return requestExperiment(experimentNumber,callback);
   }
+  IAT.IATBaseURL = 'http://iat.stephensearles.com/';
   var IATManager = {
     appendExperimentSelectorTo : function ($domObj) {
       return generateExperimentSelector(function (selector) {
@@ -433,8 +434,41 @@ var IAT = (function() {
           $download.append('Download: ')
                    .append($downloadSelect)
                    .append($downloadButton);
+          var linkHref = IAT.IATBaseURL + '?' + 'id=' + experiment.experimentNumber;
+          var $link = $('<a>').attr('href',linkHref).append(linkHref);
+          var $linkListItem = $('<li>').append('Experiment link: ').append($link);
+          var $active = $('<input type="checkbox">').click(function () {
+            function setActiveExperiment(active) {
+              sendRequest(bundleIATManagerRequestData('setExperimentProperties',{'id':experiment.experimentNumber,'active':active})).success(function (receivedData) {
+                var data = JSON.parse(receivedData);
+                if (!data.success) {
+                  $checkbox.prop('checked',!active);
+                  $.jnotify("Experiment " + (active ? "inactive. " : "active. ") + data.message);
+                } else {
+                  $.jnotify("Experiment " + (active ? "active." : "inactive."));
+                }
+              });
+            }
+            var $checkbox = $(this);
+            if ($checkbox.prop('checked')) {
+              if (!confirm("Are you sure you want to start collecting live data?")) {
+                $checkbox.prop('checked',false);
+              } else {
+                setActiveExperiment(true);
+              }
+            } else {
+              if (!confirm("Are you sure you want to stop recording data?")) {
+                $checkbox.prop('checked',true);
+              } else {
+                setActiveExperiment(false);
+              }
+            }
+          });
+          var $activeListItem = $('<li>').append('Active: ').append($active);
           $settingsList.append(generateEndUrlListItem(defaultOptions[experiment.endUrl]));
           $settingsList.append($download);
+          $settingsList.append($linkListItem);
+          $settingsList.append($activeListItem);
           $topDiv.append($settingsList);
           return $topDiv;
         }
