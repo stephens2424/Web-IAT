@@ -386,26 +386,42 @@ var IAT = (function() {
           return $sidePanel;
         }
         function generateSettingsDiv(experiment) {
+          function generateEndUrlListItem(endUrl) {
+            return $('<li>').append('First end URL: ').append($('<span>' + (endUrl ? endUrl : 'Blank') + '</span>').editable(function (value) {
+              sendRequest(bundleIATManagerRequestData('setExperimentProperties',{
+                'endUrl':value,
+                'id':experiment.experimentNumber
+              }));
+              if (defaultOptions[value]) return defaultOptions[value];
+              return value;
+            },{
+              type:'selectWithOther',
+              data:defaultOptions,
+              submit:'save',
+              style:"display:inline;"
+            }));
+          }
+          function generateSecondEndUrlListItem(endUrl) {
+            return $('<li>').append('Second end URL: ').append($('<span>' + (endUrl ? endUrl : 'Blank') + '</span>').editable(function (value) {
+              sendRequest(bundleIATManagerRequestData('setExperimentProperties',{
+                'secondEndUrl':value,
+                'id':experiment.experimentNumber
+              }));
+              if (defaultOptions[value]) return defaultOptions[value];
+              return value;
+            },{
+                type:'selectWithOther',
+                data:defaultOptions,
+                submit:'save',
+                style:"display:inline;"
+            }));
+          }
           var $topDiv = $("<div>");
           var $settingsList = $('<ul>');
           var defaultOptions = {
             "about:blank":"Blank",
             "http://google.com":"Google"
           };
-          var endUrl = defaultOptions[experiment.endUrl];
-          var $endURL = $('<li>').append('Experiment end URL: ').append($('<span>' + (endUrl ? endUrl : 'Blank') + '</span>').editable(function (value) {
-            sendRequest(bundleIATManagerRequestData('setExperimentProperties',{
-              'endUrl':value,
-              'id':experiment.experimentNumber
-            }));
-            if (defaultOptions[value]) return defaultOptions[value];
-            return value;
-          },{
-              type:'selectWithOther',
-              data:defaultOptions,
-              submit:'save',
-              style:"display:inline;"
-            }));
           var $download = $('<li>');
           var $downloadSelect = $('<select>')
             .append('<option value="greenwaldScores">Greenwald D-Scores</option>')
@@ -417,7 +433,7 @@ var IAT = (function() {
           $download.append('Download: ')
                    .append($downloadSelect)
                    .append($downloadButton);
-          $settingsList.append($endURL);
+          $settingsList.append(generateEndUrlListItem(defaultOptions[experiment.endUrl]));
           $settingsList.append($download);
           $topDiv.append($settingsList);
           return $topDiv;
