@@ -112,23 +112,6 @@ var IAT = (function() {
       type: "POST"
     });
   }
-  //key event handling
-  $(document).keydown($.noop());
-  $(document).keypress(function onKeyDown(event) {
-    switch (event.keyCode) {
-      case 13:
-        $(document.activeElement).filter("input").each(function () {
-          $(this).submit();
-        });
-        break;
-      case 27:
-        $(document.activeElement).filter("input[type=text]").each(function () {
-          var $elem = $(this);
-          $elem.val($elem.attr("original"));
-          toggleTextInput($elem);
-        });
-    }
-  });
   
   //IAT Static functions
   IAT.addExperiment = function() {
@@ -218,7 +201,16 @@ var IAT = (function() {
   //experiment constructors
   var Experiment = function () {
     function bindKeys() {
-      
+      $(document).keydown(function onKeyDown(event) {
+        switch (event.which) {
+          case 37:
+            $.jnotify("Left");
+            break;
+          case 39:
+            $.jnotify("Right");
+            break;
+        }
+      });
     }
     function addDefaultText($context) {
       $('#iatBlockPos1',$context).append("Pos 1");
@@ -247,6 +239,7 @@ var IAT = (function() {
         $iat.append($leftDiv).append($rightDiv);
         $iat.append($centerDiv);
         addDefaultText($iat);
+        bindKeys();
         return $iat;
       }
     }
