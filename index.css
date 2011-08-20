@@ -1,0 +1,43 @@
+/* 
+    Document   : index
+    Created on : Aug 20, 2011, 11:38:40 AM
+    Author     : Stephen
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/* 
+   TODO customize this sample style
+   Syntax recommendation http://www.w3.org/TR/REC-CSS2/
+*/
+
+root { 
+  display: block;
+}
+#iatStimulus,.iatBlockLeft,.iatBlockRight {
+  font-size: x-large;
+  font-family: helvetica;
+  line-height: 35px;
+  
+}
+.iatBlockLeft,.iatBlockRight {
+  line-height: 50px;
+}
+.iatBlockLeft {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+}
+.iatBlockRight {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  text-align: right;
+}
+#iatStimulus {
+  text-align: center;
+  position: fixed;
+  top: 40%;
+  left: 30%;
+  right: 30%;
+}

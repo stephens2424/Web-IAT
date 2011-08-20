@@ -18,7 +18,8 @@ var IAT = (function() {
   
   var IAT = function (experimentHash,div) {
     var experiment = requestExperimentWithHash(experimentHash,function () {
-      div.append(experiment.iat());
+      var $experimentDiv = experiment.iat();
+      div.append($experimentDiv);
     });
   }
   IAT.IATBaseURL = 'http://127.0.0.1/~Stephen/IATWeb/';
@@ -215,26 +216,43 @@ var IAT = (function() {
   }
   
   //experiment constructors
-  var Experiment = {
-    //data
-    name : null,
-    experimentNumber : null,
-    stimulusCategories : null,
-    authentication: null,
-    iat : function() {
-      var $iat = $('<div>');
-      $iat.append("IAT GOES HERE");
-      return $iat;
-    },
-    //translations
-    groupIdFromIndex : function(index) {
-      return this.stimuliGroups[index].id;
-    },
-    categoryNameFromId : function(id) {
-      if (id === "0" | id === null | id === undefined) return "\u2013";
-      else return this.stimulusCategories[id];
+  var Experiment = function () {
+    function bindKeys() {
+      
+    }
+    function addDefaultText($context) {
+      $('#iatBlockPos1',$context).append("Pos 1");
+      $('#iatBlockPos2',$context).append("Pos 2");
+      $('#iatBlockPos3',$context).append("Pos 3");
+      $('#iatBlockPos4',$context).append("Pos 4");
+      $('#iatStimulus',$context).append("Stimulus");
+    }
+    return {
+      //data
+      name : null,
+      experimentNumber : null,
+      stimulusCategories : null,
+      authentication: null,
+      iat : function() {
+        var $iat = $('<div id="iat">');
+        var $leftDiv = $('<div class="iatBlockLeft">');
+        var $rightDiv = $('<div class="iatBlockRight">');
+        var $div1 = $('<div id="iatBlockPos1">');
+        var $div2 = $('<div id="iatBlockPos2">');
+        var $div3 = $('<div id="iatBlockPos3">');
+        var $div4 = $('<div id="iatBlockPos4">');
+        $leftDiv.append($div1).append($div3);
+        $rightDiv.append($div2).append($div4);
+        var $centerDiv = $('<div id="iatStimulus" class="iatStimulus">');
+        $iat.append($leftDiv).append($rightDiv);
+        $iat.append($centerDiv);
+        addDefaultText($iat);
+        return $iat;
+      }
     }
   }
+  Experiment = Experiment();
+  
   var ExperimentManager = function () {
     var stimuliTableDomObj;
     var changedItems = [];

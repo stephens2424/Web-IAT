@@ -21,7 +21,7 @@ session_start();
     <script type="text/javascript" src="jsundoable/jsundoable.js"></script>
     <script type="text/javascript" src="selectWithOther.jeditable/selectWithOther.jeditable.js"></script>
     <script type="text/javascript" src="ClientIATManager.js"></script>
-    <link rel="stylesheet" type="text/css" href="ClientIATManager.css"/>
+    <link rel="stylesheet" type="text/css" href="index.css"/>
     <title>IAT Web</title>
   </head>
   <body>
