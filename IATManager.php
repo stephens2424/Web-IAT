@@ -64,6 +64,12 @@ class IATManager {
   function verifyAuthentication() {
     return json_encode($_SESSION['authenticated']);
   }
+  function getExperimentNumberFromHash($hash) {
+    $query = "SELECT `id` FROM experiments WHERE `hash`='$hash'";
+    $result = mysql_query($query, $this->databaseConnection);
+    $id = mysql_result($result,0,'id');
+    return json_encode(array('experimentNumber' => $id));
+  }
   function requestExperimentList() {
     if (isset($_SESSION['authenticated'])) {
       if ($_SESSION['authenticated'] == false) return $FAILED_AUTHENTICATION_RETURN_VALUE;

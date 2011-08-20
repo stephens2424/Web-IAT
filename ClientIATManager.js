@@ -16,10 +16,12 @@ if (typeof Object.create !== 'function') {
 (function( window, undefined ) {
 var IAT = (function() {
   
-  var IAT = function (experimentNumber,callback) {
-    return requestExperiment(experimentNumber,callback);
+  var IAT = function (experimentHash,div) {
+    var experiment = requestExperimentWithHash(experimentHash,function () {
+      div.append(experiment.iat());
+    });
   }
-  IAT.IATBaseURL = 'http://iat.stephensearles.com/';
+  IAT.IATBaseURL = 'http://127.0.0.1/~Stephen/IATWeb/';
   var IATManager = {
     appendExperimentSelectorTo : function ($domObj) {
       return generateExperimentSelector(function (selector) {
@@ -102,7 +104,13 @@ var IAT = (function() {
   function sendRequest(requestObject) {
     return $.post('IATManager.php',requestObject);
   }
-  
+  function sendSynchronousRequest(requestObject) {
+    return $.ajax('IATManager.php',{
+      async: false,
+      data: requestObject,
+      type: "POST"
+    });
+  }
   //key event handling
   $(document).keydown($.noop());
   $(document).keypress(function onKeyDown(event) {
@@ -213,6 +221,11 @@ var IAT = (function() {
     experimentNumber : null,
     stimulusCategories : null,
     authentication: null,
+    iat : function() {
+      var $iat = $('<div>');
+      $iat.append("IAT GOES HERE");
+      return $iat;
+    },
     //translations
     groupIdFromIndex : function(index) {
       return this.stimuliGroups[index].id;
@@ -434,7 +447,7 @@ var IAT = (function() {
           $download.append('Download: ')
                    .append($downloadSelect)
                    .append($downloadButton);
-          var linkHref = IAT.IATBaseURL + '?' + 'id=' + experiment.experimentNumber;
+          var linkHref = IAT.IATBaseURL + '?' + 'i=' + experiment.hash;
           var $link = $('<a>').attr('href',linkHref).append(linkHref);
           var $linkListItem = $('<li>').append('Experiment link: ').append($link);
           var $active = $('<input type="checkbox">').click(function () {
@@ -596,6 +609,11 @@ var IAT = (function() {
       experimentPromise.resolve();
     });
     return experiment;
+  }
+  function requestExperimentWithHash(experimentHash,callback) {
+    var receivedData = sendSynchronousRequest(bundleIATManagerRequestData('getExperimentNumberFromHash',experimentHash));
+    var data = JSON.parse(receivedData.responseText);
+    return requestExperiment(data.experimentNumber,callback);
   }
   return IAT;
 })();
