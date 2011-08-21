@@ -285,7 +285,7 @@ var IAT = (function() {
         var $centerDiv = $('<div id="iatStimulus" class="iatStimulus">');
         $iat.append($leftDiv).append($rightDiv);
         $iat.append($centerDiv);
-        addDefaultText($iat);
+        stepDisplay.apply(this,$iat);
         bindKeys(this,$iat);
         return $iat;
       }
