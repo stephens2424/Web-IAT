@@ -127,7 +127,7 @@ class IATManager {
   function getStimulusCategories($experimentNumber) {
     $query = "SELECT * FROM stimulusCategories WHERE `experiment`=$experimentNumber";
     $result = mysql_query($query);
-    $categories = arrayFromResult($result);
+    $categories = assocArrayFromResult($result,"id");
     foreach ($categories as &$category) {
       $category['stimuli'] = $this->getStimuliForCategory($category['id']);
     }

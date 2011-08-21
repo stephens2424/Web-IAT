@@ -200,24 +200,71 @@ var IAT = (function() {
   
   //experiment constructors
   var Experiment = function () {
-    function bindKeys() {
-      $(document).keydown(function onKeyDown(event) {
+    var currentTrial = 0;
+    var currentBlock = 0;
+    function bindKeys(experiment) {
+      $(document).keydown(function (event) {
         switch (event.which) {
           case 37:
-            $.jnotify("Left");
+            stepDisplay.apply(experiment);
             break;
           case 39:
-            $.jnotify("Right");
+            stepDisplay.apply(experiment);
             break;
         }
       });
     }
     function addDefaultText($context) {
-      $('#iatBlockPos1',$context).append("Pos 1");
-      $('#iatBlockPos2',$context).append("Pos 2");
-      $('#iatBlockPos3',$context).append("Pos 3");
-      $('#iatBlockPos4',$context).append("Pos 4");
-      $('#iatStimulus',$context).append("Stimulus");
+      $('#iatBlockPos1',$context).append("Pos 1 Default");
+      $('#iatBlockPos2',$context).append("Pos 2 Default");
+      $('#iatBlockPos3',$context).append("Pos 3 Default");
+      $('#iatBlockPos4',$context).append("Pos 4 Default");
+      $('#iatStimulus',$context).append("Stimulus Default");
+    }
+    function stepDisplay($context) {
+      currentTrial += 1;
+      if (currentTrial > this.blocks[currentBlock].trials) {
+        currentTrial = 1;
+        currentBlock += 1;
+        if (!this.blocks[currentBlock]) {
+          endIAT();
+        }
+      }
+      var experiment = this;
+      function replaceCategoryNameForPos(pos) {
+        var selector = "#iatBlockPos" + pos;
+        if (experiment.blocks[currentBlock].components[pos]) {
+          $(selector,$context).text(experiment.stimulusCategories[experiment.blocks[currentBlock].components[pos].category].name);
+        } else {
+          $(selector,$context).text('');
+        }
+      }
+      replaceCategoryNameForPos('1');
+      replaceCategoryNameForPos('2');
+      replaceCategoryNameForPos('3');
+      replaceCategoryNameForPos('4');
+      $('#iatStimulus',$context).text(randomStimulusFromCategories(this.stimulusCategories).word);
+    }
+    function randomStimulusFromCategories(categories) {
+      var totalOptions = 0;
+      $.each(categories,function (index,category) {
+        totalOptions += category.stimuli.length;
+      });
+      var choiceCountdown = Math.floor(Math.random() * totalOptions);
+      var chosenStimulus;
+      $.each(categories,function (index,category) {
+        if (choiceCountdown >= category.stimuli.length) {
+          choiceCountdown -= category.stimuli.length;
+          return true;
+        } else {
+          chosenStimulus = category.stimuli[choiceCountdown];
+          return false;
+        }
+      });
+      return chosenStimulus;
+    }
+    function endIAT() {
+      $.jnotify("End reached. Moving to end URLs not implemented.");
     }
     return {
       //data
@@ -239,7 +286,7 @@ var IAT = (function() {
         $iat.append($leftDiv).append($rightDiv);
         $iat.append($centerDiv);
         addDefaultText($iat);
-        bindKeys();
+        bindKeys(this,$iat);
         return $iat;
       }
     }
