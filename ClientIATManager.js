@@ -200,19 +200,31 @@ var IAT = (function() {
   
   //experiment constructors
   var Experiment = function () {
+    var currentStimulus;
     var currentTrial = 0;
     var currentBlock = 0;
+    var previousDisplayTime;
     function bindKeys(experiment) {
       $(document).keydown(function (event) {
         switch (event.which) {
           case 37:
-            stepDisplay.apply(experiment);
+            if (checkAnswer(37)) {
+              stepDisplay.apply(experiment);
+            }
             break;
           case 39:
-            stepDisplay.apply(experiment);
+            if (checkAnswer(39)) {
+              stepDisplay.apply(experiment);
+            }
             break;
         }
       });
+      function checkAnswer(key) {
+        if (experiment.checkAnswer === "1") {
+          
+        }
+        return true;
+      }
     }
     function addDefaultText($context) {
       $('#iatBlockPos1',$context).append("Pos 1 Default");
