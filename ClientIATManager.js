@@ -392,27 +392,22 @@ var IAT = (function() {
           return $listTopDiv;
         }
         function generateFlowList(stimulusCategories,blocks) {
-          function findCategory(categoryId) {
-            return $.grep(stimulusCategories,function (item,index) {
-              return item.id === categoryId;
-            })[0];
-          }
           var $flowList = $('<ul class="flowList">');
           for (var i in blocks) {
             var $block = $('<li class="flowListItem">');
             var $left = $('<div class="flowCategoryLeft">');
             var $right = $('<div class="flowCategoryRight">');
             if (blocks[i].components[1]) {
-              $left.append($('<div>').append(findCategory(blocks[i].components[1].category).name));
+              $left.append($('<div>').append(stimulusCategories[blocks[i].components['1'].category].name));
             }
             if (blocks[i].components[2]) {
-              $right.append($('<div>').append(findCategory(blocks[i].components[2].category).name));
+              $right.append($('<div>').append(stimulusCategories[blocks[i].components['2'].category].name));
             }
             if (blocks[i].components[3]) {
-              $left.append($('<div>').append(findCategory(blocks[i].components[3].category).name));
+              $left.append($('<div>').append(stimulusCategories[blocks[i].components['3'].category].name));
             }
             if (blocks[i].components[4]) {
-              $right.append($('<div>').append(findCategory(blocks[i].components[4].category).name));
+              $right.append($('<div>').append(stimulusCategories[blocks[i].components['4'].category].name));
             }
             var $blockCenter = $('<div class="flowCategoryText">');
             $blockCenter.append($('<div>').append($('<span>'+blocks[i].description+'</span>').editable(function (blockId) {
