@@ -545,28 +545,11 @@ var IAT = (function() {
         }
         function generatePairedCategoryDivs(stimulusCategories,categoryPairs) {
           var divArray = [];
-          var remainingCategories = stimulusCategories.slice(0);
-          for (var i in categoryPairs) {
-            var positiveCategory;
-            var negativeCategory;
-            var unusedCategories = [];
-            for (var ii in remainingCategories) {
-              if (remainingCategories[ii].id === categoryPairs[i].positiveCategory) {
-                positiveCategory = remainingCategories[ii];
-              } else if (remainingCategories[ii].id === categoryPairs[i].negativeCategory) {
-                negativeCategory = remainingCategories[ii];
-              } else {
-                unusedCategories.push(remainingCategories[ii]);
-              }
-            }
-            remainingCategories = unusedCategories.slice(0);
-            unusedCategories = undefined;
-            var $pairDiv = $('<div class="pairDiv" id="categoryPair' + i + '">').append(generateCategoryList(positiveCategory));
-            $pairDiv.append(generateCategoryList(negativeCategory));
+          $.each(categoryPairs,function (index,pair) {
+            var $pairDiv = $('<div class="pairDiv" id="categoryPair' + index + '">').append(generateCategoryList(stimulusCategories[pair.positiveCategory]));
+            $pairDiv.append(generateCategoryList(stimulusCategories[pair.negativeCategory]));
             divArray.push($pairDiv.get(0));
-          }
-          if (remainingCategories.length > 0)
-            console.log(remainingCategories.length + " unpaired categories ignored.");
+          });
           return divArray;
         }
         var experimentManager = this;
