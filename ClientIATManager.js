@@ -210,18 +210,44 @@ var IAT = (function() {
           case 37:
             if (checkAnswer(37)) {
               stepDisplay.apply(experiment);
+            } else {
+              $.jnotify("Incorrect");
             }
             break;
           case 39:
             if (checkAnswer(39)) {
               stepDisplay.apply(experiment);
+            } else {
+              $.jnotify("Incorrect");
             }
             break;
         }
       });
       function checkAnswer(key) {
-        if (experiment.checkAnswer === "1") {
-          
+        if (experiment.checkAnswers === "1") {
+          var leftTop;
+          var leftBottom;
+          var rightTop;
+          var rightBottom;
+          if (experiment.blocks[currentBlock].components['1']) {
+            leftTop = experiment.blocks[currentBlock].components['1'].category;
+          }
+          if (experiment.blocks[currentBlock].components['3']) {
+            leftBottom = experiment.blocks[currentBlock].components['3'].category;
+          }
+          if (experiment.blocks[currentBlock].components['2']) {
+            rightTop = experiment.blocks[currentBlock].components['2'].category;
+          }
+          if (experiment.blocks[currentBlock].components['4']) {
+            rightBottom = experiment.blocks[currentBlock].components['4'].category;
+          }
+          if (key === 37 && (currentStimulus.stimulusCategory === leftTop || currentStimulus.stimulusCategory === leftBottom)) {
+            return true;
+          } else if (key === 39 && (currentStimulus.stimulusCategory === rightTop || currentStimulus.stimulusCategory === rightBottom)) {
+            return true;
+          } else {
+            return false;
+          }
         }
         return true;
       }
@@ -255,7 +281,8 @@ var IAT = (function() {
       replaceCategoryNameForPos('2');
       replaceCategoryNameForPos('3');
       replaceCategoryNameForPos('4');
-      $('#iatStimulus',$context).text(randomStimulusFromCategories(this.stimulusCategories).word);
+      currentStimulus = randomStimulusFromCategories(this.stimulusCategories);
+      $('#iatStimulus',$context).text(currentStimulus.word);
     }
     function randomStimulusFromCategories(categories) {
       var totalOptions = 0;
