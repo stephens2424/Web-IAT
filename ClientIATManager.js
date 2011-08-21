@@ -488,6 +488,12 @@ var IAT = (function() {
               'id':experimentManager.experimentNumber
             }));
           }).attr('title','If selected, the IAT will inform test takers of incorrect responses and not allow them to proceed without a correct response. Scoring is not affected.'));
+          if (experimentManager.checkAnswers === '1') {
+            $('input',$answerChecking).prop('checked',true);
+          }
+          if (experimentManager.autoBalance === '1') {
+            $('input',$balance).prop('checked',true);
+          }
           $sidePanel.append($balance).append($answerChecking);
           return $sidePanel;
         }

@@ -123,7 +123,7 @@ CREATE TABLE `experiments` (
 
 LOCK TABLES `experiments` WRITE;
 /*!40000 ALTER TABLE `experiments` DISABLE KEYS */;
-INSERT INTO `experiments` VALUES (21,'\0','New Experiment','','z8gkl','',1,0);
+INSERT INTO `experiments` VALUES (21,'\0','New Experiment','','z8gkl','',0,0);
 /*!40000 ALTER TABLE `experiments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -267,4 +267,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2011-08-20 21:24:25
+-- Dump completed on 2011-08-21 19:06:46
