@@ -285,10 +285,12 @@ var IAT = (function() {
       $('#iatStimulus',$context).text(currentStimulus.word);
     }
     function randomStimulusFromCategories(categories) {
-      var totalOptions = 0;
+      var stimuli = [];
+      var totalOptions;
       $.each(categories,function (index,category) {
-        totalOptions += category.stimuli.length;
+        stimuli.push(category.stimuli);
       });
+      totalOptions = stimuli.length;
       var choiceCountdown = Math.floor(Math.random() * totalOptions);
       var chosenStimulus;
       $.each(categories,function (index,category) {
