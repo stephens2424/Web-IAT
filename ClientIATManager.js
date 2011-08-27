@@ -277,18 +277,25 @@ var IAT = (function() {
           $(selector,$context).text('');
         }
       }
+      function currentCategories(experiment) {
+        var categories = [];
+        $.each(experiment.blocks[currentBlock].components,function (index,component) {
+          categories.push(experiment.stimulusCategories[component.category]);
+        });
+        return categories;
+      }
       replaceCategoryNameForPos('1');
       replaceCategoryNameForPos('2');
       replaceCategoryNameForPos('3');
       replaceCategoryNameForPos('4');
-      currentStimulus = randomStimulusFromCategories(this.stimulusCategories);
+      currentStimulus = randomStimulusFromCategories(currentCategories(this));
       $('#iatStimulus',$context).text(currentStimulus.word);
     }
     function randomStimulusFromCategories(categories) {
       var stimuli = [];
       var totalOptions;
       $.each(categories,function (index,category) {
-        stimuli.push(category.stimuli);
+        stimuli = stimuli.concat(category.stimuli);
       });
       totalOptions = stimuli.length;
       var choiceCountdown = Math.floor(Math.random() * totalOptions);
