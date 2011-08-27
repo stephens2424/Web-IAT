@@ -374,6 +374,33 @@ class IATManager {
       return json_encode(array('success' => false,'message'=>"Error: deleting stimulus failed."));
     }
   }
+  function recordResponses($requestObject) {
+    $query = "INSERT INTO `subjects` SET ";
+    $beginTime = $requestObject['beginTime'];
+    $query .= "`beginTime`=$beginTime";
+    $experiment = $requestObject['experiment'];
+    $query .= ",`experiment`=$experiment";
+    if ($requestObject['qualtrics_id']) {
+      $qid = $requestObject['qualtrics_id'];
+      $query .= ",`qualtrics_id='$qid' ";
+    }
+    $result = mysql_query($query,$this->databaseConnection);
+    $subjectId = mysql_insert_id();
+    foreach ($requestObject['responses'] as $response) {
+      $stimulus = $response['stimulus'];
+      $responseText = $response['response'];
+      $responseTime = $response['response_time'];
+      $timeShown = $response['timeShown'];
+      $query = "INSERT INTO `responses` SET ";
+      $query .= "`subj`=$subjectId ";
+      $query .= ",`stimulus`=$stimulus";
+      $query .= ",`response`=$responseText ";
+      $query .= ",`response_time`=$responseTime ";
+      $query .= ",`timeShown`=$timeShown";
+      mysql_query($query,$this->databaseConnection);
+    }
+    return json_encode(array('success'=>true,'message'=>"Responses recorded."));
+  }
   function insertStimulus() {
     
   }

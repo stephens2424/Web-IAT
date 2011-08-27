@@ -200,6 +200,7 @@ var IAT = (function() {
   
   //experiment constructors
   var Experiment = function () {
+    var self;
     var responses = [];
     var currentStimulus;
     var currentTrial = 0;
@@ -207,12 +208,13 @@ var IAT = (function() {
     var fixingError = false;
     var errorLatency = 0;
     var previousDisplayTime;
+    var beginTime;
     function bindKeys(experiment) {
       $(document).keydown(function (event) {
         var answer = checkAnswer(event.which);
         if (answer) {
           responses.push({
-            stimulus: currentStimulus,
+            stimulus: currentStimulus.id,
             response: event.which,
             response_time: fixingError ? errorLatency : event.timeStamp - previousDisplayTime,
             timeShown: previousDisplayTime
@@ -320,6 +322,14 @@ var IAT = (function() {
     function endIAT() {
       $.jnotify("End reached. Moving to end URLs not implemented.");
       $(document).unbind("keydown");
+      sendRequest(bundleIATManagerRequestData("recordResponses",{
+        responses: responses,
+        experiment: self.experimentNumber,
+        beginTime: beginTime
+      })).success(function (receivedData) {
+        var data = JSON.parse(receivedData);
+        $.jnotify(data.message);
+      });
     }
     return {
       //data
@@ -328,6 +338,7 @@ var IAT = (function() {
       stimulusCategories : null,
       authentication: null,
       iat : function() {
+        self = this;
         var $iat = $('<div id="iat">');
         var $leftDiv = $('<div class="iatBlockLeft">');
         var $rightDiv = $('<div class="iatBlockRight">');
@@ -341,6 +352,7 @@ var IAT = (function() {
         $iat.append($leftDiv).append($rightDiv);
         $iat.append($centerDiv);
         stepDisplay.apply(this,$iat);
+        beginTime = previousDisplayTime;
         bindKeys(this,$iat);
         return $iat;
       }
