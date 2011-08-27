@@ -209,7 +209,8 @@ var IAT = (function() {
     var previousDisplayTime;
     function bindKeys(experiment) {
       $(document).keydown(function (event) {
-        if (checkAnswer(event.which)) {
+        var answer = checkAnswer(event.which);
+        if (answer) {
           responses.push({
             stimulus: currentStimulus,
             response: event.which,
@@ -218,7 +219,7 @@ var IAT = (function() {
           });
           fixingError = false;
           stepDisplay.apply(experiment);
-        } else {
+        } else if (answer === false) {
           fixingError = true;
           errorLatency = event.timeStamp - previousDisplayTime;
           $.jnotify("Incorrect");
@@ -246,6 +247,8 @@ var IAT = (function() {
             return true;
           } else if (key === 39 && (currentStimulus.stimulusCategory === rightTop || currentStimulus.stimulusCategory === rightBottom)) {
             return true;
+          } else if (key !== 37 && key != 39) {
+            return null;
           } else {
             return false;
           }
