@@ -224,7 +224,9 @@ var IAT = (function() {
         } else if (answer === false) {
           fixingError = true;
           errorLatency = event.timeStamp - previousDisplayTime;
-          $.jnotify("Incorrect");
+          if (self.errorNotifications === '1') {
+            $.jnotify("Incorrect");
+          }
         }
       });
       function checkAnswer(key) {
@@ -512,19 +514,39 @@ var IAT = (function() {
               'id':experimentManager.experimentNumber
             }));
           }).attr('title','If selected, the IAT will automatically randomize test takers into seeing blocks in the normal order and switching blocks 1,3,and 4 with blocks 5, 6, and 7, respectively.'));
-          var $answerChecking = $('<div>').append($('<label><input type="checkbox" />Check errors</label>').change(function () {
+          var $errorNotifications = $('<div>').append($('<label><input type="checkbox" id="errorNotification" />Display error notifications</label>').change(function () {
             sendRequest(bundleIATManagerRequestData('setExperimentProperties',{
-              'checkAnswers':$(this).find('input').prop('checked'),
+              'errorNotifications':$(this).find('input').prop('checked'),
               'id':experimentManager.experimentNumber
             }));
+          }).attr('title','If selected, the IAT will display a notification when the user makes an incorrect response. Not available unless also error checking.'));
+          var $answerChecking = $('<div>').append($('<label><input type="checkbox" />Check errors</label>').change(function () {
+            var checked = $(this).find('input').prop('checked');
+            sendRequest(bundleIATManagerRequestData('setExperimentProperties',{
+              'checkAnswers':checked,
+              'id':experimentManager.experimentNumber
+            }));
+            if (checked) {
+              $('#errorNotification').prop('disabled',false);
+            } else {
+              if ($('#errorNotification').prop('checked')) {
+                $('#errorNotification').click();
+              }
+              $('#errorNotification').prop('disabled',true);
+            }
           }).attr('title','If selected, the IAT will inform test takers of incorrect responses and not allow them to proceed without a correct response. Scoring is not affected.'));
           if (experimentManager.checkAnswers === '1') {
             $('input',$answerChecking).prop('checked',true);
+            if (experimentManager.errorNotifications === '1') {
+              $('input',$errorNotifications).prop('checked',true);
+            }
+          } else {
+            $('input',$errorNotifications).prop('disabled',true);
           }
           if (experimentManager.autoBalance === '1') {
             $('input',$balance).prop('checked',true);
           }
-          $sidePanel.append($balance).append($answerChecking);
+          $sidePanel.append($balance).append($answerChecking).append($errorNotifications);
           return $sidePanel;
         }
         function generateSettingsDiv(experiment) {

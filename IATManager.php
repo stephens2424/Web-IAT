@@ -231,6 +231,10 @@ class IATManager {
       $checkAnswers = $requestObject['checkAnswers'] === "true" ? 1 : 0;
       $set .= " `checkAnswers`=$checkAnswers";
     }
+    if ($requestObject['errorNotifications']) {
+      $errorNotifications = $requestObject['errorNotifications'] === "true" ? 1 : 0;
+      $set .= " `errorNotifications`=$errorNotifications";
+    }
     if ($requestObject['autoBalance']) {
       $autoBalance = $requestObject['autoBalance'] === "true" ? 1 : 0;
       $set .= " `autoBalance`=$autoBalance";

@@ -112,6 +112,7 @@ CREATE TABLE `experiments` (
   `hash` text,
   `secondEndUrl` text,
   `checkAnswers` tinyint(1) NOT NULL DEFAULT '0',
+  `errorNotifications` tinyint(1) NOT NULL DEFAULT '0',
   `autoBalance` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=latin1;
@@ -123,7 +124,7 @@ CREATE TABLE `experiments` (
 
 LOCK TABLES `experiments` WRITE;
 /*!40000 ALTER TABLE `experiments` DISABLE KEYS */;
-INSERT INTO `experiments` VALUES (21,'\0','New Experiment','','z8gkl','',1,0);
+INSERT INTO `experiments` VALUES (21,'\0','New Experiment','','z8gkl','',1,0,0);
 /*!40000 ALTER TABLE `experiments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -267,4 +268,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2011-08-27 16:28:17
+-- Dump completed on 2011-08-27 16:48:51
