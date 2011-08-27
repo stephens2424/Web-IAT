@@ -63,7 +63,7 @@ CREATE TABLE `blocks` (
 
 LOCK TABLES `blocks` WRITE;
 /*!40000 ALTER TABLE `blocks` DISABLE KEYS */;
-INSERT INTO `blocks` VALUES (106,20,'Block 1, Practice',21),(107,20,'Block 2, Practice',21),(108,20,'Block 3, Practice',21),(109,20,'Block 4, Test',21),(110,20,'Block 5, Practice',21),(111,20,'Block 6, Practice',21),(112,20,'Block 7, Test',21);
+INSERT INTO `blocks` VALUES (106,5,'Block 1, Practice',21),(107,5,'Block 2, Practice',21),(108,5,'Block 3, Practice',21),(109,5,'Block 4, Test',21),(110,5,'Block 5, Practice',21),(111,5,'Block 6, Practice',21),(112,5,'Block 7, Test',21);
 /*!40000 ALTER TABLE `blocks` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -267,4 +267,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2011-08-27 11:21:27
+-- Dump completed on 2011-08-27 15:43:36

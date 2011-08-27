@@ -469,13 +469,15 @@ var IAT = (function() {
             }(blocks[i].id),{
               style:"display:inline"
             })));
-            $blockCenter.append('Trials: ').append($('<span>'+blocks[i].trials+'</span>').editable(function (value) {
-              sendRequest(bundleIATManagerRequestData('setBlockProperties',{
-                'block':blocks[i].id,
-                'trials':value
-              }));
-              return value;
-            },{
+            $blockCenter.append('Trials: ').append($('<span>'+blocks[i].trials+'</span>').editable(function (blockId) {
+              return function (value) {
+                sendRequest(bundleIATManagerRequestData('setBlockProperties',{
+                  'block':blockId,
+                  'trials':value
+                }));
+                return value;
+              }
+            }(blocks[i].id),{
               style:"display:inline"
             }));
             $block.append($left).append($right).append($blockCenter);
