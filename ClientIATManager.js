@@ -200,27 +200,28 @@ var IAT = (function() {
   
   //experiment constructors
   var Experiment = function () {
+    var responses = [];
     var currentStimulus;
     var currentTrial = 0;
     var currentBlock = 0;
+    var fixingError = false;
+    var errorLatency = 0;
     var previousDisplayTime;
     function bindKeys(experiment) {
       $(document).keydown(function (event) {
-        switch (event.which) {
-          case 37:
-            if (checkAnswer(37)) {
-              stepDisplay.apply(experiment);
-            } else {
-              $.jnotify("Incorrect");
-            }
-            break;
-          case 39:
-            if (checkAnswer(39)) {
-              stepDisplay.apply(experiment);
-            } else {
-              $.jnotify("Incorrect");
-            }
-            break;
+        if (checkAnswer(event.which)) {
+          responses.push({
+            stimulus: currentStimulus,
+            response: event.which,
+            response_time: fixingError ? errorLatency : event.timeStamp - previousDisplayTime,
+            timeShown: previousDisplayTime
+          });
+          fixingError = false;
+          stepDisplay.apply(experiment);
+        } else {
+          fixingError = true;
+          errorLatency = event.timeStamp - previousDisplayTime;
+          $.jnotify("Incorrect");
         }
       });
       function checkAnswer(key) {
@@ -266,6 +267,7 @@ var IAT = (function() {
         currentBlock += 1;
         if (!this.blocks[currentBlock]) {
           endIAT();
+          return;
         }
       }
       var experiment = this;
@@ -284,11 +286,12 @@ var IAT = (function() {
         });
         return categories;
       }
+      currentStimulus = randomStimulusFromCategories(currentCategories(this));
       replaceCategoryNameForPos('1');
       replaceCategoryNameForPos('2');
       replaceCategoryNameForPos('3');
       replaceCategoryNameForPos('4');
-      currentStimulus = randomStimulusFromCategories(currentCategories(this));
+      previousDisplayTime = new Date().getTime();
       $('#iatStimulus',$context).text(currentStimulus.word);
     }
     function randomStimulusFromCategories(categories) {
@@ -313,6 +316,7 @@ var IAT = (function() {
     }
     function endIAT() {
       $.jnotify("End reached. Moving to end URLs not implemented.");
+      $(document).unbind("keydown");
     }
     return {
       //data
