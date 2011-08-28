@@ -31,6 +31,7 @@ session_start();
     if ($_GET['i']) {
       $hash = $_GET['i'];
       echo "<script type='text/javascript'>";
+      echo "IAT.managerFilePath = 'admin/IATManager.php';\n";
       echo "IAT('$hash',\$('#contentDiv'));\n";
       echo "</script>";
     } else {

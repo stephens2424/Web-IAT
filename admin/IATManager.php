@@ -10,8 +10,9 @@
 session_set_cookie_params(1800);
 session_start();
 
-require_once 'connectDatabase.php';
-require_once 'GlobalKLogger.php';
+require_once '../configuration/config.php';
+require_once '../connectDatabase.php';
+require_once '../GlobalKLogger.php';
 
 $FAILED_AUTHENTICATION_RETURN_VALUE = json_encode(array('success'=>false,'message'=>'Authentication failed.'));
 

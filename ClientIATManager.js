@@ -102,10 +102,10 @@ var IAT = (function() {
     return {"requestName":requestName,"data":dataObject};
   }
   function sendRequest(requestObject) {
-    return $.post('IATManager.php',requestObject);
+    return $.post(IAT.managerFilePath,requestObject);
   }
   function sendSynchronousRequest(requestObject) {
-    return $.ajax('IATManager.php',{
+    return $.ajax(IAT.managerFilePath,{
       async: false,
       data: requestObject,
       type: "POST"
