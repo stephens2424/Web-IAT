@@ -21,26 +21,25 @@ session_start();
     <script type="text/javascript" src="jsundoable/jsundoable.js"></script>
     <script type="text/javascript" src="selectWithOther.jeditable/selectWithOther.jeditable.js"></script>
     <script type="text/javascript" src="ClientIATManager.js"></script>
+    <script type="text/javascript" src="config.js"></script>
     <link rel="stylesheet" type="text/css" href="index.css"/>
     <title>IAT Web</title>
   </head>
   <body>
     <div id="contentDiv"></div>
-    <script type='text/javascript'>
     <?php
     if ($_GET['i']) {
       $hash = $_GET['i'];
+      echo "<script type='text/javascript'>";
       echo "IAT('$hash',\$('#contentDiv'));\n";
+      echo "</script>";
     } else {
-      echo "\$('#contentDiv).append('";
       echo "
         <h1>WebIAT</h1>
-        <p>This website is a temporary placeholder while the WebIAT comes online.</p>
+        <p>This is software is currently undergoing development and testing. Please do not use this for actual experiments until further notice.</p>
         <p><a href=\"about.html\">About</a></p>
       ";
-      echo ");";
     }
     ?>
-    </script>
   </body>
 </html>
