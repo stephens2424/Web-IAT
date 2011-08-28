@@ -22,7 +22,6 @@ var IAT = (function() {
       div.append($experimentDiv);
     });
   }
-  IAT.IATBaseURL = 'http://127.0.0.1/~Stephen/IATWeb/';
   var IATManager = {
     appendExperimentSelectorTo : function ($domObj) {
       return generateExperimentSelector(function (selector) {

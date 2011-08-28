@@ -1,0 +1,5 @@
+
+
+//Configuration
+IAT.IATBaseURL = 'REPLACE WITH TOP LEVEL DIRECTORY OF IAT';
+
