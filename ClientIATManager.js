@@ -32,7 +32,7 @@ var IAT = (function() {
     getExperimentManager : function (experimentNumber,callback,authentication) {
       return requestExperimentWithAuthentication(experimentNumber,callback,authentication);
     },
-    authenticate : function() {
+    authenticate : function(message) {
       var authentication = Object.create({});
       authentication.promise = $.Deferred();
       var authenticationRequest = this.verifyAuthentication();
@@ -53,6 +53,9 @@ var IAT = (function() {
           $form.append($labelSpan).append($inputSpan);
           $form.append($('<div>').append($('<input type="submit" value="Log in">').addClass('center').addClass('innerAuthenticationSubmit')).addClass('floatRight'));
           $form.append($('<div class="authenticationError">').append('<span id="authenticationErrorSpan">'));
+          if (message) {
+            $('#authenticationErrorSpan',$form).text(message);
+          }
           $form.submit(function () {
             $form.find().each().prop('disabled',true);
             var username = $username.val();
@@ -108,7 +111,7 @@ var IAT = (function() {
     $.post(IAT.managerFilePath,requestObject).done(function (receivedData,textStatus,jqXHR) {
       var data = JSON.parse(receivedData);
       if (data && data.errorCode === '1003') {
-        var authentication = IATManager.authenticate();
+        var authentication = IATManager.authenticate("Your authentication is invalid or has expired. Please log in again.");
         authentication.promise.done(function () {
           sendRequest(requestObject,recursion+1).done(function (data) {
             deferred.resolveWith(this,[data])
