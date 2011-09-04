@@ -35,8 +35,9 @@ var IAT = (function() {
     authenticate : function() {
       var authentication = Object.create({});
       authentication.promise = $.Deferred();
-      this.verifyAuthentication().success(function (receivedData) {
-        if (JSON.parse(receivedData) == true) {
+      var authenticationRequest = this.verifyAuthentication();
+      authenticationRequest.done(function (data) {
+        if (data == true) {
           authentication.valid = true;
           authentication.promise.resolve();
         } else {
@@ -61,16 +62,15 @@ var IAT = (function() {
             sendRequest(bundleIATManagerRequestData('authenticate',{
               username:username,
               passwordHash:passwordHash
-            })).success(function (data) {
-              var parsedData = JSON.parse(data);
-              if (parsedData.errorString) {
-                $('#authenticationErrorSpan').text(parsedData.errorString);
+            })).done(function (data) {
+              if (data.errorString) {
+                $('#authenticationErrorSpan').text(data.errorString);
               }
-              $('#authenticationErrorSpan').append(parsedData.authenticationMessage);
-              authentication.valid = parsedData.valid;
+              $('#authenticationErrorSpan').append(data.authenticationMessage);
+              authentication.valid = data.valid;
               if (authentication.valid === true) {
-                authentication.data = parsedData;
-                authentication.valid = parsedData.valid;
+                authentication.data = data;
+                authentication.valid = data.valid;
                 authentication.promise.resolve();
                 $form.trigger('close');
               }
@@ -101,8 +101,24 @@ var IAT = (function() {
   function bundleIATManagerRequestData(requestName, dataObject) {
     return {"requestName":requestName,"data":dataObject};
   }
-  function sendRequest(requestObject) {
-    return $.post(IAT.managerFilePath,requestObject);
+  function sendRequest(requestObject,recursion) {
+    var deferred = $.Deferred();
+    if (!recursion) recursion = 0;
+    else if (recursion > 3) return undefined;
+    $.post(IAT.managerFilePath,requestObject).done(function (receivedData,textStatus,jqXHR) {
+      var data = JSON.parse(receivedData);
+      if (data && data.errorCode === '1003') {
+        var authentication = IATManager.authenticate();
+        authentication.promise.done(function () {
+          sendRequest(requestObject,recursion+1).done(function (data) {
+            deferred.resolveWith(this,[data])
+          });
+        });
+      } else {
+        deferred.resolveWith(this,[data]);
+      }
+    });
+    return deferred;
   }
   function sendSynchronousRequest(requestObject) {
     return $.ajax(IAT.managerFilePath,{
@@ -132,8 +148,7 @@ var IAT = (function() {
       $listItemDiv.append($('<span class="experimentActions floatRight">').text("Delete ").click(function ($self,experimentNumber) {
         return function() {
           if (confirm('Are you sure you want to delete this experiment and all of its data? This action cannot be undone.')) {
-            sendRequest(bundleIATManagerRequestData('deleteExperiment',experimentNumber)).success(function (receivedData) {
-              var data = JSON.parse(receivedData);
+            sendRequest(bundleIATManagerRequestData('deleteExperiment',experimentNumber)).done(function (data) {
               if (data.success) {
                 $self.remove();
                 $.jnotify("Successfully Deleted");
@@ -175,8 +190,7 @@ var IAT = (function() {
       }
       var $header = $('<div>').append($('<button>+</button>').click(function () {
         var experimentListItem = Object.create(ExperimentListItem);
-        sendRequest(bundleIATManagerRequestData("addExperiment")).success(function (receivedData) {
-          var data = JSON.parse(receivedData);
+        sendRequest(bundleIATManagerRequestData("addExperiment")).done(function (data) {
           experimentListItem.experimentNumber = data.experiment.id;
           experimentListItem.experimentName = data.experiment.name;
           experimentListItem.experimentHash = data.experiment.hash;
@@ -327,8 +341,7 @@ var IAT = (function() {
         responses: responses,
         experiment: self.experimentNumber,
         beginTime: beginTime
-      })).success(function (receivedData) {
-        var data = JSON.parse(receivedData);
+      })).done(function (data) {
         $.jnotify(data.message);
       });
     }
@@ -398,8 +411,7 @@ var IAT = (function() {
               sendRequest(bundleIATManagerRequestData("setStimulusProperties",{
                 "id" : wordObject.id,
                 "word" : value
-              })).success(function (receivedData) {
-                var data = JSON.parse(receivedData);
+              })).done(function (data) {
                 $.jnotify("Stimulus changed to '" + value + "'. " + data.message);
               });
               return value;
@@ -407,8 +419,7 @@ var IAT = (function() {
             var $delete = $('<span class="StimulusDeleteSpan">X</span>').click(function () {
               $wrapper.find('.Stimulus').editable('disable');
               $wrapper.find('.StimulusDeleteSpan').unbind('click').text('');
-              sendRequest(bundleIATManagerRequestData('deleteStimulus',wordObject)).success(function (receivedData) {
-                var data = JSON.parse(receivedData);
+              sendRequest(bundleIATManagerRequestData('deleteStimulus',wordObject)).done(function (data) {
                 $li.remove();
                 $.jnotify(data.message);
               });
@@ -424,8 +435,7 @@ var IAT = (function() {
           var $listDiv = $('<span>');
           if (!temporary) {
             $listDiv.append($('<span>').append(stimulusCategory.name).addClass('CategoryListHeader').editable(function(value,settings) {
-              sendRequest(bundleIATManagerRequestData("setStimulusCategoryProperties",{"id":stimulusCategory.id,"name":value})).success(function (receivedData) {
-                var data = JSON.parse(receivedData);
+              sendRequest(bundleIATManagerRequestData("setStimulusCategoryProperties",{"id":stimulusCategory.id,"name":value})).done(function (data) {
                 $.jnotify("Category title changed to '" + value + "'. " + data.message);
               });
               return value;
@@ -440,8 +450,7 @@ var IAT = (function() {
           var $button = $('<button>+</button>').click(function () {
             var word = {"word":"new word","stimulusCategory":stimulusCategory.id,"experiment":stimulusCategory.experiment};
             var $li = makeStimulusEntry(word,true);
-            sendRequest(bundleIATManagerRequestData("addStimulus",word)).success(function (receivedData) {
-              var data = JSON.parse(receivedData);
+            sendRequest(bundleIATManagerRequestData("addStimulus",word)).done(function (data) {
               if (data.success) {
                 $li.replaceWith(makeStimulusEntry(data.stimulus,false));
                 $.jnotify("Stimulus added to " + stimulusCategory.name + ".");
@@ -601,8 +610,7 @@ var IAT = (function() {
           var $linkListItem = $('<li>').append('Experiment link: ').append($link);
           var $active = $('<input type="checkbox">').click(function () {
             function setActiveExperiment(active) {
-              sendRequest(bundleIATManagerRequestData('setExperimentProperties',{'id':experiment.experimentNumber,'active':active})).success(function (receivedData) {
-                var data = JSON.parse(receivedData);
+              sendRequest(bundleIATManagerRequestData('setExperimentProperties',{'id':experiment.experimentNumber,'active':active})).done(function (data) {
                 if (!data.success) {
                   $checkbox.prop('checked',!active);
                   $.jnotify("Experiment " + (active ? "inactive. " : "active. ") + data.message);
@@ -693,8 +701,7 @@ var IAT = (function() {
     experiments.authentication = authentication;
     authentication.promise.done(function () {
       if (authentication.valid === true) {
-        sendRequest(bundleIATManagerRequestData('requestExperimentList')).success(function (receivedData) {
-          var data = JSON.parse(receivedData);
+        sendRequest(bundleIATManagerRequestData('requestExperimentList')).done(function (data) {
           for (var dataExp in data) {
             var experiment = Object.create(ExperimentListItem);
             experiment.experimentNumber = data[dataExp].id;
@@ -720,8 +727,7 @@ var IAT = (function() {
         for (var propName in ExperimentManager) {
           experiment[propName] = ExperimentManager[propName];
         }
-        sendRequest(bundleIATManagerRequestData('requestExperiment',experimentNumber,null)).success(function (receivedData) {
-          var data = JSON.parse(receivedData);
+        sendRequest(bundleIATManagerRequestData('requestExperiment',experimentNumber,null)).done(function (data) {
           $.extend(experiment,data);
           experimentPromise.resolve();
         });
@@ -735,8 +741,7 @@ var IAT = (function() {
     experiment.experimentNumber = experimentNumber;
     experiment.experimentPromise = experimentPromise;
     experiment.authentication = null;
-    sendRequest(bundleIATManagerRequestData('requestExperiment',experimentNumber,null)).success(function (receivedData) {
-      var data = JSON.parse(receivedData);
+    sendRequest(bundleIATManagerRequestData('requestExperiment',experimentNumber,null)).done(function (data) {
       $.extend(experiment,data);
       experimentPromise.resolve();
     });

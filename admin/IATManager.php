@@ -14,9 +14,6 @@ require_once '../configuration/config.php';
 require_once '../connectDatabase.php';
 require_once '../GlobalKLogger.php';
 
-$FAILED_AUTHENTICATION_RETURN_VALUE = json_encode(array('success'=>false,'message'=>'Authentication failed.'));
-
-
 $iatManager = new IATManager;
 $requestObject = $_POST['data'];
 $requestName = $_POST['requestName'];
@@ -34,8 +31,21 @@ class IATManager {
   function __construct() {
     $this->databaseConnection = getDatabaseConnection();
   }
-  
   function authenticate($credentials) {
+    if ($this->_authenticate($credentials)) {
+      $authenticationResult = array();
+      $_SESSION['authenticated'] = true;
+      $authenticationResult['authenticationMessage'] = 'Authentication successful';
+      $authenticationResult['valid'] = true;
+      return json_encode($authenticationResult);
+    } else {
+      $authenticationResult = array();
+      $authenticationResult['authenticationMessage'] = 'Authentication failed';
+      $authenticationResult['valid'] = false;
+      return json_encode($authenticationResult);
+    }
+  }
+  private function _authenticate($credentials) {
     $username = $credentials['username'];
     $query = "SELECT * FROM users WHERE `username`='$username'";
     $result = mysql_query($query);
@@ -43,27 +53,23 @@ class IATManager {
       return $this->authenticationFailed();
     }
     if (mysql_result($result, 0, 'passwordHash') === $credentials['passwordHash']) {
-      return $this->authenticationSuccess();
+      return true;
     } else {
-      return $this->authenticationFailed();
+      return false;
     }
-    
   }
-  function authenticationFailed() {
-    $authenticationResult = array();
-    $authenticationResult['authenticationMessage'] = 'Authentication failed';
-    $authenticationResult['valid'] = false;
-    return json_encode($authenticationResult);
-  }
-  function authenticationSuccess() {
-    $authenticationResult = array();
-    $_SESSION['authenticated'] = true;
-    $authenticationResult['authenticationMessage'] = 'Authentication successful';
-    $authenticationResult['valid'] = true;
-    return json_encode($authenticationResult);
+  private function _verifyAuthentication() {
+    return $_SESSION['authenticated'];
   }
   function verifyAuthentication() {
-    return json_encode($_SESSION['authenticated']);
+    return json_encode($this->_verifyAuthentication());
+  }
+  private function _createAuthenticationFailedReturnValue($commandName,$arguments = null) {
+    return json_encode(array('success'=>false,
+        'errorCode' => '1003',
+        'message'=>'Authentication failed.',
+        'command' => $commandName,
+        'arguments' => $arguments));
   }
   function getExperimentNumberFromHash($hash) {
     $query = "SELECT `id` FROM experiments WHERE `hash`='$hash'";
@@ -72,11 +78,7 @@ class IATManager {
     return json_encode(array('experimentNumber' => $id));
   }
   function requestExperimentList() {
-    if (isset($_SESSION['authenticated'])) {
-      if ($_SESSION['authenticated'] == false) return $FAILED_AUTHENTICATION_RETURN_VALUE;
-    } else {
-      return $FAILED_AUTHENTICATION_RETURN_VALUE;
-    }
+    if (!$this->_verifyAuthentication()) return $this->_createAuthenticationFailedReturnValue(__FUNCTION__);
     $query = "SELECT id,name,hash FROM experiments";
     $result = mysql_query($query,  $this->databaseConnection);
     return json_encode(arrayFromResult($result));
@@ -142,6 +144,7 @@ class IATManager {
     return $pairs;
   }
   function setStimulusProperties($requestObject) {
+    if (!$this->_verifyAuthentication()) return $this->_createAuthenticationFailedReturnValue(__FUNCTION__);
     $stimulus_id = $requestObject['id'];
     $query = "UPDATE `stimuli` SET ";
     if ($requestObject[word]) {
@@ -156,6 +159,7 @@ class IATManager {
     }
   }
   function addExperiment($requestObject) {
+    if (!$this->_verifyAuthentication()) return $this->_createAuthenticationFailedReturnValue(__FUNCTION__);
     require_once 'hashGenerator.php';
     if ($requestObject["name"]) {
       $name = $requestObject["name"];
@@ -170,11 +174,12 @@ class IATManager {
     $result = mysql_query($query);
     $experiment = array('name' => $name, 'hash' => $hash, 'id' => $id);
     if (!$requestObject['type']) {
-      $this->applyDefaultGreenwaldBlocks($id);
+      $this->_applyDefaultGreenwaldBlocks($id);
     }
     return json_encode(array('success' => true, 'experiment' => $experiment));
   }
   function deleteExperiment($experimentNumber) {
+    if (!$this->_verifyAuthentication()) return $this->_createAuthenticationFailedReturnValue(__FUNCTION__);
     if ($this->verifyAuthentication()) {
       $query = "START TRANSACTION";
       $result = mysql_query($query);
@@ -221,9 +226,11 @@ class IATManager {
     }
   }
   function copyExperiment() {
+    if (!$this->_verifyAuthentication()) return $this->_createAuthenticationFailedReturnValue(__FUNCTION__);
     
   }
   function setExperimentProperties($requestObject) {
+    if (!$this->_verifyAuthentication()) return $this->_createAuthenticationFailedReturnValue(__FUNCTION__);
     if (!$requestObject['id']) {
       return json_encode(array('success'=>false,'message'=>'No experiment ID provided.'));
     }
@@ -264,7 +271,7 @@ class IATManager {
         return json_encode(array('success' => false,'message'=>'Update failed.'));
     }
   }
-  function applyDefaultGreenwaldBlocks($experiment) {
+  private function _applyDefaultGreenwaldBlocks($experiment) {
     $firstCategory = $this->_addStimulusCategory($experiment);
     $secondCategory = $this->_addStimulusCategory($experiment);
     $thirdCategory = $this->_addStimulusCategory($experiment);
@@ -316,9 +323,11 @@ class IATManager {
     return array('success' => true, 'blockId' => mysql_insert_id()); //TODO add code to handle failure
   }
   function addBlockComponent($block,$category,$position) {
+    if (!$this->_verifyAuthentication()) return $this->_createAuthenticationFailedReturnValue(__FUNCTION__);
     return json_encode(_addBlockComponent($block,$category,$position));
   }
   function addBlock($experiment,$trials = 20,$description = "New Block") {
+    if (!$this->_verifyAuthentication()) return $this->_createAuthenticationFailedReturnValue(__FUNCTION__);
     return json_encode(_addBlock($experiment,$trials,$description));
   }
   private function _setBlockProperties($block,$trials = null,$description = null) {
@@ -338,9 +347,11 @@ class IATManager {
     }
   }
   function setBlockProperties($requestObject) {
+    if (!$this->_verifyAuthentication()) return $this->_createAuthenticationFailedReturnValue(__FUNCTION__);
     return $this->_setBlockProperties($requestObject['block'], $requestObject['trials'], $requestObject['description']);
   }
   function addStimulus($requestObject) {
+    if (!$this->_verifyAuthentication()) return $this->_createAuthenticationFailedReturnValue(__FUNCTION__);
     $query = "INSERT INTO `stimuli` SET ";
     $set = "";
     if ($requestObject['experiment'] && $requestObject['stimulusCategory']) {
@@ -368,6 +379,7 @@ class IATManager {
     }
   }
   function deleteStimulus($requestObject) {
+    if (!$this->_verifyAuthentication()) return $this->_createAuthenticationFailedReturnValue(__FUNCTION__);
     if (!$requestObject['id']) {
       return json_encode(array('success' => false,'message'=>"Error: no stimulus id for deletion."));
     }
@@ -471,6 +483,7 @@ class IATManager {
     }
   }
   function pairCategories($requestObject) {
+    if (!$this->_verifyAuthentication()) return $this->_createAuthenticationFailedReturnValue(__FUNCTION__);
     return json_encode(_pairCategories($requestObject['positiveCategory'],$requestObject['negativeCategory'],$requestObject['experiment']));
   }
   private function _associatePairs($firstPair,$secondPair) {
@@ -481,15 +494,18 @@ class IATManager {
     return array('success' => true);
   }
   function associatePairs($requestObject) {
+    if (!$this->_verifyAuthentication()) return $this->_createAuthenticationFailedReturnValue(__FUNCTION__);
     return json_encode(_associatePairs($requestObject['firstPair'],$requestObject['secondpair']));
   }
   function addStimulusCategory($requestObject) {
+    if (!$this->_verifyAuthentication()) return $this->_createAuthenticationFailedReturnValue(__FUNCTION__);
     return json_encode(_addStimulusCategory($requestObject['experiment'],$requestObject['name']));
   }
   function removeStimulusCategory($name) {
-    
+    if (!$this->_verifyAuthentication()) return $this->_createAuthenticationFailedReturnValue(__FUNCTION__);
   }
   function setStimulusCategoryProperties($data) {
+    if (!$this->_verifyAuthentication()) return $this->_createAuthenticationFailedReturnValue(__FUNCTION__);
     $query = "UPDATE `stimulusCategories` SET ";
     if ($data.name) {
       $query .= "`name`='" . $data['name'] . "'";
