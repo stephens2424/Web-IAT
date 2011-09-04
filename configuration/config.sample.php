@@ -1,7 +1,10 @@
 <?php
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+$databaseDomain = 'DATABASE HOST';
+$databaseUsername = 'DATABASE USERNAME';
+$databasePassword = 'DATABASE PASSWORD';
+$databaseName = 'DATABASE NAME';
+
+$baseURL = 'BASE URL';
+
 ?>
