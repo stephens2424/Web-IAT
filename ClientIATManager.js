@@ -215,10 +215,22 @@ var IAT = (function() {
       return $topDiv;
     }
   }
+  
   var UserAdministration = function () {
     return {
       appendUserTableToDiv : function ($div) {
         sendRequest(bundleIATManagerRequestData('getUsers')).done(function (data) {
+          data.users = $.map(data.users, function (element,index) {
+            var array = [];
+            array[0] = element.username;
+            if (element.userAdministration === '1')
+              array[1] = "<input class='userAdministration' type='checkbox' checked='true'>";
+            else
+              array[1] = "<input class='userAdministration' type='checkbox'>";
+            array[2] = element.email;
+            array[3] = element.id
+            return [array];
+          });
           var tableInfo = {
             aaData : data.users,
             aoColumns : [
@@ -227,12 +239,25 @@ var IAT = (function() {
               {'sTitle':"Email"}
             ]
           };
-          $div.dataTable(tableInfo);
+          var dataTable = $div.dataTable(tableInfo);
+          $('.userAdministration').click(function () {
+            var that = this;
+            sendRequest(bundleIATManagerRequestData("setUserPrivileges",{
+              'userAdministration' : $(this).prop('checked'),
+              'id' : dataTable.fnGetData($(this).closest('tr')[0])[3]
+            })).done(function (data) {
+              if (!data.success) {
+                $(that).prop('checked',!$(that).prop('checked'));
+                $.jnotify("Setting user administration privilege failed.");
+              }
+            });
+          });
         });
       }
     };
   }
   IATManager.UserAdministration = UserAdministration();
+  
   //experiment constructors
   var Experiment = function () {
     var self;

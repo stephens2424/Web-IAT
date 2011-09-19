@@ -2,4 +2,4 @@
 
 //Configuration
 IAT.IATBaseURL = 'REPLACE WITH TOP LEVEL DIRECTORY OF IAT';
-
+IAT.managerFilePath = 'REPLACE WITH DIRECTORY OF IATManager.php';

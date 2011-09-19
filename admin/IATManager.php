@@ -531,13 +531,32 @@ class IATManager {
       return json_encode(array('success' => true,'message' => "Updating category succeeded."));
     }
   }
+  function setUserPrivileges($data) {
+    if (!$this->_verifyAuthentication()) return $this->_createAuthenticationFailedReturnValue(__FUNCTION__);
+    if (!$this->_verifyAuthentication('userAdministration')) return $this->_createInsufficientPermissionReturnValue(__FUNCTION__);
+    $query = "UPDATE `users` SET ";
+    if (isset($data['userAdministration'])) {
+      if ($data['userAdministration'] === "true") {
+        $query .= "`userAdministration`=1 ";
+      } else {
+        $query .= "`userAdministration`=0 ";
+      }
+    }
+    $query .= "WHERE `id`=" . $data['id'];
+    $result = mysql_query($query,  $this->databaseConnection);
+    if ($result === false) {
+      return json_encode(array('success'=> false,'message'=>"Setting user privileges failed."));
+    } else {
+      return json_encode(array('success'=> true,'message'=>"Setting user privileges succeeded."));
+    }
+  }
   function getUsers() {
     if (!$this->_verifyAuthentication()) return $this->_createAuthenticationFailedReturnValue(__FUNCTION__);
     if (!$this->_verifyAuthentication('userAdministration')) return $this->_createInsufficientPermissionReturnValue(__FUNCTION__);
-    $query = "SELECT `username`,`userAdministration`,`email` FROM `users`";
+    $query = "SELECT `username`,`userAdministration`,`email`,`id` FROM `users`";
     $result = mysql_query($query);
     return json_encode(array('success' => true,
-        'users' => arrayOfArraysFromResult($result)));
+        'users' => arrayFromResult($result)));
   }
 }
 function arrayOfArraysFromResult($result,$rowOffset = 0) {
