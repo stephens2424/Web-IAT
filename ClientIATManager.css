@@ -33,6 +33,9 @@ div.innerAuthentication {
   width: 230px;
   font-size:x-large;
 }
+.registerforgotdiv {
+  font-size:medium;
+}
 .innerAuthenticationSubmit {
   height: auto;
   width: 100px;

@@ -33,6 +33,23 @@ var IAT = (function() {
       return requestExperimentWithAuthentication(experimentNumber,callback,authentication);
     },
     authenticate : function(message) {
+      function registerDiv() {
+        var $div = $('<div class="innerAuthentication">');
+        var $form = $('<form class="floatRight">');
+        var $labels = $('<div class="floatLeft">').append('<div>Username:</div>').append('<div>Password:</div>').append('<div>Email:</div>');
+        var $username = $('<div><input class="innerAuthenticationInput" type="textbox" /></div>');
+        var $password = $('<div><input class="innerAuthenticationInput" type="password" /></div>');
+        var $email = $('<div><input class="innerAuthenticationInput" type="textbox" /></div>');
+        var $submit = $('<div><input type="submit" value="Register"></div>');
+        $form.append($username).append($password).append($email).append($submit);
+        $div.append($form).append($labels);
+        return $div;
+      }
+      function forgotDiv() {
+        var $div = $('<div>');
+        
+        return $div;
+      }
       var authentication = Object.create({});
       authentication.promise = $.Deferred();
       var authenticationRequest = this.verifyAuthentication();
@@ -52,6 +69,13 @@ var IAT = (function() {
           $inputSpan.append($('<div>').append($password));
           $form.append($labelSpan).append($inputSpan);
           $form.append($('<div>').append($('<input type="submit" value="Log in">').addClass('center').addClass('innerAuthenticationSubmit')).addClass('floatRight'));
+          var $register = $('<a class="actionLink">').text("Register").click(function () {
+            $(this).parents('div').eq(1).replaceWith(registerDiv());
+          });
+          var $forgot = $('<a class="actionLink">').text("Forgot").click(function () {
+            $(this).parents('div').eq(1).replaceWith(forgotDiv());
+          });
+          $form.append($('<div class="registerforgotdiv">').append($register).append('/').append($forgot));
           $form.append($('<div class="authenticationError">').append('<span id="authenticationErrorSpan">'));
           if (message) {
             $('#authenticationErrorSpan',$form).text(message);
