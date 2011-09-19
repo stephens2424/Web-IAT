@@ -117,6 +117,8 @@ var IAT = (function() {
             deferred.resolveWith(this,[data])
           });
         });
+      } else if (data && data.errorCode === '1004') {
+        $.jnotify("You do not have sufficient permission for the attempted function.");
       } else {
         deferred.resolveWith(this,[data]);
       }

@@ -50,24 +50,37 @@ class IATManager {
     $query = "SELECT * FROM users WHERE `username`='$username'";
     $result = mysql_query($query);
     if (mysql_num_rows($result) < 1) {
-      return $this->authenticationFailed();
+      return false;
     }
     if (mysql_result($result, 0, 'passwordHash') === $credentials['passwordHash']) {
+      if (mysql_result($result, 0, 'userAdministration') === '1') {
+        $_SESSION['userAdministration'] = true;
+      }
       return true;
     } else {
       return false;
     }
   }
-  private function _verifyAuthentication() {
+  private function _verifyAuthentication($permission = null) {
+    if ($permission) {
+      return $_SESSION[$permission];
+    }
     return $_SESSION['authenticated'];
   }
-  function verifyAuthentication() {
-    return json_encode($this->_verifyAuthentication());
+  function verifyAuthentication($permission = null) {
+    return json_encode($this->_verifyAuthentication($permission));
   }
   private function _createAuthenticationFailedReturnValue($commandName,$arguments = null) {
     return json_encode(array('success'=>false,
         'errorCode' => '1003',
         'message'=>'Authentication failed.',
+        'command' => $commandName,
+        'arguments' => $arguments));
+  }
+  private function _createInsufficientPermissionReturnValue($commandName,$arguments = null) {
+    return json_encode(array('success'=>false,
+        'errorCode' => '1004',
+        'message'=>'Permission denied.',
         'command' => $commandName,
         'arguments' => $arguments));
   }
