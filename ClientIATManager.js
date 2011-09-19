@@ -69,7 +69,7 @@ var IAT = (function() {
               if (data.errorString) {
                 $('#authenticationErrorSpan').text(data.errorString);
               }
-              $('#authenticationErrorSpan').append(data.authenticationMessage);
+              $('#authenticationErrorSpan').text(data.authenticationMessage);
               authentication.valid = data.valid;
               if (authentication.valid === true) {
                 authentication.data = data;

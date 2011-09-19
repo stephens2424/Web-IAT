@@ -169,7 +169,7 @@ CREATE TABLE `stimuli` (
   `correct_response` int(11) DEFAULT NULL,
   `stimulusCategory` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -178,7 +178,7 @@ CREATE TABLE `stimuli` (
 
 LOCK TABLES `stimuli` WRITE;
 /*!40000 ALTER TABLE `stimuli` DISABLE KEYS */;
-INSERT INTO `stimuli` VALUES (1,21,'1,1',NULL,81),(2,21,'2,1',NULL,82),(3,21,'3,1',NULL,83),(4,21,'4,1',NULL,84),(5,21,'1,2',NULL,81),(6,21,'2,2',NULL,82),(7,21,'3,2',NULL,83),(8,21,'4,2',NULL,84);
+INSERT INTO `stimuli` VALUES (1,21,'Wonderful',NULL,81),(2,21,'Horrible',NULL,82),(3,21,'That thing',NULL,83),(4,21,'That other thing',NULL,84),(5,21,'Terrific',NULL,81),(6,21,'Crappy',NULL,82),(7,21,'This one',NULL,83),(8,21,'This other one',NULL,84);
 /*!40000 ALTER TABLE `stimuli` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -204,7 +204,7 @@ CREATE TABLE `stimulusCategories` (
 
 LOCK TABLES `stimulusCategories` WRITE;
 /*!40000 ALTER TABLE `stimulusCategories` DISABLE KEYS */;
-INSERT INTO `stimulusCategories` VALUES (81,'Category1',21,42),(82,'Category2',21,42),(83,'Category3',21,42),(84,'Category4',21,42);
+INSERT INTO `stimulusCategories` VALUES (81,'Good',21,42),(82,'Bad',21,42),(83,'One thing',21,42),(84,'Other thing',21,42);
 /*!40000 ALTER TABLE `stimulusCategories` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -245,6 +245,9 @@ CREATE TABLE `users` (
   `username` text NOT NULL,
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `passwordHash` text,
+  `owner` tinyint(1) NOT NULL DEFAULT '0',
+  `userAdministration` tinyint(11) NOT NULL DEFAULT '0',
+  `email` text NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -255,7 +258,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES ('stephen',1,'5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8'),('test',2,'a94a8fe5ccb19ba61c4c0873d391e987982fbbd3');
+INSERT INTO `users` VALUES ('stephen',1,'5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8',1,1,'stephen.searles@gmail.com'),('test',2,'a94a8fe5ccb19ba61c4c0873d391e987982fbbd3',0,0,'');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -268,4 +271,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2011-09-04 12:04:27
+-- Dump completed on 2011-09-18 17:05:30
