@@ -531,9 +531,24 @@ class IATManager {
       return json_encode(array('success' => true,'message' => "Updating category succeeded."));
     }
   }
-  
+  function getUsers() {
+    if (!$this->_verifyAuthentication()) return $this->_createAuthenticationFailedReturnValue(__FUNCTION__);
+    if (!$this->_verifyAuthentication('userAdministration')) return $this->_createInsufficientPermissionReturnValue(__FUNCTION__);
+    $query = "SELECT `username`,`userAdministration`,`email` FROM `users`";
+    $result = mysql_query($query);
+    return json_encode(array('success' => true,
+        'users' => arrayOfArraysFromResult($result)));
+  }
 }
-
+function arrayOfArraysFromResult($result,$rowOffset = 0) {
+  if ($result == null) return array();
+  $array = array();
+  @mysql_data_seek($result, $rowOffset);
+  while ($row = mysql_fetch_array($result)) {
+    $array[] = $row;
+  }
+  return $array;
+}
 function objectFromResult($result,$rowOffset = 0) {
   if ($result == null) return array();
   @mysql_data_seek($result, $rowOffset);

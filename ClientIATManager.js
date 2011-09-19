@@ -215,7 +215,24 @@ var IAT = (function() {
       return $topDiv;
     }
   }
-  
+  var UserAdministration = function () {
+    return {
+      appendUserTableToDiv : function ($div) {
+        sendRequest(bundleIATManagerRequestData('getUsers')).done(function (data) {
+          var tableInfo = {
+            aaData : data.users,
+            aoColumns : [
+              {'sTitle':"Username"},
+              {'sTitle':"User Administration"},
+              {'sTitle':"Email"}
+            ]
+          };
+          $div.dataTable(tableInfo);
+        });
+      }
+    };
+  }
+  IATManager.UserAdministration = UserAdministration();
   //experiment constructors
   var Experiment = function () {
     var self;
