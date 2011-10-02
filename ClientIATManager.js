@@ -33,17 +33,41 @@ var IAT = (function() {
       return requestExperimentWithAuthentication(experimentNumber,callback,authentication);
     },
     authenticate : function(message) {
-      function registerDiv() {
+      function packageAuthenticationFromDOM($username,$password,$email) {
+        var username = $username.find('input').val();
+        var password = $password.find('input').val();
+        var passwordHash = hex_sha1(password);
+        password = '';
+        var email = $email.find('input').val();
+        return {'username':username,'passwordHash':passwordHash,'email':email};
+      }
+      function registerDiv($containingDiv,$currentContent) {
         var $div = $('<div class="innerAuthentication">');
         var $form = $('<form class="floatRight">');
-        var $labels = $('<div class="floatLeft">').append('<div>Username:</div>').append('<div>Password:</div>').append('<div>Email:</div>');
-        var $username = $('<div><input class="innerAuthenticationInput" type="textbox" /></div>');
-        var $password = $('<div><input class="innerAuthenticationInput" type="password" /></div>');
-        var $email = $('<div><input class="innerAuthenticationInput" type="textbox" /></div>');
+        var $labels = $('<div class="floatLeft">').append('<div>Username:</div>').append('<div>Password:</div>').append('<div>Retype Password:</div>').append('<div>Email:</div>');
+        var $username = $('<div><input class="registerInput" type="textbox" /></div>');
+        var $password = $('<div><input class="registerInput" type="password" /></div>');
+        var $retypePassword = $('<div><input class="registerInput" type="password" /></div>');
+        var $email = $('<div><input class="registerInput" type="textbox" /></div>');
         var $submit = $('<div><input type="submit" value="Register"></div>');
-        $form.append($username).append($password).append($email).append($submit);
+        $form.append($username).append($password).append($retypePassword).append($email).append($submit);
         $div.append($form).append($labels);
-        return $div;
+        $containingDiv.css('width','+=100px').css('height','+=120px').css('left','+=50px');
+        $containingDiv.append($div.slideDown());
+        $currentContent.slideDown().remove();
+        $form.bind('submit',function () {
+          $submit.prop('disabled','true');
+          if ($password.val() !== $retypePassword.val()) {
+            $submit.prop('disabled','false');
+            $.jnotify("Passwords do not match.");
+          } else {
+            var authenticationInfo = packageAuthenticationFromDOM($username,$password,$email);
+            sendRequest(bundleIATManagerRequestData('registerUser',authenticationInfo)).done(function() {
+              authentication.promise.resolve();
+            });
+          }
+          return false;
+        });
       }
       function forgotDiv() {
         var $div = $('<div>');
@@ -70,7 +94,8 @@ var IAT = (function() {
           $form.append($labelSpan).append($inputSpan);
           $form.append($('<div>').append($('<input type="submit" value="Log in">').addClass('center').addClass('innerAuthenticationSubmit')).addClass('floatRight'));
           var $register = $('<a class="actionLink">').text("Register").click(function () {
-            $(this).parents('div').eq(1).replaceWith(registerDiv());
+            var $newDiv = registerDiv($(this).parents('div').eq(2),$(this).parents('div').eq(1));
+            
           });
           var $forgot = $('<a class="actionLink">').text("Forgot").click(function () {
             $(this).parents('div').eq(1).replaceWith(forgotDiv());
@@ -82,13 +107,10 @@ var IAT = (function() {
           }
           $form.submit(function () {
             $form.find().each().prop('disabled',true);
-            var username = $username.val();
-            var password = $password.val();
-            var passwordHash = hex_sha1(password);
-            password = '';
+            var authenticationInfo = packageAuthenticationInfo($username,$password);
             sendRequest(bundleIATManagerRequestData('authenticate',{
-              username:username,
-              passwordHash:passwordHash
+              username:authenticationInfo.username,
+              passwordHash:authenticationInfo.passwordHash
             })).done(function (data) {
               if (data.errorString) {
                 $('#authenticationErrorSpan').text(data.errorString);

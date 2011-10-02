@@ -558,6 +558,17 @@ class IATManager {
     return json_encode(array('success' => true,
         'users' => arrayFromResult($result)));
   }
+  function registerUser($data) {
+    $username = $data['username'];
+    $passwordHash = $data['passwordHash'];
+    $email = $data['email'];
+    $query = "INSERT INTO `users` SET `username`='$username',`passwordHash`='$passwordHash',`email`='$email'";
+    $result = mysql_query($query, $this->databaseConnection);
+    if ($result)
+      return json_encode(array('success' => true));
+    else
+      return json_encode(array('success' => false));
+  }
 }
 function arrayOfArraysFromResult($result,$rowOffset = 0) {
   if ($result == null) return array();
