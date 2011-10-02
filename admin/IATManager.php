@@ -558,6 +558,15 @@ class IATManager {
     return json_encode(array('success' => true,
         'users' => arrayFromResult($result)));
   }
+  function checkUsernameAvailability($name) {
+    $query = "SELECT `username` FROM `users` WHERE `username`='$name'";
+    $result = mysql_query($query,  $this->databaseConnection);
+    if (mysql_num_rows($result) > 0) {
+      return (json_encode(array('success' => true,'available'=>false)));
+    } else {
+      return (json_encode(array('success' => true,'available'=>true)));
+    }
+  }
   function registerUser($data) {
     $username = $data['username'];
     $passwordHash = $data['passwordHash'];

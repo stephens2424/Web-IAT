@@ -46,6 +46,18 @@ var IAT = (function() {
         var $form = $('<form class="floatRight">');
         var $labels = $('<div class="floatLeft">').append('<div>Username:</div>').append('<div>Password:</div>').append('<div>Retype Password:</div>').append('<div>Email:</div>');
         var $username = $('<div><input class="registerInput" type="textbox" /></div>');
+        $username.find('input').change(function () {
+          var $that = $(this);
+          var currentValue = $that.val();
+          sendRequest(bundleIATManagerRequestData('checkUsernameAvailability',currentValue)).done(function (data) {
+            if (data.available) {
+              $that.css('background-color','#CCFF99');
+            } else {
+              $that.css('background-color','#FFCCCC');
+              $.jnotify('Username taken. Please choose another.');
+            }
+          });
+        })
         var $password = $('<div><input class="registerInput" type="password" /></div>');
         var $retypePassword = $('<div><input class="registerInput" type="password" /></div>');
         var $email = $('<div><input class="registerInput" type="textbox" /></div>');
