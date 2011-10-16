@@ -139,7 +139,7 @@ if (typeof Object.create !== 'function') {
             }
             $form.submit(function () {
               $form.find().each().prop('disabled',true);
-              var authenticationInfo = packageAuthenticationInfo($username,$password);
+              var authenticationInfo = packageAuthenticationFromDOM($username,$password);
               sendRequest(bundleIATManagerRequestData('authenticate',{
                 username:authenticationInfo.username,
                 passwordHash:authenticationInfo.passwordHash
