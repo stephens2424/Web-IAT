@@ -95,7 +95,11 @@ if (typeof Object.create !== 'function') {
           $form.bind('submit',function () {
             $submit.prop('disabled','true');
             sendRequest(bundleIATManagerRequestData('sendForgotEmail',$email.find('input').val())).done(function (data) {
-              
+              if (data.success) {
+                $.jnotify("Email to reset password was sent.");
+              } else {
+                $.jnotify("Email to reset password was not sent.");
+              }
             });
             $.jnotify("Notice: the server is not yet configured to send email.");
           })
