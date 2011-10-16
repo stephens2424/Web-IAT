@@ -89,6 +89,8 @@ if (typeof Object.create !== 'function') {
           var $div = $('<div>');
           var $form = $('<form class="floatRight">');
           var $labels = $('<div class="floatLeft">');
+          
+          $div.append($form).append($labels);
           return $div;
         }
         var authentication = Object.create({});
