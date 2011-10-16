@@ -88,8 +88,9 @@ if (typeof Object.create !== 'function') {
         function forgotDiv() {
           var $div = $('<div>');
           var $form = $('<form class="floatRight">');
-          var $labels = $('<div class="floatLeft">');
+          var $labels = $('<div class="floatLeft">').append('<div>Email: </div>');
           var $email = $('<div><input class="registerInput" type="textbox" /></div>');
+          $form.append($email);
           $div.append($form).append($labels);
           return $div;
         }
