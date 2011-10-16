@@ -579,7 +579,7 @@ class IATManager {
       return json_encode(array('success' => false));
   }
   function sendForgotEmail($email) {
-    
+    return json_encode(array('success' => false,'message'=>'Feature not yet implemented.'));
   }
 }
 function arrayOfArraysFromResult($result,$rowOffset = 0) {
