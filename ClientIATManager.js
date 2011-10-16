@@ -92,7 +92,7 @@ if (typeof Object.create !== 'function') {
           var $email = $('<div><input class="registerInput" type="textbox" /></div>');
           var $submit = $('<div><input type="submit" value="Send Email"></div>');
           $form.append($email);
-          $div.append($form).append($labels);
+          $div.append($form).append($labels).append($submit);
           return $div;
         }
         var authentication = Object.create({});
