@@ -87,7 +87,7 @@ if (typeof Object.create !== 'function') {
         }
         function forgotDiv() {
           var $div = $('<div>');
-
+          var $form = $('<form class="floatRight">');
           return $div;
         }
         var authentication = Object.create({});
