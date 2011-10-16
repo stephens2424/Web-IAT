@@ -90,6 +90,7 @@ if (typeof Object.create !== 'function') {
           var $form = $('<form class="floatRight">');
           var $labels = $('<div class="floatLeft">').append('<div>Email: </div>');
           var $email = $('<div><input class="registerInput" type="textbox" /></div>');
+          var $submit = $('<div><input type="submit" value="Send Email"></div>');
           $form.append($email);
           $div.append($form).append($labels);
           return $div;
