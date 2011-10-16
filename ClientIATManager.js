@@ -89,7 +89,7 @@ if (typeof Object.create !== 'function') {
           var $div = $('<div>');
           var $form = $('<form class="floatRight">');
           var $labels = $('<div class="floatLeft">');
-          
+          var $email = $('<div><input class="registerInput" type="textbox" /></div>');
           $div.append($form).append($labels);
           return $div;
         }
