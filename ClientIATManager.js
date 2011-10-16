@@ -94,6 +94,7 @@ if (typeof Object.create !== 'function') {
           $form.append($email);
           $form.bind('submit',function () {
             $submit.prop('disabled','true');
+            $.jnotify("Notice: the server is not yet configured to send email.");
           })
           $div.append($form).append($labels).append($submit);
           return $div;
