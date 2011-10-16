@@ -92,6 +92,9 @@ if (typeof Object.create !== 'function') {
           var $email = $('<div><input class="registerInput" type="textbox" /></div>');
           var $submit = $('<div><input type="submit" value="Send Email"></div>');
           $form.append($email);
+          $form.bind('submit',function () {
+            $submit.prop('disabled','true');
+          })
           $div.append($form).append($labels).append($submit);
           return $div;
         }
