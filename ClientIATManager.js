@@ -34,16 +34,37 @@ if (typeof Object.create !== 'function') {
       },
       authenticate : function(message) {
         function packageAuthenticationFromDOM($username,$password,$email) {
-          var username = $username.find('input').val();
-          var password = $password.find('input').val();
-          var passwordHash = hex_sha1(password);
-          password = '';
-          var email = $email.find('input').val();
-          return {
-            'username':username,
-            'passwordHash':passwordHash,
-            'email':email
-          };
+          var authentication = {};
+          var username;
+          var password;
+          var passwordHash;
+          var email;
+          if ($username.find('input').size() === 0) {
+            username = $username.val();
+            authentication.username = username;
+          } else {
+            username = $username.find('input').val();
+            authentication.username = username;
+          }
+          if ($password.find('input').size() === 0) {
+            password = $password.val();
+            passwordHash = hex_sha1(password);
+            password = '';
+            authentication.passwordHash = passwordHash;
+          } else {
+            password = $password.find('input').val();
+            passwordHash = hex_sha1(password);
+            password = '';
+            authentication.passwordHash = passwordHash;
+          }
+          if ($email && $email.find('input').size() === 0) {
+            email = $email.val();
+            authentication.email = email;
+          } else if ($email) {
+            email = $email.find('input').val();
+            authentication.email = email;
+          }
+          return authentication;
         }
         function registerDiv($containingDiv,$currentContent) {
           var $div = $('<div class="innerAuthentication">');
