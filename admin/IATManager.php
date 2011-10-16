@@ -578,6 +578,9 @@ class IATManager {
     else
       return json_encode(array('success' => false));
   }
+  function sendForgotEmail($email) {
+    
+  }
 }
 function arrayOfArraysFromResult($result,$rowOffset = 0) {
   if ($result == null) return array();
