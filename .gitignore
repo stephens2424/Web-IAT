@@ -6,8 +6,8 @@ log/*
 logs/*
 
 #Configuration
-config.js
-config.php
+configuration/config.js
+configuration/config.php
 
 #custom results
 Results
