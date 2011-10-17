@@ -8,8 +8,8 @@ session_start();
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <link rel="stylesheet" type="text/css" href="./jquery.jnotify/css/jquery.jnotify-bottom.css" />
     <link rel="stylesheet" type="text/css" href="./blitzer/jquery-ui-1.8.14.custom.css" />
-    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.min.js" type="text/javascript"></script>-->
-    <script type="text/javascript" src="jquery.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript"></script>
+    <!-- <script type="text/javascript" src="jquery.js"></script> -->
     <script type="text/javascript" src="jquery-ui.js"></script>
     <script type="text/javascript" src="./jquery.jnotify/lib/jquery.jnotify.js"></script>
     <script type="text/javascript" src="sha1.js"></script>
