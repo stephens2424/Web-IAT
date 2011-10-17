@@ -336,8 +336,12 @@ if (typeof Object.create !== 'function') {
                 array[1] = "<input class='userAdministration' type='checkbox' checked='true'>";
               else
                 array[1] = "<input class='userAdministration' type='checkbox'>";
-              array[2] = element.email;
-              array[3] = element.id
+              if (element.active === '1')
+                array[2] = "<input class='active' type='checkbox' checked='true'>";
+              else
+                array[2] = "<input class='active' type='checkbox'>";
+              array[3] = element.email;
+              array[4] = element.id;
               return [array];
             });
             var tableInfo = {
@@ -346,11 +350,12 @@ if (typeof Object.create !== 'function') {
               {
                 'sTitle':"Username"
               },
-
               {
                 'sTitle':"User Administration"
               },
-
+              {
+                'sTitle':"Active"
+              },
               {
                 'sTitle':"Email"
               }
@@ -361,11 +366,23 @@ if (typeof Object.create !== 'function') {
               var that = this;
               sendRequest(bundleIATManagerRequestData("setUserPrivileges",{
                 'userAdministration' : $(this).prop('checked'),
-                'id' : dataTable.fnGetData($(this).closest('tr')[0])[3]
+                'id' : dataTable.fnGetData($(this).closest('tr')[0])[4]
               })).done(function (data) {
                 if (!data.success) {
                   $(that).prop('checked',!$(that).prop('checked'));
                   $.jnotify("Setting user administration privilege failed.");
+                }
+              });
+            });
+            $('.active').click(function () {
+              var that = this;
+              sendRequest(bundleIATManagerRequestData("setUserPrivileges",{
+                'active' : $(this).prop('checked'),
+                'id' : dataTable.fnGetData($(this).closest('tr')[0])[4]
+              })).done(function (data) {
+                if (!data.success) {
+                  $(that).prop('checked',!$(that).prop('checked'));
+                  $.jnotify("Setting active failed.");
                 }
               });
             });

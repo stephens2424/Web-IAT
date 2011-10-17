@@ -52,7 +52,7 @@ class IATManager {
     if (mysql_num_rows($result) < 1) {
       return false;
     }
-    if (mysql_result($result, 0, 'passwordHash') === $credentials['passwordHash']) {
+    if (mysql_result($result, 0, 'passwordHash') === $credentials['passwordHash'] && mysql_result($result, 0, 'active') === '1') {
       if (mysql_result($result, 0, 'userAdministration') === '1') {
         $_SESSION['userAdministration'] = true;
       }
@@ -542,6 +542,13 @@ class IATManager {
         $query .= "`userAdministration`=0 ";
       }
     }
+    if (isset($data['active'])) {
+      if ($data['active'] === "true") {
+        $query .= "`active`=1 ";
+      } else {
+        $query .= "`active`=0 ";
+      }
+    }
     $query .= "WHERE `id`=" . $data['id'];
     $result = mysql_query($query,  $this->databaseConnection);
     if ($result === false) {
@@ -553,7 +560,7 @@ class IATManager {
   function getUsers() {
     if (!$this->_verifyAuthentication()) return $this->_createAuthenticationFailedReturnValue(__FUNCTION__);
     if (!$this->_verifyAuthentication('userAdministration')) return $this->_createInsufficientPermissionReturnValue(__FUNCTION__);
-    $query = "SELECT `username`,`userAdministration`,`email`,`id` FROM `users`";
+    $query = "SELECT `username`,`userAdministration`,`active`,`email`,`id` FROM `users`";
     $result = mysql_query($query);
     return json_encode(array('success' => true,
         'users' => arrayFromResult($result)));

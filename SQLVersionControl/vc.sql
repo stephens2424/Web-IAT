@@ -248,6 +248,7 @@ CREATE TABLE `users` (
   `owner` tinyint(1) NOT NULL DEFAULT '0',
   `userAdministration` tinyint(11) NOT NULL DEFAULT '0',
   `email` text NOT NULL,
+  `active` tinyint(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -258,7 +259,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES ('stephen',1,'5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8',1,1,'stephen.searles@gmail.com'),('test',2,'a94a8fe5ccb19ba61c4c0873d391e987982fbbd3',0,0,'');
+INSERT INTO `users` VALUES ('stephen',1,'5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8',1,1,'stephen.searles@gmail.com',1),('test',2,'a94a8fe5ccb19ba61c4c0873d391e987982fbbd3',0,0,'',0);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -271,4 +272,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2011-10-16 17:00:42
+-- Dump completed on 2011-10-16 18:37:47
