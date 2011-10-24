@@ -146,7 +146,7 @@ if (typeof Object.create !== 'function') {
             $inputSpan.append($('<div>').append($password));
             $form.append($labelSpan).append($inputSpan);
             $form.append($('<div>').append($('<input type="submit" value="Log in">').addClass('center').addClass('innerAuthenticationSubmit')).addClass('floatRight'));
-            var $register = $('<a class="actionLink">').text("Register").click(function () {
+            var $register = $('<a class="actionLink">').text("Request login").click(function () {
               var $newDiv = registerDiv($(this).parents('div').eq(2),$(this).parents('div').eq(1));
 
             });
