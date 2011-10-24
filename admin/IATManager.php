@@ -580,8 +580,13 @@ class IATManager {
     $email = $data['email'];
     $query = "INSERT INTO `users` SET `username`='$username',`passwordHash`='$passwordHash',`email`='$email'";
     $result = mysql_query($query, $this->databaseConnection);
-    if ($result)
-      return json_encode(array('success' => true));
+    if ($result) {
+      $mailSent = mail('stephen.searles@gmail.com', 'New IAT User Request', "$username has requested access to WebIAT. You can approve their request at <a href='http://iat.stephensearles.com/useradmin/'>http://iat.stephensearles.com/useradmin/</a>.");
+      if ($mailSent)
+        return json_encode(array('success' => true));
+      else
+        return json_encode(array('success' => false,'message'=>'Application submitted, but administrator could not be notified.'));
+    }
     else
       return json_encode(array('success' => false));
   }
