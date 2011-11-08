@@ -249,8 +249,10 @@ CREATE TABLE `users` (
   `userAdministration` tinyint(11) NOT NULL DEFAULT '0',
   `email` text NOT NULL,
   `active` tinyint(11) NOT NULL DEFAULT '0',
+  `originalActivation` tinyint(11) NOT NULL DEFAULT '0',
+  `emailConfirmed` tinyint(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -259,7 +261,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES ('stephen',1,'5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8',1,1,'stephen.searles@gmail.com',1),('test',2,'a94a8fe5ccb19ba61c4c0873d391e987982fbbd3',0,0,'',0);
+INSERT INTO `users` VALUES ('stephen',1,'5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8',1,1,'stephen.searles@gmail.com',1,0,0),('test',2,'a94a8fe5ccb19ba61c4c0873d391e987982fbbd3',0,0,'',0,0,0),('testuser',3,'5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8',0,0,'stephens2424@gmail.com',0,0,0),('anothertest',4,'a94a8fe5ccb19ba61c4c0873d391e987982fbbd3',0,0,'stephens2424@gmail.com',0,0,0),('newTestUser',5,'a94a8fe5ccb19ba61c4c0873d391e987982fbbd3',0,0,'stephens2424@gmail.com',0,0,0),('newTestUser2',6,'a94a8fe5ccb19ba61c4c0873d391e987982fbbd3',0,0,'stephens2424@gmail.com',0,0,0),('newTestUser3',7,'a94a8fe5ccb19ba61c4c0873d391e987982fbbd3',0,0,'stephen.searles@ucla.edu',0,0,0),('testUser2',8,'a94a8fe5ccb19ba61c4c0873d391e987982fbbd3',0,0,'stephens2424@gmail.com',0,0,0),('testUser3',9,'a94a8fe5ccb19ba61c4c0873d391e987982fbbd3',0,0,'stephens2424@gmail.com',0,0,0);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -272,4 +274,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2011-10-23 17:32:41
+-- Dump completed on 2011-11-07 22:16:28

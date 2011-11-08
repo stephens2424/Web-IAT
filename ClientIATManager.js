@@ -66,15 +66,25 @@ if (typeof Object.create !== 'function') {
           }
           return authentication;
         }
+        
+        /*
+         * Produces the registration form to be used on the authentication 
+         * lightbox.
+         */
         function registerDiv($containingDiv,$currentContent) {
           var $div = $('<div class="innerAuthentication">');
           var $form = $('<form class="floatRight">');
-          var $labels = $('<div class="floatLeft">').append('<div>Username:</div>').append('<div>Password:</div>').append('<div>Retype Password:</div>').append('<div>Email:</div>');
+          var $labels = $('<div class="floatLeft">')
+                          .append('<div>Username:</div>')
+                          .append('<div>Password:</div>')
+                          .append('<div>Retype Password:</div>')
+                          .append('<div>Email:</div>');
           var $username = $('<div><input class="registerInput" type="textbox" /></div>');
           $username.find('input').change(function () {
             var $that = $(this);
             var currentValue = $that.val();
-            sendRequest(bundleIATManagerRequestData('checkUsernameAvailability',currentValue)).done(function (data) {
+            sendRequest(bundleIATManagerRequestData('checkUsernameAvailability',currentValue))
+                          .done(function (data) {
               if (data.available) {
                 $that.css('background-color','#CCFF99');
               } else {
