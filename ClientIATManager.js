@@ -331,14 +331,6 @@ if (typeof Object.create !== 'function') {
       });
     }
 
-    //IAT Static functions
-    IAT.addExperiment = function() {
-      return sendRequest(bundleIATManagerRequestData("addExperiment",null));
-    }
-    IAT.requestExperimentList = function() {
-      return sendRequest(bundleIATManagerRequestData("requestExperimentList",null));
-    }
-
     var ExperimentListItem = {
       experimentNumber : null,
       experimentName : null,
@@ -552,13 +544,6 @@ if (typeof Object.create !== 'function') {
           }
           return true;
         }
-      }
-      function addDefaultText($context) {
-        $('#iatBlockPos1',$context).append("Pos 1 Default");
-        $('#iatBlockPos2',$context).append("Pos 2 Default");
-        $('#iatBlockPos3',$context).append("Pos 3 Default");
-        $('#iatBlockPos4',$context).append("Pos 4 Default");
-        $('#iatStimulus',$context).append("Stimulus Default");
       }
       function stepDisplay($context) {
         currentTrial += 1;
