@@ -36,6 +36,12 @@ div.innerAuthentication {
 .registerforgotdiv {
   font-size:medium;
 }
+.authenticationBoxNotice {
+  width:400px;
+  height:200px;
+  left:50px;
+  top:100px;
+}
 .innerAuthenticationSubmit {
   height: auto;
   width: 100px;

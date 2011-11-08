@@ -544,7 +544,7 @@ class IATManager {
     }
     if (isset($data['active'])) {
       if ($data['active'] === "true") {
-        $query .= "`active`=1 ";
+        $query .= "`active`=1,`originalActivation`=1";
       } else {
         $query .= "`active`=0 ";
       }
@@ -581,7 +581,7 @@ class IATManager {
     $query = "INSERT INTO `users` SET `username`='$username',`passwordHash`='$passwordHash',`email`='$email'";
     $result = mysql_query($query, $this->databaseConnection);
     if ($result) {
-      $mailSent = mail('stephen.searles@gmail.com', 'New IAT User Request', "$username has requested access to WebIAT. You can approve their request at <a href='http://iat.stephensearles.com/useradmin/'>http://iat.stephensearles.com/useradmin/</a>.");
+      $mailSent = mail($email,'WebIAT Registration',"Thank you for registering for WebIAT! Please click the link below to confirm your email address. Once you do, an administrator will be alerted to approve your registration.\n\nUsername: $username\nConfirmation link: http://iat.stephensearles.com/confirmEmail/?e=$emailHash");
       if ($mailSent)
         return json_encode(array('success' => true));
       else
@@ -589,6 +589,9 @@ class IATManager {
     }
     else
       return json_encode(array('success' => false));
+  }
+  function confirmEmail() {
+    $mailSent = mail('stephen.searles@gmail.com', 'New IAT User Request', "$username has requested access to WebIAT. You can approve their request at http://iat.stephensearles.com/useradmin/.");
   }
   function sendForgotEmail($email) {
     return json_encode(array('success' => false,'message'=>'Feature not yet implemented.'));

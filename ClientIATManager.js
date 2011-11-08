@@ -161,6 +161,7 @@ if (typeof Object.create !== 'function') {
             } else {
               var authenticationInfo = packageAuthenticationFromDOM($username,$password,$email);
               sendRequest(bundleIATManagerRequestData('registerUser',authenticationInfo)).done(function() {
+                $div.replaceWith('<div class="authenticationBoxNotice">Your registration email has been sent. Once you confirm your email, an administrator will complete your registration.</div>');
                 authentication.promise.resolve();
               });
             }
