@@ -331,10 +331,32 @@ if (typeof Object.create !== 'function') {
       });
     }
 
+    /*
+     * Prototype for experiment list items in the IAT Manager.
+     */
     var ExperimentListItem = {
+
+      /*
+       * The experiment's ID number in the database.
+       */
       experimentNumber : null,
+
+      /*
+       * The experiment's name.
+       */
       experimentName : null,
+
+      /*
+       * The experiment's unique short hash. This exists to obfuscate the ID
+       * number, solely to prevent user error in the event someone accidentally
+       * modifying a URI parameter.
+       */
       experimentHash : null,
+
+      /*
+       * Constructs the HTML for an experiment list item. Accepts a function to
+       * be called when the modify link is clicked.
+       */
       generateExperimentListItem : function (modifyCallback) {
         var $listItemDiv = $('<div class="experimentListItem">');
         $listItemDiv.append($('<span class="experimentNumber floatLeft">').text(this.experimentNumber));
@@ -362,8 +384,20 @@ if (typeof Object.create !== 'function') {
      * Prototype for experiment lists.
      */
     var ExperimentList = {
+
+      /*
+       * Holds list data objects received from the server.
+       */
       experiments : [],
+
+      /*
+       * Holds an authentication object as a record.
+       */
       authentication : null,
+
+      /*
+       * Generates the HTML representation of the experiment list.
+       */
       generateExperimentList : function ($contentDiv) {
         var self = this;
         var $topDiv = $('<div>');
@@ -416,8 +450,16 @@ if (typeof Object.create !== 'function') {
       }
     }
 
+    /*
+     * User administration module. This creates an HTML interface to
+     * administrate usage of the IAT Manager.
+     */
     var UserAdministration = function () {
       return {
+
+        /*
+         * Creates and appents a table of users to a given div.
+         */
         appendUserTableToDiv : function ($div) {
           sendRequest(bundleIATManagerRequestData('getUsers')).done(function (data) {
             data.users = $.map(data.users, function (element,index) {
@@ -481,19 +523,71 @@ if (typeof Object.create !== 'function') {
         }
       };
     }
+
+    /*
+     * Adds user administration to the IATManager object, (which is itself on
+     * IAT, a global object).
+     */
     IATManager.UserAdministration = UserAdministration();
 
-    //experiment constructors
+    /*
+     * Prototype of Experiment objects
+     */
     var Experiment = function () {
+
+      //Private variables
+
+      /*
+       * Outer reference to self, for the purpose of simplifying closures.
+       */
       var self;
+
+      /*
+       * An array of response objects.
+       */
       var responses = [];
+
+      /*
+       * A record of the current stimulus ID.
+       */
       var currentStimulus;
+
+      /*
+       * A variable tracking the current trial number within the current block.
+       */
       var currentTrial = 0;
+
+      /*
+       * A variable tracking the current block number.
+       */
       var currentBlock = 0;
+
+      /*
+       * A variable reflecting the configuration of whether or not to require
+       * correct answers of participants. Default is set to false.
+       */
       var fixingError = false;
+
+      /*
+       * The error latency of the current trial
+       */
       var errorLatency = 0;
+
+      /*
+       * The previous display time of the current trial
+       */
       var previousDisplayTime;
+
+      /*
+       * The begin time of the current IAT
+       */
       var beginTime;
+
+      //Private functions
+
+      /*
+       * Binds arrow keys and handles user input during the IAT.
+       */
       function bindKeys(experiment) {
         $(document).keydown(function (event) {
           var answer = checkAnswer(event.which);
@@ -545,6 +639,11 @@ if (typeof Object.create !== 'function') {
           return true;
         }
       }
+
+      /*
+       * Updates user interface to move from stimuli to stimuli, including
+       * categories.
+       */
       function stepDisplay($context) {
         currentTrial += 1;
         if (currentTrial > this.blocks[currentBlock].trials) {
@@ -609,6 +708,10 @@ if (typeof Object.create !== 'function') {
           $.jnotify(data.message);
         });
       }
+
+      /*
+       * Exports public variables and functions.
+       */
       return {
         //data
         name : null,
