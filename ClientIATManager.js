@@ -1,10 +1,23 @@
 /*!
  * WebIAT
- * This project was originally developed for Margaret Shih and Geoff Ho at the UCLA Anderson School of Management by Stephen Searles.
- * This code is licensed under the Eclipse Public License (EPL) version 1.0, which is available here: http://www.eclipse.org/legal/epl-v10.html.
+ * This project was originally developed for Margaret Shih and Geoff Ho at the
+ * UCLA Anderson School of Management by Stephen Searles.
+ * This code is licensed under the Eclipse Public License (EPL) version 1.0,
+ * which is available here: http://www.eclipse.org/legal/epl-v10.html.
+ *
+ * ClientIATManager.js
+ *
+ * This file serves as the client-side engine behind WebIAT. It generates all
+ * the HTML, produces all the effects, and handles all the communication with
+ * the server.
  *
  * Author: Stephen Searles
  * Date: May 10, 2011
+ */
+
+/*
+ * Supplies Object.create in the global context. For an explanation, see Douglas
+ * Crockford: http://javascript.crockford.com/prototypal.html
  */
 if (typeof Object.create !== 'function') {
   Object.create = function (o) {
@@ -13,26 +26,64 @@ if (typeof Object.create !== 'function') {
     return new F();
   };
 }
+
+/*
+ * This function wraps the entire WebIAT to provide a hidden local context and
+ * modularity.
+ */
 (function( window, undefined ) {
   var IAT = (function() {
 
+    /*
+     * Produces an IAT object and puts an IAT experiment interface into the
+     * passed in div. It is unauthenticated and does not contain access to
+     * manipulation functions.
+     */
     var IAT = function (experimentHash,div) {
       var experiment = requestExperimentWithHash(experimentHash,function () {
         var $experimentDiv = experiment.iat();
         div.append($experimentDiv);
       });
     }
+
+    /*
+     * This object encapsulates all the functionality of the IAT Manager.
+     */
     var IATManager = {
+
+      /*
+       * Supplies an interface allowing an experiment selector to be added to an
+       * existing div.
+       */
       appendExperimentSelectorTo : function ($domObj) {
         return generateExperimentSelector(function (selector) {
           var $list = selector.generateExperimentList($domObj);
           $domObj.append($list);
         },IATManager.authenticate());
       },
+
+      /*
+       * Forwards a request for authenticated experiment object.
+       */
       getExperimentManager : function (experimentNumber,callback,authentication) {
         return requestExperimentWithAuthentication(experimentNumber,callback,authentication);
       },
+
+      /*
+       * Handles authentication. When called, it calls to the server checking
+       * for an existing valid session, but immediately passes out a deferred
+       * authentication object. When the server returns, if the authentication
+       * is already valid, the deffered object is resolved. If no valid session
+       * is found, a login lightbox is displayed, with options to create a new
+       * account or recover a lost password.
+       */
       authenticate : function(message) {
+
+        /*
+         * This function packages authentication input from HTML form elements
+         * into an object useable by the rest of the authentication
+         * infrastructure.
+         */
         function packageAuthenticationFromDOM($username,$password,$email) {
           var authentication = {};
           var username;
@@ -66,9 +117,9 @@ if (typeof Object.create !== 'function') {
           }
           return authentication;
         }
-        
+
         /*
-         * Produces the registration form to be used on the authentication 
+         * Produces the registration form to be used on the authentication
          * lightbox.
          */
         function registerDiv($containingDiv,$currentContent) {
@@ -116,6 +167,11 @@ if (typeof Object.create !== 'function') {
             return false;
           });
         }
+
+        /*
+         * Produces a form to request a password reset for the authentication
+         * lightbox.
+         */
         function forgotDiv() {
           var $div = $('<div>');
           var $form = $('<form class="floatRight">');
@@ -202,20 +258,44 @@ if (typeof Object.create !== 'function') {
         });
         return authentication;
       },
+
+      /*
+       * Verifies with the server if a valid authenticated session exists.
+       */
       verifyAuthentication : function() {
         return sendRequest(bundleIATManagerRequestData('verifyAuthentication'));
       }
     };
+
+    /*
+     * Adds IATManager to the IAT superglobal and transforms the name itself
+     * into a function that, while inheriting elements from the prototype above,
+     * when called, creates a new instance of that object. Essentially, a
+     * constructor.
+     */
     IAT.IATManager = function () {
       return Object.create(IATManager);
     }
-    //Server Upload Connection functions
+
+    /*
+     * Bundles an IAT server-side request with data. requestName must be a valid
+     * function name for the server side.
+     */
     function bundleIATManagerRequestData(requestName, dataObject) {
       return {
         "requestName":requestName,
         "data":dataObject
       };
     }
+
+    /*
+     * Sends a bundled request to the server. See 'bundleIATManagerRequestData'.
+     * sendRequest handles general errors returned by the server-side, such as
+     * invalid authentication or insufficient permission.
+     *
+     * sendRequest wraps all requests in a deferred object and returns that
+     * immediately.
+     */
     function sendRequest(requestObject,recursion) {
       var deferred = $.Deferred();
       if (!recursion) recursion = 0;
@@ -237,6 +317,11 @@ if (typeof Object.create !== 'function') {
       });
       return deferred;
     }
+
+    /*
+     * Sends a synchronous request to the server and returns the raw result. It
+     * does not handle any errors and should be used minimally.
+     */
     function sendSynchronousRequest(requestObject) {
       return $.ajax(IAT.managerFilePath,{
         async: false,
