@@ -365,8 +365,11 @@ if (typeof Object.create !== 'function') {
       }
     }
 
+    /*
+     * Prototype for experiment lists.
+     */
     var ExperimentList = {
-      array : [],
+      experiments : [],
       authentication : null,
       generateExperimentList : function ($contentDiv) {
         var self = this;
@@ -406,10 +409,10 @@ if (typeof Object.create !== 'function') {
             }(self.authentication,experimentListItem)));
           });
         }));
-        for (var experiment in this.array) {
-          $list.append(this.array[experiment].generateExperimentListItem(function (authentication,experimentListItem) {
+        for (var experiment in this.experiments) {
+          $list.append(this.experiments[experiment].generateExperimentListItem(function (authentication,experimentListItem) {
             return listItemCallback.apply(this,[authentication,experimentListItem]);
-          }(self.authentication,this.array[experiment])
+          }(self.authentication,this.experiments[experiment])
             ));
         }
         $list.sortable({
@@ -1002,7 +1005,7 @@ if (typeof Object.create !== 'function') {
               experiment.experimentHash = data[dataExp].hash;
               experiment.experimentName = data[dataExp].name;
               experiment.authentication = authentication;
-              experiments.array[dataExp] = experiment;
+              experiments.experiments[dataExp] = experiment;
             }
             experimentListPromise.resolve();
           });
