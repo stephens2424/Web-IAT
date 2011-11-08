@@ -555,11 +555,10 @@ if (typeof Object.create !== 'function') {
             return;
           }
         }
-        var experiment = this;
         function replaceCategoryNameForPos(pos) {
           var selector = "#iatBlockPos" + pos;
-          if (experiment.blocks[currentBlock].components[pos]) {
-            $(selector,$context).text(experiment.stimulusCategories[experiment.blocks[currentBlock].components[pos].category].name);
+          if (self.blocks[currentBlock].components[pos]) {
+            $(selector,$context).text(self.stimulusCategories[self.blocks[currentBlock].components[pos].category].name);
           } else {
             $(selector,$context).text('');
           }
