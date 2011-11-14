@@ -21,4 +21,4 @@
 	url = git@github.com:stephens2424/selectWithOther.jeditable.git
 [submodule "DataTables"]
 	path = scripts/DataTables
-	url = https://github.com/DataTables/DataTables.git
+	url = git://github.com/DataTables/DataTables.git
