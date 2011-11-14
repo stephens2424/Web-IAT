@@ -5,8 +5,8 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link rel="stylesheet" type="text/css" href="../jquery.jnotify/css/jquery.jnotify-bottom.css" />
     <link rel="stylesheet" type="text/css" href="../css/dataTableStyle.css" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript"></script>
-    <!-- <script type="text/javascript" src="../jquery.js"></script>-->
+    <script src="../scripts/require-jquery.js" data-main="../scripts/useradmin.js"></script>
+    <!--
     <script type="text/javascript" src="../jquery-ui.js"></script>
     <script type="text/javascript" src="../DataTables/media/js/jquery.dataTables.js"></script>
     <script type="text/javascript" src="../jquery.jnotify/lib/jquery.jnotify.js"></script>
@@ -20,6 +20,7 @@
     <script type="text/javascript" src="../selectWithOther.jeditable/selectWithOther.jeditable.js"></script>
     <script type="text/javascript" src="../ClientIATManager.js"></script>
     <script type="text/javascript" src="../configuration/config.js"></script>
+    -->
     <link rel="stylesheet" type="text/css" href="index.css"/>
   </head>
   <body>
@@ -27,10 +28,7 @@
       <table id="userTable"></table>
     </div>
     <script type="text/javascript">
-      $(function () {
-        var iatManager = IAT.IATManager();
-        iatManager.UserAdministration.appendUserTableToDiv($('#userTable'));
-      });
+      
     </script>
   </body>
 </html>

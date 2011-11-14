@@ -1,7 +1,7 @@
 <?php
 
 require_once 'KLogger/src/KLogger.php';
-require_once 'configuration/config.php';
+require_once '../configuration/config.php';
 date_default_timezone_set("UTC");
 $_log = new KLogger('..' . DIRECTORY_SEPARATOR . 'logs','default', KLogger::INFO);
 

@@ -28,7 +28,7 @@ CREATE TABLE `blockComponents` (
   `category` int(11) DEFAULT NULL,
   `position` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=364 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=342 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -54,7 +54,7 @@ CREATE TABLE `blocks` (
   `description` text,
   `experiment` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=120 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=113 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -84,7 +84,7 @@ CREATE TABLE `categoryPairs` (
   UNIQUE KEY `positiveCategory` (`positiveCategory`),
   UNIQUE KEY `negativeCateogry` (`negativeCategory`),
   UNIQUE KEY `associatedPair` (`associatedPair`)
-) ENGINE=InnoDB AUTO_INCREMENT=45 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -115,7 +115,7 @@ CREATE TABLE `experiments` (
   `errorNotifications` tinyint(1) NOT NULL DEFAULT '0',
   `autoBalance` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -143,7 +143,7 @@ CREATE TABLE `responses` (
   `response_time` int(11) DEFAULT NULL,
   `timeShown` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`response_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -152,6 +152,7 @@ CREATE TABLE `responses` (
 
 LOCK TABLES `responses` WRITE;
 /*!40000 ALTER TABLE `responses` DISABLE KEYS */;
+INSERT INTO `responses` VALUES (1,1,6,'39',-2147483648,'0000-00-00 00:00:00'),(2,1,4,'39',-2147483648,'0000-00-00 00:00:00'),(3,1,8,'39',-2147483648,'0000-00-00 00:00:00'),(4,1,6,'39',-2147483648,'0000-00-00 00:00:00'),(5,1,2,'37',-2147483648,'0000-00-00 00:00:00'),(6,1,2,'37',-2147483648,'0000-00-00 00:00:00'),(7,1,1,'39',-2147483648,'0000-00-00 00:00:00');
 /*!40000 ALTER TABLE `responses` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -195,7 +196,7 @@ CREATE TABLE `stimulusCategories` (
   `experiment` int(11) DEFAULT NULL,
   `inPair` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=89 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=85 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -222,7 +223,7 @@ CREATE TABLE `subjects` (
   `score` double DEFAULT NULL,
   `experiment` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -231,6 +232,7 @@ CREATE TABLE `subjects` (
 
 LOCK TABLES `subjects` WRITE;
 /*!40000 ALTER TABLE `subjects` DISABLE KEYS */;
+INSERT INTO `subjects` VALUES (1,'0000-00-00 00:00:00',NULL,NULL,21);
 /*!40000 ALTER TABLE `subjects` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -274,4 +276,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2011-11-08  0:28:40
+-- Dump completed on 2011-11-14 12:43:32

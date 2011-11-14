@@ -11,8 +11,8 @@ session_set_cookie_params(1800);
 session_start();
 
 require_once '../configuration/config.php';
-require_once '../connectDatabase.php';
-require_once '../GlobalKLogger.php';
+require_once '../server/connectDatabase.php';
+require_once '../server/GlobalKLogger.php';
 
 $iatManager = new IATManager;
 $requestObject = $_POST['data'];
