@@ -476,53 +476,65 @@ define(["IAT",
           return $listTopDiv;
         }
         function generateFlowList(stimulusCategories,blocks) {
-          var $flowList = $('<ul class="flowList">');
+          var $flowList = $('<ul class="flowList" id="flowList">');
           for (var i in blocks) {
-            var $block = $('<li class="flowListItem">');
-            var $left = $('<div class="flowCategoryLeft">');
-            var $right = $('<div class="flowCategoryRight">');
-            if (blocks[i].components[1]) {
-              $left.append($('<div>').append(stimulusCategories[blocks[i].components['1'].category].name));
-            }
-            if (blocks[i].components[2]) {
-              $right.append($('<div>').append(stimulusCategories[blocks[i].components['2'].category].name));
-            }
-            if (blocks[i].components[3]) {
-              $left.append($('<div>').append(stimulusCategories[blocks[i].components['3'].category].name));
-            }
-            if (blocks[i].components[4]) {
-              $right.append($('<div>').append(stimulusCategories[blocks[i].components['4'].category].name));
-            }
-            var $blockCenter = $('<div class="flowCategoryText">');
-            $blockCenter.append($('<div>').append($('<span>'+blocks[i].description+'</span>').editable(function (blockId) {
-              return function (value) {
-                IAT.sendRequest(IAT.bundleIATManagerRequestData('setBlockProperties',{
-                  'block':blockId,
-                  'description':value
-                }));
-                return value;
-              }
-            }(blocks[i].id),{
-              style:"display:inline"
-            })));
-            $blockCenter.append('Trials: ').append($('<span>'+blocks[i].trials+'</span>').editable(function (blockId) {
-              return function (value) {
-                IAT.sendRequest(IAT.bundleIATManagerRequestData('setBlockProperties',{
-                  'block':blockId,
-                  'trials':value
-                }));
-                return value;
-              }
-            }(blocks[i].id),{
-              style:"display:inline"
-            }));
-            $block.append($left).append($right).append($blockCenter);
-            $flowList.append($block);
+            $flowList.append(generateBlock(blocks[i],false,stimulusCategories));
           }
           return $flowList;
         }
+        function generateBlock(blockData,instruction,stimulusCategories) {
+          var $block = $('<li class="flowListItem">');
+          var $left = $('<div class="flowCategoryLeft">');
+          var $right = $('<div class="flowCategoryRight">');
+          if (blockData.components[1]) {
+            $left.append($('<div>').append(stimulusCategories[blockData.components['1'].category].name));
+          }
+          if (blockData.components[2]) {
+            $right.append($('<div>').append(stimulusCategories[blockData.components['2'].category].name));
+          }
+          if (blockData.components[3]) {
+            $left.append($('<div>').append(stimulusCategories[blockData.components['3'].category].name));
+          }
+          if (blockData.components[4]) {
+            $right.append($('<div>').append(stimulusCategories[blockData.components['4'].category].name));
+          }
+          var $blockCenter = $('<div class="flowCategoryText">');
+          $blockCenter.append($('<div>').append($('<span>'+blockData.description+'</span>').editable(function (blockId) {
+            return function (value) {
+              IAT.sendRequest(IAT.bundleIATManagerRequestData('setBlockProperties',{
+                'block':blockId,
+                'description':value
+              }));
+              return value;
+            }
+          }(blockData.id),{
+            style:"display:inline"
+          })));
+          $blockCenter.append('Trials: ').append($('<span>'+blockData.trials+'</span>').editable(function (blockId) {
+            return function (value) {
+              IAT.sendRequest(IAT.bundleIATManagerRequestData('setBlockProperties',{
+                'block':blockId,
+                'trials':value
+              }));
+              return value;
+            }
+          }(blockData.id),{
+            style:"display:inline"
+          }));
+          $block.append($left).append($right).append($blockCenter);
+          return $block;
+        }
         function generateFlowSidePanel() {
           var $sidePanel = $('<div class="flowSidePanel">');
+          var $addInstruction = $('<div>').append($('<button>Add instruction block</button>').click(function () {
+            $('#flowList').append($('<li class="flowListItem">').append($('<div class="flowCategoryText">Click here to edit</div>').editable(function (value,settings) {
+              $.jnotify("Saving instructions not yet implemented.");
+              return value;
+            },{
+              type:'textarea',
+              submit:'Save'
+            })));
+          }));
           var $balance = $('<div>').append($('<label><input type="checkbox" />Auto-balance</label>').change(function() {
             IAT.sendRequest(IAT.bundleIATManagerRequestData('setExperimentProperties',{
               'autoBalance':$(this).find('input').prop('checked'),
@@ -561,7 +573,7 @@ define(["IAT",
           if (experimentManager.autoBalance === '1') {
             $('input',$balance).prop('checked',true);
           }
-          $sidePanel.append($balance).append($answerChecking).append($errorNotifications);
+          $sidePanel.append($addInstruction).append($balance).append($answerChecking).append($errorNotifications);
           return $sidePanel;
         }
         function generateSettingsDiv(experiment) {
