@@ -5,6 +5,33 @@ define(["IAT",
         "../scripts/jquery.jeditable/jquery.jeditable.js",
         "../scripts/selectWithOther.jeditable/selectWithOther.jeditable.js"
       ],function (IAT) {
+
+  /*
+   * This replaces the default sendRequest method defined in CoreIAT with a more
+   * complex one that can handle reauthentication of an expired
+   */
+  IAT.sendRequest = function(requestObject,recursion) {
+      var deferred = $.Deferred();
+      if (!recursion) recursion = 0;
+      else if (recursion > 3) return undefined;
+      $.post(IAT.managerFilePath,requestObject).done(function (receivedData,textStatus,jqXHR) {
+        var data = JSON.parse(receivedData);
+        if (data && data.errorCode === '1003') {
+          var authentication = IATManager.authenticate("Your authentication is invalid or has expired. Please log in again.");
+          authentication.promise.done(function () {
+            IAT.sendRequest(requestObject,recursion+1).done(function (data) {
+              deferred.resolveWith(this,[data])
+            });
+          });
+        } else if (data && data.errorCode === '1004') {
+          $.jnotify("You do not have sufficient permission for the attempted function.");
+        } else {
+          deferred.resolveWith(this,[data]);
+        }
+      });
+      return deferred;
+    }
+
   /*
  * This object encapsulates all the functionality of the IAT Manager.
  */
@@ -346,7 +373,7 @@ define(["IAT",
       return $topDiv;
     }
   }
-  
+
       var ExperimentManager = function () {
     var stimuliTableDomObj;
     var changedItems = [];
@@ -681,7 +708,7 @@ define(["IAT",
     };
   }
   ExperimentManager = ExperimentManager();
-  
+
     function requestExperimentWithAuthentication(experimentNumber,callback,authentication) {
       var experimentPromise = $.Deferred().done(callback);
       var experiment = Object.create(IAT.Experiment);
@@ -701,7 +728,7 @@ define(["IAT",
       });
       return experiment;
     }
-    
+
         var DISCLOSURE_HEADER_STRING = '<span class="disclosure"><img src="disclosureTriangle.png"></span>';
     function generateExperimentSelector(callback,authentication) {
       var experiments = Object.create(ExperimentList);

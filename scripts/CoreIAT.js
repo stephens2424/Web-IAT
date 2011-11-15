@@ -79,14 +79,7 @@ define(["../configuration/config"],function (config) {
       else if (recursion > 3) return undefined;
       $.post(config.managerFilePath,requestObject).done(function (receivedData,textStatus,jqXHR) {
         var data = JSON.parse(receivedData);
-        if (data && data.errorCode === '1003') {
-          var authentication = IATManager.authenticate("Your authentication is invalid or has expired. Please log in again.");
-          authentication.promise.done(function () {
-            sendRequest(requestObject,recursion+1).done(function (data) {
-              deferred.resolveWith(this,[data])
-            });
-          });
-        } else if (data && data.errorCode === '1004') {
+        if (data && (data.errorCode === '1003' || data.errorCode == '1004')) {
           $.jnotify("You do not have sufficient permission for the attempted function.");
         } else {
           deferred.resolveWith(this,[data]);
