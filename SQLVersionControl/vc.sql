@@ -53,6 +53,7 @@ CREATE TABLE `blocks` (
   `trials` int(11) DEFAULT NULL,
   `description` text,
   `experiment` int(11) NOT NULL,
+  `instruction` int(1) DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=113 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -63,7 +64,7 @@ CREATE TABLE `blocks` (
 
 LOCK TABLES `blocks` WRITE;
 /*!40000 ALTER TABLE `blocks` DISABLE KEYS */;
-INSERT INTO `blocks` VALUES (106,1,'Block 1, Practice',21),(107,1,'Block 2, Practice',21),(108,1,'Block 3, Practice',21),(109,1,'Block 4, Test',21),(110,1,'Block 5, Practice',21),(111,1,'Block 6, Practice',21),(112,1,'Block 7, Test',21);
+INSERT INTO `blocks` VALUES (106,1,'Block 1, Practice',21,0),(107,1,'Block 2, Practice',21,0),(108,1,'Block 3, Practice',21,0),(109,1,'Block 4, Test',21,0),(110,1,'Block 5, Practice',21,0),(111,1,'Block 6, Practice',21,0),(112,1,'Block 7, Test',21,0);
 /*!40000 ALTER TABLE `blocks` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -167,7 +168,6 @@ CREATE TABLE `stimuli` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `experiment` int(11) NOT NULL,
   `word` text,
-  `correct_response` int(11) DEFAULT NULL,
   `stimulusCategory` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
@@ -179,7 +179,7 @@ CREATE TABLE `stimuli` (
 
 LOCK TABLES `stimuli` WRITE;
 /*!40000 ALTER TABLE `stimuli` DISABLE KEYS */;
-INSERT INTO `stimuli` VALUES (1,21,'Wonderful',NULL,81),(2,21,'Horrible',NULL,82),(3,21,'That thing',NULL,83),(4,21,'That other thing',NULL,84),(5,21,'Terrific',NULL,81),(6,21,'Crappy',NULL,82),(7,21,'This one',NULL,83),(8,21,'This other one',NULL,84);
+INSERT INTO `stimuli` VALUES (1,21,'Wonderful',81),(2,21,'Horrible',82),(3,21,'That thing',83),(4,21,'That other thing',84),(5,21,'Terrific',81),(6,21,'Crappy',82),(7,21,'This one',83),(8,21,'This other one',84);
 /*!40000 ALTER TABLE `stimuli` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -276,4 +276,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2011-11-14 17:21:55
+-- Dump completed on 2011-11-14 20:23:00

@@ -375,9 +375,6 @@ class IATManager {
     if ($requestObject['word']) {
       $set .= ",`word`='" . $requestObject['word'] . "'";
     }
-    if ($requestObject['correct_response']) {
-      $set .= ",`correct_response`=" . $requestObject['correct_response'];
-    }
     $query .= $set;
     $result = mysql_query($query);
     if ($result) {
