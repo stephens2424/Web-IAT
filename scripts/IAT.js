@@ -10,7 +10,7 @@ define(["CoreIAT","jquery.jnotify/lib/jquery.jnotify"],function (CoreIAT) {
         div.append($experimentDiv);
       });
     }
-  
+
     /*
      * Prototype of Experiment objects
      */
@@ -33,14 +33,7 @@ define(["CoreIAT","jquery.jnotify/lib/jquery.jnotify"],function (CoreIAT) {
        */
       var currentStimulus;
 
-      /*
-       * A variable tracking the current trial number within the current block.
-       */
       var currentTrial = 0;
-
-      /*
-       * A variable tracking the current block number.
-       */
       var currentBlock = 0;
 
       /*
@@ -63,6 +56,11 @@ define(["CoreIAT","jquery.jnotify/lib/jquery.jnotify"],function (CoreIAT) {
        * The begin time of the current IAT
        */
       var beginTime;
+
+      var stimuli =[];
+      var currentStimuli = [];
+      var iatDoms = [];
+      var iatDependencies = [];
 
       //Private functions
 
@@ -120,63 +118,39 @@ define(["CoreIAT","jquery.jnotify/lib/jquery.jnotify"],function (CoreIAT) {
           return true;
         }
       }
-
-      /*
-       * Updates user interface to move from stimuli to stimuli, including
-       * categories.
-       */
-      function stepDisplay($context) {
-        currentTrial += 1;
-        if (currentTrial > this.blocks[currentBlock].trials) {
-          currentTrial = 1;
-          currentBlock += 1;
-          if (!this.blocks[currentBlock]) {
-            endIAT();
-            return;
+      var stepDisplay;
+      var stepDisplayDeferred = $.Deferred();
+      var initialize = function initialize() {
+        require(['IATStyleLoader'].concat(this.stylePaths),function (IATStyleLoader) {
+          var styleModules = Array.prototype.slice.call(arguments).slice(1);
+          /*
+           * Updates user interface to move from stimuli to stimuli, including
+           * categories.
+           */
+          stepDisplay = function stepDisplay($context) {
+            currentTrial += 1;
+            if (currentTrial > currentBlock.trials) {
+              currentTrial = 1;
+              currentBlock += 1;
+              if (!this.blocks[currentBlock]) {
+                endIAT();
+                return;
+              }
+            }
+            var styleData = this.blocks[currentBlock].style;
+            var $styleDeferred = IATStyleLoader.loadStyle(styleData.prefix);
+            var styleModule = $.grep(styleModules,function(elem,idx) {
+              return elem.id == styleData.id;
+            });
+            styleModule = styleModule[0];
+            $styleDeferred.done(function () {
+              var $populatedStyle = styleModule.populateStyle(self.stimulusCategories,self.blocks[currentBlock],$styleDeferred.loadedStyle);
+              previousDisplayTime = new Date().getTime();
+              $('#iat').html($populatedStyle);
+            });
           }
-        }
-        function replaceCategoryNameForPos(pos) {
-          var selector = "#iatBlockPos" + pos;
-          if (self.blocks[currentBlock].components[pos]) {
-            $(selector,$context).text(self.stimulusCategories[self.blocks[currentBlock].components[pos].category].name);
-          } else {
-            $(selector,$context).text('');
-          }
-        }
-        function currentCategories(experiment) {
-          var categories = [];
-          $.each(experiment.blocks[currentBlock].components,function (index,component) {
-            categories.push(experiment.stimulusCategories[component.category]);
-          });
-          return categories;
-        }
-        currentStimulus = randomStimulusFromCategories(currentCategories(this));
-        replaceCategoryNameForPos('1');
-        replaceCategoryNameForPos('2');
-        replaceCategoryNameForPos('3');
-        replaceCategoryNameForPos('4');
-        previousDisplayTime = new Date().getTime();
-        $('#iatStimulus',$context).text(currentStimulus.word);
-      }
-      function randomStimulusFromCategories(categories) {
-        var stimuli = [];
-        var totalOptions;
-        $.each(categories,function (index,category) {
-          stimuli = stimuli.concat(category.stimuli);
+          stepDisplayDeferred.resolve();
         });
-        totalOptions = stimuli.length;
-        var choiceCountdown = Math.floor(Math.random() * totalOptions);
-        var chosenStimulus;
-        $.each(categories,function (index,category) {
-          if (choiceCountdown >= category.stimuli.length) {
-            choiceCountdown -= category.stimuli.length;
-            return true;
-          } else {
-            chosenStimulus = category.stimuli[choiceCountdown];
-            return false;
-          }
-        });
-        return chosenStimulus;
       }
       function endIAT() {
         $.jnotify("End reached. Moving to end URLs not implemented.");
@@ -201,26 +175,18 @@ define(["CoreIAT","jquery.jnotify/lib/jquery.jnotify"],function (CoreIAT) {
         iat : function() {
           self = this;
           var $iat = $('<div id="iat">');
-          var $leftDiv = $('<div class="iatBlockLeft">');
-          var $rightDiv = $('<div class="iatBlockRight">');
-          var $div1 = $('<div id="iatBlockPos1">');
-          var $div2 = $('<div id="iatBlockPos2">');
-          var $div3 = $('<div id="iatBlockPos3">');
-          var $div4 = $('<div id="iatBlockPos4">');
-          $leftDiv.append($div1).append($div3);
-          $rightDiv.append($div2).append($div4);
-          var $centerDiv = $('<div id="iatStimulus" class="iatStimulus">');
-          $iat.append($leftDiv).append($rightDiv);
-          $iat.append($centerDiv);
-          stepDisplay.apply(this,$iat);
-          beginTime = previousDisplayTime;
           bindKeys(this,$iat);
+          stepDisplayDeferred.done(function () {
+            stepDisplay.apply(self,$iat);
+          });
+          initialize.apply(self);
+          beginTime = previousDisplayTime;
           return $iat;
         }
       }
     }
     IAT.Experiment = Experiment();
-  
+
   function requestExperiment(experimentNumber,callback) {
     var experimentPromise = $.Deferred().done(callback);
     var experiment = Object.create(IAT.Experiment);
@@ -229,6 +195,14 @@ define(["CoreIAT","jquery.jnotify/lib/jquery.jnotify"],function (CoreIAT) {
     experiment.authentication = null;
     CoreIAT.sendRequest(CoreIAT.bundleIATManagerRequestData('requestExperiment',experimentNumber,null)).done(function (data) {
       $.extend(experiment,data);
+      var stylePaths = [];
+      var styles = [];
+      $.each(experiment.blocks,function (idx,elem) {
+        stylePaths.push(CoreIAT.IATStyleBaseURL + elem.style.filePath + '/' + elem.style.filePath + '.js');
+        styles.push(elem.style);
+      });
+      experiment.styles = styles;
+      experiment.stylePaths = stylePaths;
       experimentPromise.resolve();
     });
     return experiment;
@@ -238,9 +212,9 @@ define(["CoreIAT","jquery.jnotify/lib/jquery.jnotify"],function (CoreIAT) {
     var data = JSON.parse(receivedData.responseText);
     return requestExperiment(data.experimentNumber,callback);
   }
-  
+
   return $.extend(IAT,CoreIAT);
-  
+
 });
 
 

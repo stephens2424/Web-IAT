@@ -1,0 +1,27 @@
+#GreenwaldStimulus_iatStimulus,#GreenwaldStimulus_iatBlockLeft,#GreenwaldStimulus_iatBlockRight {
+  font-size: x-large;
+  font-family: helvetica;
+  line-height: 35px;
+
+}
+#GreenwaldStimulus_iatBlockLeft,#GreenwaldStimulus_iatBlockRight {
+  line-height: 50px;
+}
+#GreenwaldStimulus_iatStimulus {
+  text-align: center;
+  position: fixed;
+  top: 40%;
+  left: 30%;
+  right: 30%;
+}
+#GreenwaldStimulus_iatBlockLeft {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+}
+#GreenwaldStimulus_iatBlockRight {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  text-align: right;
+}

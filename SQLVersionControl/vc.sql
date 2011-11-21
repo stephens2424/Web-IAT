@@ -42,6 +42,33 @@ INSERT INTO `blockComponents` VALUES (320,106,81,1),(321,106,82,2),(322,107,83,1
 UNLOCK TABLES;
 
 --
+-- Table structure for table `blockStyles`
+--
+
+DROP TABLE IF EXISTS `blockStyles`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `blockStyles` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` text,
+  `filePath` text,
+  `positions` int(11) DEFAULT NULL,
+  `prefix` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `blockStyles`
+--
+
+LOCK TABLES `blockStyles` WRITE;
+/*!40000 ALTER TABLE `blockStyles` DISABLE KEYS */;
+INSERT INTO `blockStyles` VALUES (1,'Greenwald Stimulus','GreenwaldStimulus',5,'GreenwaldStimulus');
+/*!40000 ALTER TABLE `blockStyles` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `blocks`
 --
 
@@ -53,7 +80,7 @@ CREATE TABLE `blocks` (
   `trials` int(11) DEFAULT NULL,
   `description` text,
   `experiment` int(11) NOT NULL,
-  `instruction` int(1) DEFAULT '0',
+  `blockStyle` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=113 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -64,7 +91,7 @@ CREATE TABLE `blocks` (
 
 LOCK TABLES `blocks` WRITE;
 /*!40000 ALTER TABLE `blocks` DISABLE KEYS */;
-INSERT INTO `blocks` VALUES (106,1,'Block 1, Practice',21,0),(107,1,'Block 2, Practice',21,0),(108,1,'Block 3, Practice',21,0),(109,1,'Block 4, Test',21,0),(110,1,'Block 5, Practice',21,0),(111,1,'Block 6, Practice',21,0),(112,1,'Block 7, Test',21,0);
+INSERT INTO `blocks` VALUES (106,1,'Block 1, Practice',21,1),(107,1,'Block 2, Practice',21,1),(108,1,'Block 3, Practice',21,1),(109,1,'Block 4, Test',21,1),(110,1,'Block 5, Practice',21,1),(111,1,'Block 6, Practice',21,1),(112,1,'Block 7, Test',21,1);
 /*!40000 ALTER TABLE `blocks` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -276,4 +303,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2011-11-14 20:26:53
+-- Dump completed on 2011-11-20 14:15:25

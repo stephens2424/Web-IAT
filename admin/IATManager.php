@@ -3,7 +3,7 @@
  * WebIAT
  * This project was originally developed for Margaret Shih and Geoff Ho at the UCLA Anderson School of Management by Stephen Searles.
  * This code is licensed under the Eclipse Public License (EPL) version 1.0, which is available here: http://www.eclipse.org/legal/epl-v10.html.
- * 
+ *
  * Author: Stephen Searles
  * Date: May 10, 2011
  */
@@ -25,9 +25,9 @@ echo $iatManager->$requestName($requestObject);
  * @author Stephen Sealres
  */
 class IATManager {
-  
+
   public $databaseConnection;
-  
+
   function __construct() {
     $this->databaseConnection = getDatabaseConnection();
   }
@@ -127,6 +127,10 @@ class IATManager {
       $query = "SELECT * FROM `blockComponents` WHERE `block`=$id";
       $result = mysql_query($query,  $this->databaseConnection);
       $block['components'] = assocArrayFromResult($result,'position');
+      $styleId = $block['blockStyle'];
+      $query = "SELECT * FROM `blockStyles` WHERE `id`=$styleId";
+      $result = mysql_query($query,  $this->databaseConnection);
+      $block['style'] = objectFromResult($result);
     }
     return $blocks;
   }
@@ -240,7 +244,7 @@ class IATManager {
   }
   function copyExperiment() {
     if (!$this->_verifyAuthentication()) return $this->_createAuthenticationFailedReturnValue(__FUNCTION__);
-    
+
   }
   function setExperimentProperties($requestObject) {
     if (!$this->_verifyAuthentication()) return $this->_createAuthenticationFailedReturnValue(__FUNCTION__);
@@ -429,29 +433,29 @@ class IATManager {
     return json_encode(array('success'=>true,'message'=>"Responses recorded."));
   }
   function insertStimulus() {
-    
+
   }
   function moveStimulus() {
-    
+
   }
-  
+
   function addStimulusGroup() {
-    
+
   }
   function removeStimulusGroup() {
-    
+
   }
   function insertStimulusGroup() {
-    
+
   }
   function moveStimulusGroup() {
-    
+
   }
   function copyStimulusGroup() {
-    
+
   }
   function setStimulusGroupProperties() {
-    
+
   }
   private function _addStimulusCategory($experiment,$name = null) {
     $query = "INSERT INTO `stimulusCategories` SET ";
