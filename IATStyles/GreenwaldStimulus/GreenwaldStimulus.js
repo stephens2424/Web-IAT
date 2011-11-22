@@ -1,4 +1,11 @@
 define([],function () {
+  var responseDeferred,currentBlock,currentStimulus,fixingError,errorLatency,previousDisplayTime;
+
+  function pushResponse(response) {
+    responseDeferred.response = response;
+    responseDeferred.resolve();
+  }
+
   var currentCategories = function (stimulusCategories,currentBlock) {
     var categories = {};
     $.each(currentBlock.components,function (index,component) {
@@ -39,25 +46,85 @@ define([],function () {
     });
     return chosenStimulus;
   }
-  var replaceAtPos = function (pos) {
-    if (pos === 0) {
-      replaceCategoryNameForPos(pos)
-    } else {
-
+  /*
+   * Binds arrow keys and handles user input during the IAT.
+   */
+  function bindKeys(experiment,stepDisplay) {
+    $(document).keydown(function (event) {
+      var answer = checkAnswer(event.which);
+      if (answer) {
+        pushResponse({
+          stimulus: currentStimulus.id,
+          response: event.which,
+          response_time: fixingError ? errorLatency : event.timeStamp - previousDisplayTime,
+          timeShown: previousDisplayTime
+        });
+        fixingError = false;
+        stepDisplay.apply(experiment);
+      } else if (answer === false) {
+        fixingError = true;
+        errorLatency = event.timeStamp - previousDisplayTime;
+        if (experiment.errorNotifications === '1') {
+          $.jnotify("Incorrect");
+        }
+      }
+    });
+    function checkAnswer(key) {
+      if (experiment.checkAnswers === "1") {
+        var leftTop;
+        var leftBottom;
+        var rightTop;
+        var rightBottom;
+        if (currentBlock.components['1']) {
+          leftTop = currentBlock.components['1'].category;
+        }
+        if (currentBlock.components['3']) {
+          leftBottom = currentBlock.components['3'].category;
+        }
+        if (currentBlock.components['2']) {
+          rightTop = currentBlock.components['2'].category;
+        }
+        if (currentBlock.components['4']) {
+          rightBottom = currentBlock.components['4'].category;
+        }
+        if (key === 37 && (currentStimulus.stimulusCategory === leftTop || currentStimulus.stimulusCategory === leftBottom)) {
+          return true;
+        } else if (key === 39 && (currentStimulus.stimulusCategory === rightTop || currentStimulus.stimulusCategory === rightBottom)) {
+          return true;
+        } else if (key !== 37 && key != 39) {
+          return null;
+        } else {
+          return false;
+        }
+      }
+      return true;
     }
   }
   return {
     name : "Greenwald Stimulus",
     id : 1,
-    populateStyle : function (categories,currentBlock,$style) {
+    prepare : function (experiment,stepDisplay) {
+      bindKeys(experiment,stepDisplay);
+    },
+    populateStyle : function (categories,_currentBlock,$style) {
+      currentBlock = _currentBlock;
       categories = currentCategories(categories,currentBlock);
-      var stimulus = randomStimulusFromCategories(categories).word;
+      currentStimulus = randomStimulusFromCategories(categories);
       $('#iatBlockPos1',$style).text(categories.categoryOne ? categories.categoryOne.name : '');
       $('#iatBlockPos2',$style).text(categories.categoryTwo ? categories.categoryTwo.name : '');
       $('#iatBlockPos3',$style).text(categories.subCategoryOne ? categories.subCategoryOne.name : '');
       $('#iatBlockPos4',$style).text(categories.subCategoryTwo ? categories.subCategoryTwo.name : '');
-      $('#GreenwaldStimulus_iatStimulus',$style).text(stimulus);
+      $('#GreenwaldStimulus_iatStimulus',$style).text(currentStimulus.word);
       return $style;
+    },
+    displayIn : function ($div,$iat) {
+      previousDisplayTime = new Date().getTime();
+      $iat.html($div);
+      return previousDisplayTime;
+    },
+    getResponse : function () {
+      responseDeferred = $.Deferred();
+      return responseDeferred;
     }
   }
 });

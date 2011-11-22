@@ -27,126 +27,64 @@ define(["CoreIAT","jquery.jnotify/lib/jquery.jnotify"],function (CoreIAT) {
        * An array of response objects.
        */
       var responses = [];
+      var beginTime;
 
       /*
        * A record of the current stimulus ID.
        */
-      var currentStimulus;
 
       var currentTrial = 0;
-      var currentBlock = 0;
+      var currentBlock,remainingBlocks;
 
-      /*
-       * A variable reflecting the configuration of whether or not to require
-       * correct answers of participants. Default is set to false.
-       */
-      var fixingError = false;
+      var styleModules = [];
 
-      /*
-       * The error latency of the current trial
-       */
-      var errorLatency = 0;
-
-      /*
-       * The previous display time of the current trial
-       */
-      var previousDisplayTime;
-
-      /*
-       * The begin time of the current IAT
-       */
-      var beginTime;
-
-      var stimuli =[];
-      var currentStimuli = [];
-      var iatDoms = [];
-      var iatDependencies = [];
 
       //Private functions
 
-      /*
-       * Binds arrow keys and handles user input during the IAT.
-       */
-      function bindKeys(experiment) {
-        $(document).keydown(function (event) {
-          var answer = checkAnswer(event.which);
-          if (answer) {
-            responses.push({
-              stimulus: currentStimulus.id,
-              response: event.which,
-              response_time: fixingError ? errorLatency : event.timeStamp - previousDisplayTime,
-              timeShown: previousDisplayTime
-            });
-            fixingError = false;
-            stepDisplay.apply(experiment);
-          } else if (answer === false) {
-            fixingError = true;
-            errorLatency = event.timeStamp - previousDisplayTime;
-            if (self.errorNotifications === '1') {
-              $.jnotify("Incorrect");
-            }
-          }
-        });
-        function checkAnswer(key) {
-          if (experiment.checkAnswers === "1") {
-            var leftTop;
-            var leftBottom;
-            var rightTop;
-            var rightBottom;
-            if (experiment.blocks[currentBlock].components['1']) {
-              leftTop = experiment.blocks[currentBlock].components['1'].category;
-            }
-            if (experiment.blocks[currentBlock].components['3']) {
-              leftBottom = experiment.blocks[currentBlock].components['3'].category;
-            }
-            if (experiment.blocks[currentBlock].components['2']) {
-              rightTop = experiment.blocks[currentBlock].components['2'].category;
-            }
-            if (experiment.blocks[currentBlock].components['4']) {
-              rightBottom = experiment.blocks[currentBlock].components['4'].category;
-            }
-            if (key === 37 && (currentStimulus.stimulusCategory === leftTop || currentStimulus.stimulusCategory === leftBottom)) {
-              return true;
-            } else if (key === 39 && (currentStimulus.stimulusCategory === rightTop || currentStimulus.stimulusCategory === rightBottom)) {
-              return true;
-            } else if (key !== 37 && key != 39) {
-              return null;
-            } else {
-              return false;
-            }
-          }
-          return true;
-        }
-      }
+
       var stepDisplay;
       var stepDisplayDeferred = $.Deferred();
       var initialize = function initialize() {
         require(['IATStyleLoader'].concat(this.stylePaths),function (IATStyleLoader) {
-          var styleModules = Array.prototype.slice.call(arguments).slice(1);
+          var requiredStyleModules = Array.prototype.slice.call(arguments).slice(1);
           /*
            * Updates user interface to move from stimuli to stimuli, including
            * categories.
            */
           stepDisplay = function stepDisplay($context) {
+            $(document).off('keydown');
+            var styleModule,$styleDeferred;
             currentTrial += 1;
-            if (currentTrial > currentBlock.trials) {
+            if (currentTrial > parseInt(currentBlock.trials,10)) {
               currentTrial = 1;
-              currentBlock += 1;
-              if (!this.blocks[currentBlock]) {
+              currentBlock = remainingBlocks.shift();
+              if (currentBlock == null || currentBlock == undefined) {
                 endIAT();
                 return;
               }
             }
-            var styleData = this.blocks[currentBlock].style;
-            var $styleDeferred = IATStyleLoader.loadStyle(styleData.prefix);
-            var styleModule = $.grep(styleModules,function(elem,idx) {
-              return elem.id == styleData.id;
-            });
-            styleModule = styleModule[0];
+            var styleData = currentBlock.style;
+            if (styleModules[styleData.id]) {
+              $styleDeferred = $.Deferred();
+              styleModule = styleModules[styleData.id];
+              $styleDeferred.resolve();
+            } else {
+              $styleDeferred = IATStyleLoader.loadStyle(styleData.prefix);
+              styleModule = $.grep(requiredStyleModules,function(elem,idx) {
+                return elem.id == styleData.id;
+              });
+              styleModule = styleModule[0];
+            }
             $styleDeferred.done(function () {
-              var $populatedStyle = styleModule.populateStyle(self.stimulusCategories,self.blocks[currentBlock],$styleDeferred.loadedStyle);
-              previousDisplayTime = new Date().getTime();
-              $('#iat').html($populatedStyle);
+              styleModule.prepare(self,stepDisplay);
+              var $populatedStyle = styleModule.populateStyle(self.stimulusCategories,currentBlock,$styleDeferred.loadedStyle);
+              var responseDeferred = styleModule.getResponse().done(function () {
+                if (beginTime == null || beginTime == undefined) {
+                  beginTime = responseDeferred.response.timeShown;
+                }
+                responses.push(responseDeferred.response);
+              });
+              styleModule.displayIn($populatedStyle,$('#iat'));
             });
           }
           stepDisplayDeferred.resolve();
@@ -154,7 +92,6 @@ define(["CoreIAT","jquery.jnotify/lib/jquery.jnotify"],function (CoreIAT) {
       }
       function endIAT() {
         $.jnotify("End reached. Moving to end URLs not implemented.");
-        $(document).unbind("keydown");
         CoreIAT.sendRequest(CoreIAT.bundleIATManagerRequestData("recordResponses",{
           responses: responses,
           experiment: self.experimentNumber,
@@ -175,12 +112,13 @@ define(["CoreIAT","jquery.jnotify/lib/jquery.jnotify"],function (CoreIAT) {
         iat : function() {
           self = this;
           var $iat = $('<div id="iat">');
-          bindKeys(this,$iat);
+          remainingBlocks = self.blocks;
+          currentBlock = remainingBlocks.shift();
           stepDisplayDeferred.done(function () {
             stepDisplay.apply(self,$iat);
           });
+
           initialize.apply(self);
-          beginTime = previousDisplayTime;
           return $iat;
         }
       }

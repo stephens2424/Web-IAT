@@ -480,7 +480,7 @@ define(["IAT",
           for (var i in blocks) {
             $flowList.append(generateBlock(blocks[i],false,stimulusCategories));
           }
-          return $flowList;
+          return $flowList.sortable({cancel: '.flowListItem'});
         }
         function generateBlock(blockData,instruction,stimulusCategories) {
           var $block = $('<li class="flowListItem">');
