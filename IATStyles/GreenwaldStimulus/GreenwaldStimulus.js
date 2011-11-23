@@ -51,19 +51,29 @@ define([],function () {
    */
   function bindKeys(experiment,stepDisplay) {
     $(document).keydown(function (event) {
+      /*
+       * This is a workaround. This code should use event.timeStamp for a more
+       * accurate measure, but there has been an open bug in Firefox since
+       * 2004 regarding this value populating correctly. It is impossible to get
+       * this level of accuracy from Firefox while this bug remains unresolved.
+       *
+       * https://bugzilla.mozilla.org/show_bug.cgi?id=238041
+       *
+       */
+      var eventTime = new Date().getTime();
       var answer = checkAnswer(event.which);
       if (answer) {
         pushResponse({
           stimulus: currentStimulus.id,
           response: event.which,
-          response_time: fixingError ? errorLatency : event.timeStamp - previousDisplayTime,
+          response_time: fixingError ? errorLatency : eventTime - previousDisplayTime,
           timeShown: previousDisplayTime
         });
         fixingError = false;
         stepDisplay.apply(experiment);
       } else if (answer === false) {
         fixingError = true;
-        errorLatency = event.timeStamp - previousDisplayTime;
+        errorLatency = eventTime - previousDisplayTime;
         if (experiment.errorNotifications === '1') {
           $.jnotify("Incorrect");
         }
