@@ -177,7 +177,7 @@ class IATManager {
   }
   function addExperiment($requestObject) {
     if (!$this->_verifyAuthentication()) return $this->_createAuthenticationFailedReturnValue(__FUNCTION__);
-    require_once '../hashGenerator.php';
+    require_once '../server/hashGenerator.php';
     if ($requestObject["name"]) {
       $name = $requestObject["name"];
     } else {
